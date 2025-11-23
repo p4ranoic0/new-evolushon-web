@@ -24,7 +24,7 @@ export default function Hero() {
         opacity: [0, 1],
         translateY: [50, 0],
         scale: [0.5, 1],
-        delay: (el, i) => i * 50 + 300,
+        delay: (_el, i) => i * 50 + 300,
         duration: 800,
         easing: 'out-elastic(1, .8)'
       })

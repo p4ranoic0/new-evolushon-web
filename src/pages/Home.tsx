@@ -8,7 +8,6 @@ import banner1 from '../assets/banner1.jpg'
 import banner3 from '../assets/banner3.jpg'
 import grupales from '../assets/grupales.jpg'
 import personalizada from '../assets/personalizada-scaled.jpg'
-import surftripBermejo from '../assets/surftrip-bermejo.jpg'
 import coaching from '../assets/coaching-card.jpeg'
 import PhotoGrid from '../components/PhotoGrid'
 import ImageCarousel from '../components/ImageCarousel'
@@ -197,27 +196,6 @@ export default function Home() {
           </Link>
         </div>
       </AnimatedSection>
-    </div>
-  )
-}
-
-function SurfCard({ title, image, description, delay }: Readonly<{ title: string; image: string; description: string; delay: number }>) {
-  return (
-    <div 
-      className="surf-card group rounded-2xl overflow-hidden border-2 border-ocean-200 dark:border-ocean-600 bg-white dark:bg-ocean-800 shadow-wave"
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="h-52 overflow-hidden">
-        <img 
-          src={image} 
-          alt={title} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-        />
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl md:text-2xl font-surf mb-2 text-ocean-800 dark:text-wave-light">{title}</h3>
-        <p className="text-base font-heading text-ocean-700 dark:text-ocean-200">{description}</p>
-      </div>
     </div>
   )
 }
