@@ -5,13 +5,18 @@ import { X, Users, User, Target, Baby, Info } from 'lucide-react';
 import grupales from '../assets/grupales.jpg'
 import personalizada from '../assets/personalizada-scaled.jpg'
 import coaching from '../assets/coaching-card.jpeg'
+import minigroms from '../assets/minigroms-e1732732357425.jpeg'
+import img0260 from '../assets/IMG_0260-scaled.jpg'
+import img1863 from '../assets/IMG_1863-scaled.jpg'
+import img1868 from '../assets/IMG_1868-scaled.jpg'
+import img1869 from '../assets/IMG_1869-1-scaled.jpg'
 import ImageCarousel from '../components/ImageCarousel';
 
 const surfActionImages = [
-  '/src/assets/IMG_0260-scaled.jpg',
-  '/src/assets/IMG_1863-scaled.jpg',
-  '/src/assets/IMG_1868-scaled.jpg',
-  '/src/assets/IMG_1869-1-scaled.jpg'
+  img0260,
+  img1863,
+  img1868,
+  img1869
 ];
 
 export default function Surf() {
@@ -99,7 +104,7 @@ export default function Surf() {
         <SpecialCard
           icon={<Baby className="w-8 h-8" />}
           title={t('surf.tandem')}
-          image="/src/assets/minigroms-e1732732357425.jpeg"
+          image={minigroms}
           description={t('surf.tandemDesc')}
           price="S/ 150"
           packages={[

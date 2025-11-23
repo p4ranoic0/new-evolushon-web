@@ -3,39 +3,71 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import ImageCarousel from '../components/ImageCarousel';
 import PhotoGrid from '../components/PhotoGrid';
+import galeriaSesion0 from '../assets/galeria-sesion-0.jpeg';
+import galeriaSesion1 from '../assets/galeria-sesion-1.jpg';
+import galeriaSesion2 from '../assets/galeria-sesion-2.jpg';
+import galeriaSesion3 from '../assets/galeria-sesion-3.jpg';
+import galeriaSesion4 from '../assets/galeria-sesion-4.jpg';
+import galeriaSesion5 from '../assets/galeria-sesion-5.jpg';
+import galeriaSesion6 from '../assets/galeria-sesion-6.jpg';
+import galeriaSesion7 from '../assets/galeria-sesion-7.jpg';
+import galeriaSesion8 from '../assets/galeria-sesion-8.jpg';
+import galeriaSesion9 from '../assets/galeria-sesion-9.jpg';
+import galeriaSesion10 from '../assets/galeria-sesion-10.jpg';
+import galeriaSesion11 from '../assets/galeria-sesion-11.jpg';
+import galeria1 from '../assets/galeria1.jpg';
+import galeria2 from '../assets/galeria2.jpg';
+import galeria3 from '../assets/galeria3.jpg';
+import galeria4 from '../assets/galeria4.jpg';
+import galeria5 from '../assets/galeria5.jpg';
+import galeria6 from '../assets/galeria6.jpg';
+import galeria7 from '../assets/galeria7.jpg';
+import galeria8 from '../assets/galeria8.jpg';
+import galeria9 from '../assets/galeria9.jpg';
+import galeria10 from '../assets/galeria10.jpg';
+import galeria11 from '../assets/galeria11.jpg';
+import galeria12 from '../assets/galeria12.jpg';
+import galeria13 from '../assets/galeria13.jpg';
+import galeria14 from '../assets/galeria14.jpg';
+import galeria15 from '../assets/galeria15.jpg';
+import galeria16 from '../assets/galeria16.jpg';
+import img5920 from '../assets/IMG_5920-scaled.jpeg';
+import img6465 from '../assets/IMG_6465-scaled.jpg';
+import img7189 from '../assets/IMG_7189-scaled.jpg';
+import img5371 from '../assets/IMG_5371-scaled.jpg';
 
 const sessionImages = [
-  '/src/assets/galeria-sesion-0.jpeg',
-  '/src/assets/galeria-sesion-1.jpg',
-  '/src/assets/galeria-sesion-2.jpg',
-  '/src/assets/galeria-sesion-3.jpg',
-  '/src/assets/galeria-sesion-4.jpg',
-  '/src/assets/galeria-sesion-5.jpg',
-  '/src/assets/galeria-sesion-6.jpg',
-  '/src/assets/galeria-sesion-7.jpg',
-  '/src/assets/galeria-sesion-8.jpg',
-  '/src/assets/galeria-sesion-9.jpg',
-  '/src/assets/galeria-sesion-10.jpg',
-  '/src/assets/galeria-sesion-11.jpg'
+  galeriaSesion0,
+  galeriaSesion1,
+  galeriaSesion2,
+  galeriaSesion3,
+  galeriaSesion4,
+  galeriaSesion5,
+  galeriaSesion6,
+  galeriaSesion7,
+  galeriaSesion8,
+  galeriaSesion9,
+  galeriaSesion10,
+  galeriaSesion11
 ];
 
 const generalGalleryImages = [
-  '/src/assets/galeria1.jpg',
-  '/src/assets/galeria2.jpg',
-  '/src/assets/galeria3.jpg',
-  '/src/assets/galeria4.jpg',
-  '/src/assets/galeria5.jpg',
-  '/src/assets/galeria6.jpg',
-  '/src/assets/galeria7.jpg',
-  '/src/assets/galeria8.jpg',
-  '/src/assets/galeria9.jpg',
-  '/src/assets/galeria10.jpg',
-  '/src/assets/galeria11.jpg',
-  '/src/assets/galeria12.jpg',
-  '/src/assets/galeria13.jpg',
-  '/src/assets/galeria14.jpg',
-  '/src/assets/galeria15.jpg',
-  '/src/assets/galeria16.jpg'
+  galeria1,
+  galeria2,
+  galeria3,
+  galeria4,
+  galeria5,
+  galeria6,
+  galeria7,
+  galeria8,
+  galeria9,
+  galeria10,
+  galeria11,
+  galeria12,
+  galeria13,
+  galeria14,
+  galeria15,
+  galeria16
 ];
 
 export default function Gallery() {
@@ -136,24 +168,24 @@ export default function Gallery() {
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-4">
                   <img
-                    src="/src/assets/IMG_5920-scaled.jpeg"
+                    src={img5920}
                     alt="Surf lifestyle"
                     className="w-full h-64 object-cover rounded-xl"
                   />
                   <img
-                    src="/src/assets/IMG_6465-scaled.jpg"
+                    src={img6465}
                     alt="Beach life"
                     className="w-full h-48 object-cover rounded-xl"
                   />
                 </div>
                 <div className="space-y-4">
                   <img
-                    src="/src/assets/IMG_7189-scaled.jpg"
+                    src={img7189}
                     alt="Ocean view"
                     className="w-full h-48 object-cover rounded-xl"
                   />
                   <img
-                    src="/src/assets/IMG_5371-scaled.jpg"
+                    src={img5371}
                     alt="Surf equipment"
                     className="w-full h-64 object-cover rounded-xl"
                   />

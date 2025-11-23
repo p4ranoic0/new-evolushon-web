@@ -19,6 +19,14 @@ import galeria18 from '../assets/galeria-sesion-18.jpg'
 import galeria20 from '../assets/galeria-sesion-20.jpg'
 import galeria21 from '../assets/galeria-sesion-21.jpeg'
 import galeria22 from '../assets/galeria-sesion-22.jpg'
+import minigroms from '../assets/minigroms-e1732732357425.jpeg'
+import surfskate1 from '../assets/class-surfskate-1.jpg'
+import surfskate2 from '../assets/class-surfskate-2.jpg'
+import surfskate3 from '../assets/class-surfskate-3.jpg'
+import surfskate4 from '../assets/class-surfskate-4.jpeg'
+import surftripChicama from '../assets/surftrip-chicama.jpg'
+import surftripBermejo from '../assets/surftrip-bermejo.jpg'
+import surftripPuertoViejo from '../assets/surftrip-puerto-viejo.jpg'
 
 const homeGalleryImages = [
   galeria16,
@@ -93,7 +101,7 @@ export default function Home() {
           <SpecialCard
             icon={<Baby className="w-8 h-8" />}
             title="Tandem"
-            image="/src/assets/minigroms-e1732732357425.jpeg"
+            image={minigroms}
             description="Clases de surf diseñadas para los más pequeños, donde se aprende en pareja con un instructor. ¡Una experiencia divertida y segura para que los niños se inicien en el mar!"
             price="S/ 150"
             packages={[
@@ -123,10 +131,10 @@ export default function Home() {
             <p className="text-lg md:text-xl leading-relaxed">{t('home.surfskateDesc')}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <img src="/src/assets/class-surfskate-1.jpg" alt="Surfskate 1" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
-            <img src="/src/assets/class-surfskate-2.jpg" alt="Surfskate 2" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
-            <img src="/src/assets/class-surfskate-3.jpg" alt="Surfskate 3" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
-            <img src="/src/assets/class-surfskate-4.jpeg" alt="Surfskate 4" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
+            <img src={surfskate1} alt="Surfskate 1" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
+            <img src={surfskate2} alt="Surfskate 2" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
+            <img src={surfskate3} alt="Surfskate 3" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
+            <img src={surfskate4} alt="Surfskate 4" className="rounded-2xl shadow-wave hover:shadow-xl transition-all duration-300 transform hover:scale-105" />
           </div>
         </div>
       </AnimatedSection>
@@ -140,14 +148,14 @@ export default function Home() {
             <p className="text-lg md:text-xl mb-8 font-heading leading-relaxed text-ocean-800 dark:text-ocean-100">{t('home.surftripsDesc')}</p>
             <div className="grid grid-cols-1 gap-4">
               <div className="aspect-video w-full overflow-hidden rounded-xl shadow-lg">
-                <img src="/src/assets/surftrip-chicama.jpg" alt="Chicama" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+                <img src={surftripChicama} alt="Chicama" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="aspect-video w-full overflow-hidden rounded-xl shadow-lg">
-                  <img src="/src/assets/surftrip-bermejo.jpg" alt="Bermejo" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+                  <img src={surftripBermejo} alt="Bermejo" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
                 </div>
                 <div className="aspect-video w-full overflow-hidden rounded-xl shadow-lg">
-                  <img src="/src/assets/surftrip-puerto-viejo.jpg" alt="Puerto Viejo" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+                  <img src={surftripPuertoViejo} alt="Puerto Viejo" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
                 </div>
               </div>
             </div>
