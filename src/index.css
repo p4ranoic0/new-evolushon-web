@@ -1,0 +1,97 @@
+@import "tailwindcss";
+@import "@fontsource/permanent-marker";
+@import "@fontsource/roboto-slab/400.css";
+@import "@fontsource/roboto-slab/700.css";
+
+@theme {
+  --color-brand: #00A8E8;
+  --color-brand-dark: #0077B6;
+  --color-brand-light: #48CAE4;
+  
+  --color-ocean-50: #E3F7FF;
+  --color-ocean-100: #C7EEFF;
+  --color-ocean-200: #90DDFF;
+  --color-ocean-300: #48CAE4;
+  --color-ocean-400: #00B4D8;
+  --color-ocean-500: #0096C7;
+  --color-ocean-600: #0077B6;
+  --color-ocean-700: #023E8A;
+  --color-ocean-800: #03045E;
+  --color-ocean-900: #021B3D;
+  
+  --color-sand-50: #FFF9F0;
+  --color-sand-100: #FFF3E0;
+  --color-sand-200: #FFE0B2;
+  --color-sand-300: #FFCC80;
+  --color-sand-400: #FFB74D;
+  --color-sand-500: #FFA726;
+  --color-sand-600: #FF9800;
+  --color-sand-700: #F57C00;
+  --color-sand-800: #E65100;
+  --color-sand-900: #BF360C;
+  
+  --color-sunset: #FF6B35;
+  --color-sunset-light: #FF8C61;
+  --color-sunset-dark: #E85D2F;
+  
+  --color-wave: #00B4D8;
+  --color-wave-light: #48CAE4;
+  --color-wave-dark: #0077B6;
+  
+  --color-foam: #E3F7FF;
+  --color-coral: #FF6B35;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Estilos surf personalizados */
+h1, h2, h3, .surf-title {
+  font-family: 'Permanent Marker', cursive;
+  letter-spacing: 0.02em;
+}
+
+.heading-text {
+  font-family: 'Roboto Slab', serif;
+}
+
+/* Efectos de onda */
+@keyframes wave-text {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-5px); }
+  75% { transform: translateY(5px); }
+}
+
+.wave-text span {
+  display: inline-block;
+  animation: wave-text 2s ease-in-out infinite;
+}
+
+.wave-text span:nth-child(2) { animation-delay: 0.1s; }
+.wave-text span:nth-child(3) { animation-delay: 0.2s; }
+.wave-text span:nth-child(4) { animation-delay: 0.3s; }
+.wave-text span:nth-child(5) { animation-delay: 0.4s; }
+
+/* Efecto hover de tarjetas */
+.surf-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.surf-card:hover {
+  transform: translateY(-8px) rotate(-1deg);
+}
