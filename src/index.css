@@ -4,42 +4,48 @@
 @import "@fontsource/roboto-slab/700.css";
 
 @theme {
-  --color-brand: #00A8E8;
-  --color-brand-dark: #0077B6;
-  --color-brand-light: #48CAE4;
+  /* Colores principales del logo */
+  --color-brand: #308dc9;
+  --color-brand-dark: #3f7ba9;
+  --color-brand-light: #8eaabb;
   
-  --color-ocean-50: #E3F7FF;
-  --color-ocean-100: #C7EEFF;
-  --color-ocean-200: #90DDFF;
-  --color-ocean-300: #48CAE4;
-  --color-ocean-400: #00B4D8;
-  --color-ocean-500: #0096C7;
-  --color-ocean-600: #0077B6;
-  --color-ocean-700: #023E8A;
-  --color-ocean-800: #03045E;
-  --color-ocean-900: #021B3D;
+  /* Escala ocean - azules del logo */
+  --color-ocean-50: #faf4f1;
+  --color-ocean-100: #e4c4d2;
+  --color-ocean-200: #8eaabb;
+  --color-ocean-300: #308dc9;
+  --color-ocean-400: #3f7ba9;
+  --color-ocean-500: #308dc9;
+  --color-ocean-600: #3f7ba9;
+  --color-ocean-700: #3f7ba9;
+  --color-ocean-800: #15181e;
+  --color-ocean-900: #15181e;
   
-  --color-sand-50: #FFF9F0;
-  --color-sand-100: #FFF3E0;
-  --color-sand-200: #FFE0B2;
-  --color-sand-300: #FFCC80;
-  --color-sand-400: #FFB74D;
-  --color-sand-500: #FFA726;
-  --color-sand-600: #FF9800;
-  --color-sand-700: #F57C00;
-  --color-sand-800: #E65100;
-  --color-sand-900: #BF360C;
+  /* Escala sand - tonos cálidos del logo */
+  --color-sand-50: #faf4f1;
+  --color-sand-100: #e4c69b;
+  --color-sand-200: #d9a88d;
+  --color-sand-300: #e2b03f;
+  --color-sand-400: #e2b03f;
+  --color-sand-500: #e2b03f;
+  --color-sand-600: #d9a88d;
+  --color-sand-700: #836b5f;
+  --color-sand-800: #836b5f;
+  --color-sand-900: #836b5f;
   
-  --color-sunset: #FF6B35;
-  --color-sunset-light: #FF8C61;
-  --color-sunset-dark: #E85D2F;
+  /* Sunset - tonos dorados */
+  --color-sunset: #e2b03f;
+  --color-sunset-light: #e4c69b;
+  --color-sunset-dark: #d9a88d;
   
-  --color-wave: #00B4D8;
-  --color-wave-light: #48CAE4;
-  --color-wave-dark: #0077B6;
+  /* Wave - azules del logo */
+  --color-wave: #308dc9;
+  --color-wave-light: #8eaabb;
+  --color-wave-dark: #3f7ba9;
   
-  --color-foam: #E3F7FF;
-  --color-coral: #FF6B35;
+  /* Complementarios */
+  --color-foam: #faf4f1;
+  --color-coral: #e4c4d2;
 }
 
 @variant dark (&:where(.dark, .dark *));

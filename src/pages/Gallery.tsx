@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import ImageCarousel from '../components/ImageCarousel';
 import PhotoGrid from '../components/PhotoGrid';
@@ -38,6 +39,7 @@ const generalGalleryImages = [
 ];
 
 export default function Gallery() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'sessions' | 'general'>('sessions');
 
   return (
@@ -50,10 +52,10 @@ export default function Gallery() {
         className="text-center mb-12"
       >
         <h1 className="text-4xl md:text-5xl font-surf text-ocean-800 dark:text-wave-light mb-4">
-          Galería de Experiencias
+          {t('gallery.title')}
         </h1>
         <p className="text-lg text-ocean-700 dark:text-ocean-200 max-w-2xl mx-auto font-heading">
-          Revive los mejores momentos de nuestras sesiones de surf y aventuras en el mar
+          {t('gallery.subtitle')}
         </p>
       </motion.div>
 
@@ -73,7 +75,7 @@ export default function Gallery() {
                 : 'text-ocean-700 dark:text-ocean-200 hover:text-brand dark:hover:text-wave-light'
             }`}
           >
-            Sesiones de Surf
+            {t('gallery.sessionTab')}
           </button>
           <button
             onClick={() => setActiveTab('general')}
@@ -83,7 +85,7 @@ export default function Gallery() {
                 : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            Galería General
+            {t('gallery.generalTab')}
           </button>
         </div>
       </motion.div>
@@ -100,7 +102,7 @@ export default function Gallery() {
             {/* Featured Carousel */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Momentos Destacados
+                {t('gallery.featuredCarousel')}
               </h2>
               <ImageCarousel 
                 images={sessionImages.slice(0, 6)} 
@@ -113,7 +115,7 @@ export default function Gallery() {
             {/* Photo Grid */}
             <div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                Todas las Sesiones
+                {t('gallery.allSessions')}
               </h3>
               <PhotoGrid 
                 images={sessionImages} 
@@ -129,7 +131,7 @@ export default function Gallery() {
             {/* Surf Lifestyle Section */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Estilo de Vida Surf
+                {t('gallery.surfLifestyle')}
               </h2>
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-4">
@@ -162,7 +164,7 @@ export default function Gallery() {
             {/* Complete Gallery Grid */}
             <div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                Colección Completa
+                {t('gallery.completeCollection')}
               </h3>
               <PhotoGrid 
                 images={generalGalleryImages} 
@@ -181,15 +183,15 @@ export default function Gallery() {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="text-center mt-16 p-8 bg-brand dark:bg-ocean-700 rounded-2xl text-white shadow-wave"
       >
-        <h3 className="text-2xl font-surf mb-4">¿Quieres formar parte de nuestra galería?</h3>
+        <h3 className="text-2xl font-surf mb-4">{t('gallery.ctaTitle')}</h3>
         <p className="text-lg mb-6 opacity-90 font-heading">
-          Únete a nuestras sesiones y crea tus propios momentos inolvidables
+          {t('gallery.ctaSubtitle')}
         </p>
         <a
           href="/contacto"
           className="inline-flex items-center px-6 py-3 bg-white text-brand font-surf rounded-lg hover:bg-ocean-50 transition-colors"
         >
-          Reserva tu Sesión
+          {t('gallery.ctaButton')}
         </a>
       </motion.div>
     </div>
