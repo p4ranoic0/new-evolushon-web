@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 import ImageCarousel from '../components/ImageCarousel';
 import PhotoGrid from '../components/PhotoGrid';
 import galeriaSesion0 from '../assets/galeria-sesion-0.jpeg';
@@ -75,7 +76,12 @@ export default function Gallery() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'general'>('sessions');
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
+    <div className="mx-auto max-w-7xl px-4 py-12 space-y-8">
+      <SEO 
+        title="Galería"
+        description="Galería de fotos de nuestras clases de surf, sesiones y experiencias en el mar. Conoce el ambiente de Evolushon Surf Experience."
+        keywords="galeria surf, fotos surf lima, sesiones surf, surf experience"
+      />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

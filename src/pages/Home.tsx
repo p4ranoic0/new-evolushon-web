@@ -1,5 +1,6 @@
 import Hero from '../components/Hero'
 import AnimatedSection from '../components/AnimatedSection'
+import SEO from '../components/SEO'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -42,6 +43,11 @@ export default function Home() {
   
   return (
     <div className="space-y-20">
+      <SEO 
+        title="Inicio"
+        description="Clases de surf profesionales en Lima, Perú. Aprende surf, surfskate y únete a nuestros surf trips. Instructores certificados, equipos de calidad y experiencia garantizada."
+        keywords="surf lima, clases de surf, surfskate lima, surf trips peru, escuela de surf lima, surf lessons, aprender surf"
+      />
       <Hero />
 
       <AnimatedSection animation="fade-up" className="mx-auto max-w-6xl px-4">

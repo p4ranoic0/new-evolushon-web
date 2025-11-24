@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import SEO from '../components/SEO'
 
 export default function Contact() {
   const [loading, setLoading] = useState(false)
@@ -12,6 +13,11 @@ export default function Contact() {
   }
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
+      <SEO 
+        title="Contacto y Reservas"
+        description="Reserva tus clases de surf con Evolushon. Contáctanos para más información sobre nuestros servicios, horarios y precios."
+        keywords="reservar surf, contacto surf lima, reservas clases surf, agendar surf"
+      />
       <h2 className="text-3xl md:text-4xl font-surf text-ocean-800 dark:text-brand-light mb-8">Reserva</h2>
       <form onSubmit={submit} className="space-y-6">
         <div>

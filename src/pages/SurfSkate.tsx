@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { Users, User, Target, Info, X } from 'lucide-react'
 import { motion } from 'framer-motion'
+import SEO from '../components/SEO'
 import AnimatedSection from '../components/AnimatedSection'
 import skate1 from '../assets/class-surfskate-1.jpg'
 import skate2 from '../assets/class-surfskate-2.jpg'
@@ -14,6 +15,11 @@ export default function SurfSkate() {
   
   return (
     <div className="space-y-20 pb-16">
+      <SEO 
+        title="Clases de Surfskate"
+        description="Aprende surfskate en Lima con instructores profesionales. Clases grupales, privadas y coaching para todos los niveles. Mejora tu técnica de surf en tierra."
+        keywords="surfskate lima, clases surfskate, surfskate peru, surfskate lessons, surf training"
+      />
       {/* Hero Section */}
       <AnimatedSection animation="fade-up" className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">

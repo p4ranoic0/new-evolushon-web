@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { X, Users, User, Target, Baby, Info } from 'lucide-react';
+import SEO from '../components/SEO';
 import grupales from '../assets/grupales.jpg'
 import personalizada from '../assets/personalizada-scaled.jpg'
 import coaching from '../assets/coaching-card.jpeg'
@@ -24,6 +25,11 @@ export default function Surf() {
   
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 space-y-12">
+      <SEO 
+        title="Clases de Surf"
+        description="Clases de surf en Lima para todos los niveles. Grupales, privadas, coaching y minigroms. Instructores certificados y equipos de calidad. ¡Reserva tu clase!"
+        keywords="clases de surf lima, surf grupales, surf privadas, coaching surf, surf niños, minigroms, surf lessons"
+      />
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
