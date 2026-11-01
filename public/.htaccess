@@ -7,6 +7,7 @@ RewriteEngine On
 RewriteRule ^clases/surf/?$ /es/servicios?category=surf [R=301,L,NE]
 RewriteRule ^clases/surfskate/?$ /es/servicios?category=surfskate [R=301,L,NE]
 RewriteRule ^surftrips/?$ /es/servicios?category=trip [R=301,L,NE]
+RewriteRule ^en/surftrips/?$ /en/services?category=trip [R=301,L,NE]
 RewriteRule ^galeria/?$ /es/galeria [R=301,L,NE]
 RewriteRule ^contacto/?$ /es/contacto [R=301,L,NE]
 RewriteRule ^$ /es/ [R=302,L]
