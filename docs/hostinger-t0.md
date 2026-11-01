@@ -8,7 +8,8 @@ El ensayo local no acredita persistencia ni compatibilidad en Hostinger. No camb
 - Crear app Node desde GitHub, raíz `/`, Node 22, entry `server.js`, build `npm ci && npm run build`, inicio `npm start` si hay campo. Usar primero el subdominio temporal.
 - Configurar `NODE_ENV=production`, `T0_ONLY=1`, `PUBLIC_URL=https://subdominio-temporal`, `TZ=America/Lima`, `DB_HOST`, `DB_PORT=3306`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `UPLOADS_DIR=/home/USUARIO/evolushon-uploads`, `TRUST_PROXY=0` inicialmente. No poner contraseñas en GitHub.
 - Crear el directorio de uploads fuera del despliegue y permitir escritura al usuario Node. Confirmar con soporte que sobrevive a redeploy, reinicio y cambio de plan, y que los respaldos del panel lo incluyen.
-- Si el build omite Vite/TypeScript, fijar `NPM_CONFIG_PRODUCTION=false`.
+- Con `NODE_ENV=production`, `npm install` omite devDependencies y el build falla con `tsc: command not found`: fijar `NPM_CONFIG_INCLUDE=dev`.
+- Hostinger arranca la app con LiteSpeed (`lsnode.js`), que carga `server.js` con `require()`: `server.js` no puede tener `await` de nivel superior (`ERR_REQUIRE_ASYNC_MODULE`). Lo que carga con `import()` dinámico sí puede. No definir `PORT`: lo inyecta el panel.
 
 ## Comprobar con evidencia
 
