@@ -1,50 +1,90 @@
-import { Routes, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import Surf from "./pages/Surf";
-import SurfSkate from "./pages/SurfSkate";
-import SurfTrips from "./pages/SurfTrips";
-import Gallery from "./pages/Gallery";
-import Contact from "./pages/Contact";
-
-export default function App() {
-  const { t } = useTranslation();
-  const [, setTheme] = useState(0);
-  
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setTheme(prev => prev + 1);
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-    return () => observer.disconnect();
-  }, []);
-  
+import { lazy, Suspense, useEffect } from "react";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from "react-router-dom";
+import { PUBLIC_UI, LANGS, pathFor, slugs, useSiteData } from "./store";
+import type { Lang, Page } from "./store";
+import { PublicSite } from "./components/PublicSite";
+const Admin = lazy(() => import("./admin/Admin"));
+function LocalizedSite() {
+  const { lang, section, slug } = useParams();
+  const d = useSiteData();
+  const location = useLocation();
+  if (!LANGS.includes(lang as Lang)) return <NotFound />;
+  const l = lang as Lang;
+  const page: Page | undefined = !section
+    ? "home"
+    : (Object.keys(slugs) as Exclude<Page, "home">[]).find(
+        (p) => slugs[p][l] === section,
+      );
+  const service =
+    slug && page === "services"
+      ? d.services.find((s) => s.active && (s.seo.slug || s.id) === slug)
+      : undefined;
+  if (!page || (slug && !service)) return <NotFound />;
   return (
-    <div className="min-h-dvh flex flex-col bg-ocean-50 dark:bg-ocean-900 transition-colors duration-300">
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/clases/surf" element={<Surf />} />
-          <Route path="/clases/surfskate" element={<SurfSkate />} />
-          <Route path="/surftrips" element={<SurfTrips />} />
-          <Route path="/galeria" element={<Gallery />} />
-          <Route path="/contacto" element={<Contact />} />
-          <Route
-            path="*"
-            element={
-              <div className="p-8 text-center">{t("common.notFound")}</div>
+    <PublicSite
+      key={location.pathname + location.search}
+      data={d}
+      lang={l}
+      page={page}
+      service={service}
+    />
+  );
+}
+function NotFound() {
+  const { lang } = useParams();
+  const l: Lang = LANGS.includes(lang as Lang) ? (lang as Lang) : "es";
+  useEffect(() => {
+    document.documentElement.lang = l;
+  }, [l]);
+  return (
+    <main className="not-found">
+      <title>404 | Evolushon</title>
+      <meta name="robots" content="noindex" />
+      <span className="serif">Evolushon Surf Experience</span>
+      <h1>404</h1>
+      <p>{PUBLIC_UI.notFound[l]}</p>
+      <Link className="btn gold" to={pathFor("es")}>
+        {PUBLIC_UI.backHome[l]}
+      </Link>
+    </main>
+  );
+}
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/es/" replace />} />
+      <Route
+        path="/admin/*"
+        element={
+          <Suspense
+            fallback={
+              <main className="loading">Evolushon · Cargando panel…</main>
             }
-          />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+          >
+            <Admin />
+          </Suspense>
+        }
+      />
+      {[
+        ["/clases/surf", "/es/servicios?category=surf"],
+        ["/clases/surfskate", "/es/servicios?category=surfskate"],
+        ["/surftrips", "/es/servicios?category=trip"],
+        ["/galeria", "/es/galeria"],
+        ["/contacto", "/es/contacto"],
+      ].map(([from, to]) => (
+        <Route key={from} path={from} element={<Navigate to={to} replace />} />
+      ))}
+      <Route path="/:lang/" element={<LocalizedSite />} />
+      <Route path="/:lang/:section" element={<LocalizedSite />} />
+      <Route path="/:lang/:section/:slug" element={<LocalizedSite />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }

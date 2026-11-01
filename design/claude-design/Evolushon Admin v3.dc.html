@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="evo-store.js"></script>
+<style>
+body{margin:0;background:#faf4f1;color:#15181e;font-family:'Figtree',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1f5f8b;text-decoration:none}a:hover{color:#15181e}
+*{box-sizing:border-box}button,input,select,textarea{font-family:inherit;color:#15181e}
+input:focus,select:focus,textarea:focus{outline:2px solid #308dc9;outline-offset:-1px}
+::selection{background:#e2b03f}
+</style>
+</helmet>
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Login" style="min-height:100vh;display:flex;flex-wrap:wrap;background:#15181e">
+    <div style="position:relative;flex:1 1 420px;min-height:300px;overflow:hidden">
+      <img src="src/assets/galeria-sesion-20.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.75">
+      <div style="position:absolute;left:clamp(20px,4vw,48px);bottom:clamp(20px,4vw,40px);color:#faf4f1;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:clamp(64px,9vw,140px);line-height:0.8">Evolushon<br><span style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;text-transform:none;font-size:0.45em;color:#e2b03f">panel del equipo</span></div>
+    </div>
+    <form onSubmit="{{ login }}" style="flex:1 1 380px;background:#faf4f1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:clamp(28px,5vw,64px)">
+      <img src="src/assets/logo.jpg" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:52px">Iniciar sesión</h1>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Usuario<input value="{{ user }}" onChange="{{ setUser }}" autocomplete="username" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Contraseña<input type="password" value="{{ pass }}" onChange="{{ setPass }}" autocomplete="current-password" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+      <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}"><div style="color:#a8452f;font-size:14px">Usuario o contraseña incorrectos.</div></sc-if>
+      <button type="submit" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;justify-content:center;padding:15px">Entrar</button>
+      <div style="font-size:13px;color:#8f847c;line-height:1.6">Demo · admin / evolushon · editor / editor · foto / foto</div>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showApp }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex">
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <aside style="width:236px;flex-shrink:0;background:#15181e;color:#f1e6da;display:flex;flex-direction:column;padding:18px 12px;gap:2px;position:sticky;top:0;height:100vh">
+      <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 22px">
+        <img src="src/assets/logo.jpg" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover">
+        <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:22px;color:#faf4f1">Evolushon</div><div style="font-size:12px;color:#8f847c">Panel del equipo</div></div>
+      </div>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+        <button onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:10px;border:0;border-radius:8px;padding:11px 12px;text-align:left;cursor:pointer;font-size:15px;font-weight:500;background:{{ n.bg }};color:{{ n.fg }}"><i class="{{ n.icon }}" style="font-size:19px"></i><span style="flex:1">{{ n.label }}</span><span style="font-size:12px;font-weight:700;padding:2px 7px;border-radius:999px;background:{{ n.badgeBg }};color:{{ n.badgeFg }}">{{ n.badge }}</span></button>
+      </sc-for>
+      <div style="flex:1"></div>
+      <a href="Evolushon Sitio v2.dc.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;color:#f1e6da;font-size:14px" style-hover="color:#e2b03f"><i class="ti ti-external-link"></i>Ver sitio publicado</a>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px;border-top:1px solid #2a2f38;margin-top:6px">
+        <span style="width:34px;height:34px;border-radius:50%;background:#308dc9;color:#faf4f1;display:flex;align-items:center;justify-content:center;font-weight:700">{{ me.initial }}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:#faf4f1">{{ me.name }}</div><div style="font-size:12px;color:#8f847c">{{ me.roleLabel }}</div></div>
+        <button onClick="{{ logout }}" aria-label="Cerrar sesión" style="border:0;background:none;color:#8f847c;font-size:18px;cursor:pointer"><i class="ti ti-logout"></i></button>
+      </div>
+    </aside>
+  </sc-if>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;padding-bottom:{{ mainPadBottom }}">
+    <div style="position:sticky;top:0;z-index:10;background:#faf4f1;border-bottom:1px solid #15181e;padding:12px clamp(14px,2.5vw,28px);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:clamp(28px,3vw,38px);flex:1;min-width:160px">{{ title }}</h1>
+      <div style="display:flex;gap:4px">
+        <button onClick="{{ doUndo }}" aria-label="Deshacer" title="Deshacer (Ctrl+Z)" style="width:38px;height:38px;border-radius:50%;border:1px solid #d8c9b9;background:#fffdfb;cursor:pointer;font-size:17px;opacity:{{ undoOp }}"><i class="ti ti-arrow-back-up"></i></button>
+        <button onClick="{{ doRedo }}" aria-label="Rehacer" title="Rehacer (Ctrl+Shift+Z)" style="width:38px;height:38px;border-radius:50%;border:1px solid #d8c9b9;background:#fffdfb;cursor:pointer;font-size:17px;opacity:{{ redoOp }}"><i class="ti ti-arrow-forward-up"></i></button>
+      </div>
+      <sc-if value="{{ hasChanges }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#8a5a00;background:#f7e6b8;padding:7px 12px;border-radius:999px"><span style="width:7px;height:7px;border-radius:50%;background:#c8921c"></span>{{ changesText }}</span>
+          <sc-if value="{{ canPublish }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ discard }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:8px 14px">Descartar</button>
+            <button onClick="{{ publish }}" style="border:0;background:#e2b03f;color:#15181e;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-world-upload"></i>Publicar</button>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noChanges }}" hint-placeholder-val="{{ true }}">
+        <span style="font-size:13px;color:#2f7d5b;display:flex;align-items:center;gap:6px;font-weight:600"><i class="ti ti-circle-check"></i>Todo publicado</span>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Resumen" style="padding:clamp(18px,3vw,36px) clamp(14px,2.5vw,28px);display:flex;flex-direction:column;gap:28px;max-width:1200px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:clamp(30px,3.4vw,48px);line-height:1">Hola, {{ me.name }}.</p>
+          <span style="font-size:14px;color:#5e534d">{{ lastPub }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6">
+            <button onClick="{{ s.onClick }}" style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px;border-top:4px solid {{ s.color }}" style-hover="border-color:#15181e">
+              <span style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ s.label }}</span>
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:54px">{{ s.value }}</span>
+              <span style="font-size:13px;color:#5e534d">{{ s.sub }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
+            <button onClick="{{ q.onClick }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:12px 18px"><i class="{{ q.icon }}"></i>{{ q.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px">
+          <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Pendiente de idioma</div>
+            <sc-for list="{{ dashMissing }}" as="m" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #efe4d6"><span style="flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.label }}</span><span style="font-size:12px;font-weight:700;color:#8a5a00">{{ m.langsText }}</span></div>
+            </sc-for>
+            <button onClick="{{ goLangs }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;align-self:flex-start;margin-top:4px">Ver todo<i class="ti ti-arrow-right"></i></button>
+          </div>
+          <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Últimas publicaciones</div>
+            <sc-for list="{{ historyRows }}" as="h" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #efe4d6;font-size:14px"><i class="ti ti-world-upload" style="color:#308dc9"></i><span style="flex:1">{{ h.when }} · {{ h.by }}</span><span style="color:#5e534d;font-size:13px">{{ h.summary }}</span></div>
+            </sc-for>
+            <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#5e534d">Aún no hay publicaciones.</div></sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isGallery }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Galería" style="display:flex;align-items:flex-start;min-width:0">
+        <div style="flex:1;min-width:0;padding:18px clamp(14px,2.5vw,28px) 40px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <sc-for list="{{ albumTabs }}" as="a" hint-placeholder-count="5">
+              <button onClick="{{ a.onClick }}" style="border:1px solid #15181e;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:{{ a.bg }};color:{{ a.fg }}">{{ a.label }} <span style="opacity:0.55">{{ a.count }}</span></button>
+            </sc-for>
+            <button onClick="{{ toggleAlbums }}" style="border:1px dashed #15181e;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;background:none;display:flex;gap:6px;align-items:center"><i class="ti ti-folders"></i>Álbumes</button>
+          </div>
+
+          <sc-if value="{{ albumsOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Álbumes</span><button onClick="{{ addAlbum }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-plus"></i>Nuevo álbum</button></div>
+              <sc-for list="{{ albumRows }}" as="r" hint-placeholder-count="4">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-top:1px solid #efe4d6">
+                  <sc-for list="{{ r.names }}" as="n" hint-placeholder-count="4">
+                    <label style="display:flex;align-items:center;gap:6px;flex:1 1 150px;font-size:12px;font-weight:700;color:#5e534d">{{ n.code }}<input value="{{ n.value }}" onChange="{{ n.onChange }}" placeholder="{{ n.ph }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;padding:8px 10px;font-size:14px"></label>
+                  </sc-for>
+                  <span style="font-size:13px;color:#5e534d;min-width:64px">{{ r.count }} fotos</span>
+                  <button onClick="{{ r.translate }}" title="Traducir nombre" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:7px 10px"><i class="ti ti-language"></i></button>
+                  <button onClick="{{ r.remove }}" aria-label="Eliminar álbum" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:7px 10px"><i class="ti ti-trash"></i></button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <div style="position:relative;flex:1 1 220px;max-width:360px"><i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8f847c"></i><input value="{{ q }}" onChange="{{ setQ }}" placeholder="Buscar por texto alternativo" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;padding-left:36px;font-size:14px"></div>
+            <sc-for list="{{ gFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.onClick }}" style="border:0;border-radius:999px;padding:8px 12px;cursor:pointer;font-size:13px;font-weight:600;background:{{ f.bg }};color:{{ f.fg }};display:flex;gap:6px;align-items:center"><i class="{{ f.icon }}"></i>{{ f.label }} <span style="opacity:0.6">{{ f.count }}</span></button>
+            </sc-for>
+            <div style="flex:1"></div>
+            <button onClick="{{ toggleSelMode }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="{{ selModeIcon }}"></i>{{ selModeLabel }}</button>
+            <button onClick="{{ toggleSitePrev }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-device-desktop"></i>{{ sitePrevLabel }}</button>
+          </div>
+
+          <div onClick="{{ pickFiles }}" onDragOver="{{ zoneOver }}" onDragLeave="{{ zoneLeave }}" onDrop="{{ zoneDrop }}" style="border:1.5px dashed {{ zoneBorder }};background:{{ zoneBg }};border-radius:10px;padding:20px;display:flex;align-items:center;gap:14px;cursor:pointer;flex-wrap:wrap">
+            <i class="ti ti-photo-up" style="font-size:32px;color:#308dc9"></i>
+            <div style="flex:1;min-width:200px"><div style="font-weight:700;font-size:15px">{{ zoneText }}</div><div style="font-size:13px;color:#5e534d">Varias a la vez · compresión automática ({{ imgCfgText }}) · van a «{{ uploadAlbum }}»</div></div>
+            <input type="file" accept="image/*" multiple="" ref="{{ fileRef }}" onChange="{{ onFiles }}" style="display:none">
+            <sc-if value="{{ uploading }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1 1 100%;display:flex;flex-direction:column;gap:6px">
+                <div style="height:8px;border-radius:999px;background:#efe4d6;overflow:hidden"><div style="height:100%;width:{{ up.pct }};background:#308dc9;transition:width .3s"></div></div>
+                <span style="font-size:13px;color:#5e534d">{{ up.text }}</span>
+              </div>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+            <div style="position:sticky;top:66px;z-index:6;background:#15181e;color:#faf4f1;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-weight:700;padding:0 6px">{{ selCount }} seleccionadas</span>
+              <select onChange="{{ bulkMove }}" value="" style="padding:8px 10px;border-radius:999px;border:1px solid #faf4f1;background:#15181e;color:#faf4f1;font-size:13px"><option value="">Mover a…</option>
+                <sc-for list="{{ albumOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+              </select>
+              <button onClick="{{ bulkFeat }}" style="border:1px solid #faf4f1;background:none;color:#faf4f1;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="ti ti-star"></i>Destacar</button>
+              <button onClick="{{ bulkUnfeat }}" style="border:1px solid #faf4f1;background:none;color:#faf4f1;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer">Quitar destacado</button>
+              <button onClick="{{ bulkHide }}" style="border:1px solid #faf4f1;background:none;color:#faf4f1;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="ti ti-eye-off"></i>Ocultar</button>
+              <button onClick="{{ bulkShow }}" style="border:1px solid #faf4f1;background:none;color:#faf4f1;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="ti ti-eye"></i>Mostrar</button>
+              <button onClick="{{ bulkOptimize }}" style="border:1px solid #faf4f1;background:none;color:#faf4f1;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="ti ti-bolt"></i>Optimizar</button>
+              <sc-if value="{{ canDelete }}" hint-placeholder-val="{{ true }}"><button onClick="{{ bulkDelete }}" style="border:1px solid #f0a090;background:none;color:#f0a090;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="ti ti-trash"></i>Eliminar</button></sc-if>
+              <div style="flex:1"></div>
+              <button onClick="{{ selAll }}" style="border:0;background:none;color:#e4c69b;font-size:13px;font-weight:600;cursor:pointer">Seleccionar todo ({{ shownCount }})</button>
+              <button onClick="{{ selNone }}" style="border:0;background:none;color:#faf4f1;font-size:18px;cursor:pointer" aria-label="Cancelar"><i class="ti ti-x"></i></button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ gridMode }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:13px;color:#5e534d">{{ gridHint }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px">
+              <sc-for list="{{ tiles }}" as="p" hint-placeholder-count="12">
+                <div draggable="{{ p.draggable }}" onDragStart="{{ p.onDragStart }}" onDragOver="{{ p.onDragOver }}" onDrop="{{ p.onDrop }}" onClick="{{ p.onClick }}" style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#efe4d6;cursor:pointer;outline:3px solid {{ p.outline }};outline-offset:-3px">
+                  <img src="{{ p.src }}" alt="{{ p.alt }}" draggable="false" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;object-position:{{ p.pos }};opacity:{{ p.opacity }}">
+                  <span style="position:absolute;left:6px;top:6px;width:24px;height:24px;border-radius:6px;background:{{ p.checkBg }};border:2px solid #faf4f1;display:{{ p.checkDisplay }};align-items:center;justify-content:center;color:#faf4f1;font-size:14px"><i class="{{ p.checkIcon }}"></i></span>
+                  <div style="position:absolute;right:6px;top:6px;display:flex;gap:4px">
+                    <button onClick="{{ p.toggleFeat }}" aria-label="Destacar" style="width:28px;height:28px;border-radius:50%;border:0;background:#faf4f1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:{{ p.starColor }}"><i class="{{ p.starIcon }}"></i></button>
+                    <button onClick="{{ p.toggleHide }}" aria-label="Ocultar" style="width:28px;height:28px;border-radius:50%;border:0;background:#faf4f1;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="{{ p.eyeIcon }}"></i></button>
+                  </div>
+                  <div style="position:absolute;left:6px;right:6px;bottom:6px;display:flex;gap:4px;flex-wrap:wrap">
+                    <span style="background:#15181e;color:#faf4f1;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px">{{ p.posLabel }}</span>
+                    <span style="background:{{ p.sizeBg }};color:{{ p.sizeFg }};font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px">{{ p.size }}</span>
+                    <sc-if value="{{ p.noAlt }}" hint-placeholder-val="{{ false }}"><span style="background:#a8452f;color:#faf4f1;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px">sin alt</span></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ noTiles }}" hint-placeholder-val="{{ false }}"><div style="padding:40px;text-align:center;color:#5e534d">No hay fotos con este filtro.</div></sc-if>
+          </sc-if>
+
+          <sc-if value="{{ sitePrev }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#15181e;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:44px;color:#faf4f1">Galería</span><span style="font-size:13px;color:#c9bcb0">Así se ve en el sitio · solo fotos visibles · borrador sin publicar</span></div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));grid-auto-rows:130px;grid-auto-flow:dense;gap:6px">
+                <sc-for list="{{ previewTiles }}" as="p" hint-placeholder-count="10">
+                  <div style="grid-column:{{ p.col }};grid-row:{{ p.row }};border-radius:4px;overflow:hidden;background:#2a2f38"><img src="{{ p.src }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:{{ p.pos }};display:block"></div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ showPhotoPanel }}" hint-placeholder-val="{{ false }}">
+          <div style="flex-shrink:0;background:#fffdfb;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;overflow:auto;align-content:start;right:0;padding:{{ pp.pad }};width:{{ pp.width }};border-left:{{ pp.border }};position:{{ pp.position }};top:{{ pp.top }};left:{{ pp.left }};bottom:{{ pp.bottom }};z-index:{{ pp.z }};max-height:{{ pp.maxh }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Editar foto</span>
+              <button onClick="{{ closePhoto }}" aria-label="Cerrar" style="width:36px;height:36px;border-radius:50%;border:1px solid #15181e;background:none;cursor:pointer;font-size:16px"><i class="ti ti-x"></i></button>
+            </div>
+            <div onClick="{{ ph.setFocus }}" style="flex-shrink:0;position:relative;border-radius:8px;overflow:hidden;cursor:crosshair;background:#efe4d6">
+              <img src="{{ ph.src }}" alt="" draggable="false" style="width:100%;display:block;max-height:320px;object-fit:contain">
+              <span style="position:absolute;left:{{ ph.fx }};top:{{ ph.fy }};width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:3px solid #faf4f1;box-shadow:0 0 0 2px #15181e;pointer-events:none"></span>
+            </div>
+            <div style="font-size:13px;color:#5e534d">Toca la imagen para elegir el punto de encuadre. Así se recorta en el sitio:</div>
+            <div style="display:flex;gap:8px;align-items:flex-end;flex-shrink:0">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="aspect-ratio:1;border-radius:4px;overflow:hidden"><img src="{{ ph.src }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ ph.pos }}"></div><span style="font-size:11px;color:#5e534d">1:1</span></div>
+              <div style="flex:1.3;display:flex;flex-direction:column;gap:4px"><div style="aspect-ratio:4/3;border-radius:4px;overflow:hidden"><img src="{{ ph.src }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ ph.pos }}"></div><span style="font-size:11px;color:#5e534d">4:3 portada</span></div>
+              <div style="flex:0.8;display:flex;flex-direction:column;gap:4px"><div style="aspect-ratio:3/4;border-radius:4px;overflow:hidden"><img src="{{ ph.src }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ ph.pos }}"></div><span style="font-size:11px;color:#5e534d">3:4</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;padding:10px 12px;border-radius:8px;background:{{ ph.weightBg }}"><i class="ti ti-file-info"></i><span style="flex:1">{{ ph.weight }}</span><sc-if value="{{ ph.canOptimize }}" hint-placeholder-val="{{ false }}"><button onClick="{{ ph.optimize }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:6px 12px"><i class="ti ti-bolt"></i>Optimizar</button></sc-if></div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Álbum
+              <select value="{{ ph.album }}" onChange="{{ ph.setAlbum }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><sc-for list="{{ albumOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}">{{ o.label }}</option></sc-for></select>
+            </label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Texto alternativo</span><button onClick="{{ ph.translate }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:6px 12px"><i class="ti ti-language"></i>{{ ph.translateLabel }}</button></div>
+            <sc-for list="{{ ph.alts }}" as="a" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:28px;font-size:12px;font-weight:700;color:#5e534d">{{ a.code }}</span><input value="{{ a.value }}" onChange="{{ a.onChange }}" placeholder="{{ a.ph }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;padding:8px 10px;font-size:14px"></div>
+            </sc-for>
+            <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #e2d5c7;padding-top:8px">
+              <button onClick="{{ ph.toggleFeat }}" style="display:flex;align-items:center;gap:10px;border:0;background:none;padding:8px 0;cursor:pointer;text-align:left;font-size:14px"><span style="width:38px;height:22px;border-radius:999px;background:{{ ph.featBg }};display:flex;padding:3px;justify-content:{{ ph.featJ }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span>Destacada en el inicio</button>
+              <button onClick="{{ ph.toggleHide }}" style="display:flex;align-items:center;gap:10px;border:0;background:none;padding:8px 0;cursor:pointer;text-align:left;font-size:14px"><span style="width:38px;height:22px;border-radius:999px;background:{{ ph.visBg }};display:flex;padding:3px;justify-content:{{ ph.visJ }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span>Visible en el sitio</button>
+            </div>
+            <sc-if value="{{ canDelete }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ph.remove }}" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;align-self:flex-start"><i class="ti ti-trash"></i>Eliminar foto</button></sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isServices }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Servicios" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:flex;flex-direction:column;gap:18px;min-width:0">
+        <sc-if value="{{ isTable }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <span style="font-size:14px;color:#5e534d;flex:1;min-width:220px">Edita precios aquí mismo. Abre un servicio para textos, fotos, oferta y SEO.</span>
+            <div style="position:relative">
+              <button onClick="{{ toggleNew }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-plus"></i>Nuevo servicio</button>
+              <sc-if value="{{ newOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;right:0;top:calc(100% + 6px);z-index:8;background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:6px;min-width:250px;display:flex;flex-direction:column">
+                  <sc-for list="{{ templates }}" as="t" hint-placeholder-count="4">
+                    <button onClick="{{ t.onClick }}" style="display:flex;gap:10px;align-items:center;border:0;background:none;padding:10px;border-radius:6px;cursor:pointer;text-align:left" style-hover="background:#f1e6da"><i class="{{ t.icon }}" style="font-size:20px;color:#308dc9"></i><span><span style="display:block;font-weight:700;font-size:14px">{{ t.label }}</span><span style="display:block;font-size:12px;color:#5e534d">{{ t.sub }}</span></span></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          <sc-for list="{{ svcGroups }}" as="g" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column">
+              <div style="display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid #15181e"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:28px">{{ g.label }}</span><span style="font-size:13px;color:#5e534d">{{ g.count }}</span></div>
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3">
+                <div draggable="true" onDragStart="{{ r.onDragStart }}" onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid #e2d5c7;flex-wrap:wrap;opacity:{{ r.opacity }}">
+                  <i class="ti ti-grip-vertical" style="color:#b3a597;cursor:grab"></i>
+                  <img src="{{ r.cover }}" alt="" style="width:52px;height:52px;border-radius:6px;object-fit:cover;object-position:{{ r.coverPos }}">
+                  <div style="flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:4px">
+                    <input value="{{ r.name }}" onChange="{{ r.setName }}" style="border:0;background:none;padding:2px 0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px;width:100%;color:#15181e">
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+                      <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:{{ r.statusBg }};color:{{ r.statusFg }}">{{ r.status }}</span>
+                      <sc-if value="{{ r.offerOn }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#e2b03f;color:#15181e">{{ r.offerText }}</span></sc-if>
+                      <sc-if value="{{ r.changed }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#f7e6b8;color:#8a5a00">sin publicar</span></sc-if>
+                      <span style="display:flex;gap:3px;align-items:center">
+                        <sc-for list="{{ r.langDots }}" as="d" hint-placeholder-count="4"><span title="{{ d.title }}" style="font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;background:{{ d.bg }};color:{{ d.fg }}">{{ d.code }}</span></sc-for>
+                      </span>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <label style="display:flex;flex-direction:column;gap:2px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5e534d">{{ r.unit }}<span style="display:flex;align-items:center;gap:4px;font-size:13px;color:#15181e">{{ r.currency }}<input type="number" min="0" value="{{ r.price }}" onChange="{{ r.setPrice }}" placeholder="Consultar" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;width:96px;padding:7px 8px;font-size:15px;font-weight:700"></span></label>
+                    <sc-for list="{{ r.packages }}" as="p" hint-placeholder-count="3">
+                      <label style="display:flex;flex-direction:column;gap:2px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5e534d">{{ p.label }}<input type="number" min="0" value="{{ p.price }}" onChange="{{ p.setPrice }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;width:84px;padding:7px 8px;font-size:14px"></label>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:4px">
+                    <button onClick="{{ r.toggleActive }}" title="{{ r.activeTitle }}" style="border:0;background:none;cursor:pointer;padding:6px"><span style="width:38px;height:22px;border-radius:999px;background:{{ r.activeBg }};display:flex;padding:3px;justify-content:{{ r.activeJ }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span></button>
+                    <button onClick="{{ r.edit }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 14px"><i class="ti ti-pencil"></i>Editar</button>
+                    <button onClick="{{ r.duplicate }}" title="Duplicar" aria-label="Duplicar" style="width:36px;height:36px;border-radius:50%;border:1px solid #15181e;background:none;cursor:pointer"><i class="ti ti-copy"></i></button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </sc-if>
+
+        <sc-if value="{{ isEdit }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ backToTable }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-arrow-left"></i>Todos</button>
+            <div style="display:flex;border:1px solid #d8c9b9;border-radius:999px;padding:2px;background:#fffdfb">
+  <sc-for list="{{ langTabs }}" as="l" hint-placeholder-count="4">
+    <button onClick="{{ l.onClick }}" style="border:0;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;background:{{ l.bg }};color:{{ l.fg }}">{{ l.code }}<span style="width:6px;height:6px;border-radius:50%;background:{{ l.dot }}"></span></button>
+  </sc-for></div>
+            <button onClick="{{ ed.translate }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-language"></i>{{ ed.translateLabel }}</button>
+            <div style="flex:1"></div>
+            <button onClick="{{ ed.toggleActive }}" style="display:flex;align-items:center;gap:8px;border:0;background:none;cursor:pointer;font-weight:700;font-size:14px"><span style="width:38px;height:22px;border-radius:999px;background:{{ ed.activeBg }};display:flex;padding:3px;justify-content:{{ ed.activeJ }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span>{{ ed.activeLabel }}</button>
+            <button onClick="{{ ed.duplicate }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-copy"></i>Duplicar</button>
+          </div>
+          <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:22px">
+              <section style="display:flex;flex-direction:column;gap:14px">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Contenido · {{ langCode }}</div>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Nombre<input value="{{ ed.name }}" onChange="{{ ed.setName }}" placeholder="{{ ed.namePh }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;font-size:18px;font-weight:600"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Descripción<textarea rows="4" value="{{ ed.desc }}" onChange="{{ ed.setDesc }}" placeholder="{{ ed.descPh }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;resize:vertical;line-height:1.5"></textarea></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;max-width:260px">Categoría<select value="{{ ed.cat }}" onChange="{{ ed.setCat }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><option value="surf">Surf</option><option value="surfskate">Surfskate</option><option value="trip">Surftrip</option></select></label>
+              </section>
+              <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Portada</span><div style="display:flex;gap:6px;flex-wrap:wrap"><button onClick="{{ pickCover }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-upload"></i>{{ coverUploadLabel }}</button><input type="file" accept="image/*" ref="{{ coverRef }}" onChange="{{ onCoverFile }}" style="display:none"><button onClick="{{ toggleCoverPick }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-photo"></i>{{ coverPickLabel }}</button></div></div>
+                <div onClick="{{ ed.setCoverFocus }}" style="position:relative;aspect-ratio:4/3;max-width:420px;border-radius:8px;overflow:hidden;cursor:crosshair;background:#efe4d6">
+                  <img src="{{ ed.cover }}" alt="" draggable="false" style="width:100%;height:100%;object-fit:cover;object-position:{{ ed.coverPos }}">
+                  <span style="position:absolute;left:{{ ed.cfx }};top:{{ ed.cfy }};width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid #faf4f1;box-shadow:0 0 0 2px #15181e;pointer-events:none"></span>
+                </div>
+                <span style="font-size:13px;color:#5e534d">Toca la portada para mover el encuadre. Las fotos subidas se comprimen ({{ imgCfgText }}) y quedan ocultas en la galería.</span>
+                <sc-if value="{{ coverPick }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;max-height:240px;overflow:auto;background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:8px">
+                    <sc-for list="{{ coverOptions }}" as="o" hint-placeholder-count="12"><button onClick="{{ o.onClick }}" style="border:0;padding:0;aspect-ratio:1;border-radius:4px;overflow:hidden;cursor:pointer;outline:3px solid {{ o.outline }};outline-offset:-3px"><img src="{{ o.src }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"></button></sc-for>
+                  </div>
+                </sc-if>
+              </section>
+              <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Tarifa</span>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;width:90px">Moneda<select value="{{ ed.currency }}" onChange="{{ ed.setCurrency }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><option value="S/">S/</option><option value="$">$</option></select></label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;width:160px">{{ ed.priceLabel }}<input type="number" min="0" value="{{ ed.price }}" onChange="{{ ed.setPrice }}" placeholder="Consultar" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;font-weight:700"></label>
+                  <span style="font-size:13px;color:#5e534d;padding-bottom:12px">Vacío = «Consultar»</span>
+                </div>
+                <sc-if value="{{ ed.notTrip }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <span style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Paquetes</span>
+                    <sc-for list="{{ ed.packages }}" as="p" hint-placeholder-count="3">
+                      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                        <input type="number" min="1" value="{{ p.n }}" onChange="{{ p.setN }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;width:72px"><span style="font-size:13px;color:#5e534d">clases</span>
+                        <span style="font-size:13px;margin-left:6px">{{ ed.currency }}</span><input type="number" min="0" value="{{ p.price }}" onChange="{{ p.setPrice }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;width:110px">
+                        <span style="font-size:12px;color:#8f847c">{{ p.each }}</span>
+                        <button onClick="{{ p.remove }}" aria-label="Quitar" style="border:0;background:none;color:#a8452f;cursor:pointer;font-size:18px"><i class="ti ti-x"></i></button>
+                      </div>
+                    </sc-for>
+                    <button onClick="{{ ed.addPackage }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;align-self:flex-start;border-style:dashed"><i class="ti ti-plus"></i>Agregar paquete</button>
+                  </div>
+                </sc-if>
+              </section>
+              <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Oferta temporal</span><button onClick="{{ ed.toggleOffer }}" style="display:flex;align-items:center;gap:8px;border:0;background:none;cursor:pointer;font-weight:700;font-size:14px"><span style="width:38px;height:22px;border-radius:999px;background:{{ ed.offerBg }};display:flex;padding:3px;justify-content:{{ ed.offerJ }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span>{{ ed.offerState }}</button></div>
+                <sc-if value="{{ ed.offerOn }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Precio oferta ({{ ed.currency }})<input type="number" min="0" value="{{ ed.offerPrice }}" onChange="{{ ed.setOfferPrice }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;font-weight:700"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Desde<input type="date" value="{{ ed.offerFrom }}" onChange="{{ ed.setOfferFrom }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Hasta<input type="date" value="{{ ed.offerTo }}" onChange="{{ ed.setOfferTo }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Etiqueta ({{ langCode }})<input value="{{ ed.offerLabel }}" onChange="{{ ed.setOfferLabel }}" placeholder="Oferta de verano" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                  </div>
+                  <div style="font-size:13px;font-weight:600;color:{{ ed.offerStatusColor }}">{{ ed.offerStatus }}</div>
+                </sc-if>
+              </section>
+              <sc-if value="{{ ed.isTrip }}" hint-placeholder-val="{{ false }}">
+                <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                  <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Logística del trip</span>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Salida de Lima<input value="{{ ed.depart }}" onChange="{{ ed.setDepart }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Llegada a Lima<input value="{{ ed.ret }}" onChange="{{ ed.setRet }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Mín. participantes<input type="number" min="1" value="{{ ed.minPeople }}" onChange="{{ ed.setMin }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Duración ({{ langCode }})<input value="{{ ed.duration }}" onChange="{{ ed.setDuration }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Distancia ({{ langCode }})<input value="{{ ed.distance }}" onChange="{{ ed.setDistance }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                  </div>
+                </section>
+              </sc-if>
+              <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Detalle · {{ langCode }} <span style="font-family:'Figtree',sans-serif;font-variation-settings:normal;font-weight:400;text-transform:none;font-size:13px;color:#5e534d">un elemento por línea</span></span>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+                  <sc-for list="{{ ed.lists }}" as="l" hint-placeholder-count="3"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ l.label }}<textarea rows="6" value="{{ l.value }}" onChange="{{ l.onChange }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;resize:vertical;line-height:1.5;font-size:14px"></textarea></label></sc-for>
+                </div>
+              </section>
+              <section style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #15181e;padding-top:16px">
+                <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">SEO · {{ langCode }}</span>
+                <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;background:#fff;padding:14px 16px;display:flex;flex-direction:column;gap:2px;font-family:Arial,sans-serif">
+                  <span style="font-size:12px;color:#4d5156">{{ ed.seoUrl }}</span>
+                  <span style="font-size:19px;color:#1a0dab;line-height:1.3">{{ ed.seoTitleShown }}</span>
+                  <span style="font-size:13px;color:#4d5156;line-height:1.5">{{ ed.seoDescShown }}</span>
+                </div>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Título <span style="font-weight:400;letter-spacing:0;color:{{ ed.seoTitleColor }}">{{ ed.seoTitleCount }} / 60</span><input value="{{ ed.seoTitle }}" onChange="{{ ed.setSeoTitle }}" placeholder="{{ ed.seoTitlePh }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Meta descripción <span style="font-weight:400;letter-spacing:0;color:{{ ed.seoDescColor }}">{{ ed.seoDescCount }} / 155</span><textarea rows="3" value="{{ ed.seoDesc }}" onChange="{{ ed.setSeoDesc }}" placeholder="{{ ed.seoDescPh }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;resize:vertical;line-height:1.5"></textarea></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;max-width:360px">Slug de URL<input value="{{ ed.slug }}" onChange="{{ ed.setSlug }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              </section>
+              <div style="display:flex;gap:10px;border-top:1px solid #e2d5c7;padding-top:16px;flex-wrap:wrap">
+                <sc-if value="{{ canDelete }}" hint-placeholder-val="{{ true }}"><button onClick="{{ ed.remove }}" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-trash"></i>Eliminar servicio</button></sc-if>
+              </div>
+            </div>
+
+            <div style="flex:1 1 380px;min-width:0;position:sticky;top:78px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:22px">Vista previa · {{ langCode }}</span>
+                <div style="display:flex;border:1px solid #d8c9b9;border-radius:999px;padding:2px">
+                  <button onClick="{{ prevDesk }}" aria-label="Escritorio" style="border:0;border-radius:999px;padding:6px 10px;cursor:pointer;background:{{ prevDeskBg }};color:{{ prevDeskFg }}"><i class="ti ti-device-desktop"></i></button>
+                  <button onClick="{{ prevMob }}" aria-label="Móvil" style="border:0;border-radius:999px;padding:6px 10px;cursor:pointer;background:{{ prevMobBg }};color:{{ prevMobFg }}"><i class="ti ti-device-mobile"></i></button>
+                </div>
+              </div>
+              <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:16px;background:#faf4f1;overflow:hidden">
+                <article style="max-width:{{ prevMax }};margin:0 auto;display:flex;flex-direction:column;gap:14px">
+                  <div style="position:relative;aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:#f1e6da">
+                    <img src="{{ ed.cover }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:{{ ed.coverPos }};display:block">
+                    <span style="position:absolute;left:10px;top:10px;background:#faf4f1;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:5px 9px;border-radius:999px">{{ ed.catLabel }}</span>
+                    <sc-if value="{{ ed.offerLive }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:10px;top:10px;background:#e2b03f;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px">{{ ed.offerBadge }}</span></sc-if>
+                  </div>
+                  <div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:{{ prevTitleSize }}">{{ ed.previewName }}</div>
+                  <p style="margin:0;font-size:14px;line-height:1.55;color:#3a3330">{{ ed.previewDesc }}</p>
+                  <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap">
+                    <div style="display:flex;flex-direction:column"><span style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5e534d">{{ ed.unitText }}</span>
+                      <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:46px;background:linear-gradient(transparent 62%,#e2b03f 62%,#e2b03f 90%,transparent 90%)">{{ ed.previewPrice }}</span>
+                      <sc-if value="{{ ed.offerLive }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#5e534d;text-decoration:line-through">{{ ed.regularPrice }}</span></sc-if>
+                    </div>
+                    <div style="display:flex;flex:1 1 180px;border-top:1px solid #15181e">
+                      <sc-for list="{{ ed.prevPackages }}" as="p" hint-placeholder-count="3"><div style="flex:1;padding:8px 8px 0;border-right:1px solid #e2d5c7;display:flex;flex-direction:column"><span style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ p.label }}</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:20px">{{ p.price }}</span></div></sc-for>
+                    </div>
+                  </div>
+                  <span style="align-self:flex-start;display:flex;align-items:center;gap:8px;background:#15181e;color:#faf4f1;padding:11px 18px;border-radius:999px;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase"><i class="ti ti-brand-whatsapp"></i>{{ ed.bookLabel }}</span>
+                </article>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Textos del inicio" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div style="display:flex;border:1px solid #d8c9b9;border-radius:999px;padding:2px;background:#fffdfb">
+  <sc-for list="{{ homeLangTabs }}" as="l" hint-placeholder-count="4">
+    <button onClick="{{ l.onClick }}" style="border:0;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;background:{{ l.bg }};color:{{ l.fg }}">{{ l.code }}<span style="width:6px;height:6px;border-radius:50%;background:{{ l.dot }}"></span></button>
+  </sc-for></div><button onClick="{{ translateHome }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-language"></i>{{ homeTranslateLabel }}</button></div>
+          <span style="font-size:13px;color:#5e534d">Vacío = texto original del sitio (en gris). Solo cambia lo que quieras personalizar.</span>
+          <sc-for list="{{ homeFields }}" as="f" hint-placeholder-count="6">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d"><span style="display:flex;justify-content:space-between;gap:10px">{{ f.label }}<sc-if value="{{ f.custom }}" hint-placeholder-val="{{ false }}"><button onClick="{{ f.reset }}" style="border:0;background:none;color:#1f5f8b;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0;text-transform:none">Restaurar original</button></sc-if></span>
+              <textarea rows="{{ f.rows }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;resize:vertical;line-height:1.5"></textarea>
+            </label>
+          </sc-for>
+        </div>
+        <div style="flex:1 1 360px;min-width:0;position:sticky;top:78px;border-radius:10px;overflow:hidden;background:#15181e;color:#faf4f1">
+          <div style="position:relative;aspect-ratio:16/11">
+            <img src="src/assets/banner-principal.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.65">
+            <div style="position:absolute;left:18px;right:18px;bottom:16px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e4c69b">{{ hp.kicker }}</span>
+              <span style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:30px;line-height:1">{{ hp.heroTitle }}</span>
+              <span style="font-size:13px;color:#f1e6da">{{ hp.heroSub }}</span>
+            </div>
+          </div>
+          <div style="background:#faf4f1;color:#15181e;padding:18px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:32px">{{ hp.introTitle }}</span>
+            <span style="font-size:13px;line-height:1.55;color:#3a3330">{{ hp.intro }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLangs }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Idiomas" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:flex;flex-direction:column;gap:18px;max-width:1100px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+          <sc-for list="{{ langProgress }}" as="p" hint-placeholder-count="4">
+            <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">{{ p.name }}</span><span style="font-weight:700">{{ p.pct }}</span></div><div style="height:8px;border-radius:999px;background:#efe4d6;overflow:hidden"><div style="height:100%;width:{{ p.pct }};background:{{ p.color }}"></div></div><span style="font-size:12px;color:#5e534d">{{ p.sub }}</span></div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span style="font-size:14px;color:#5e534d;flex:1;min-width:220px">La traducción asistida solo completa campos vacíos; nunca sobrescribe lo que el equipo escribió.</span><button onClick="{{ translateAll }}" style="border:0;background:#e2b03f;color:#15181e;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-language"></i>{{ translateAllLabel }}</button></div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ missing }}" as="m" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid #e2d5c7;flex-wrap:wrap">
+              <img src="{{ m.thumb }}" alt="" style="width:44px;height:44px;border-radius:6px;object-fit:cover;background:#efe4d6">
+              <div style="flex:1 1 200px;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.label }}</div><div style="font-size:12px;color:#5e534d">{{ m.type }}</div></div>
+              <div style="display:flex;gap:4px"><sc-for list="{{ m.langs }}" as="l" hint-placeholder-count="2"><span style="font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;background:#f7e6b8;color:#8a5a00">{{ l }}</span></sc-for></div>
+              <button onClick="{{ m.translate }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:7px 12px"><i class="ti ti-language"></i>{{ m.translateLabel }}</button>
+              <button onClick="{{ m.open }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 12px">Abrir</button>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noMissing }}" hint-placeholder-val="{{ false }}"><div style="padding:40px;text-align:center;color:#2f7d5b;font-weight:600"><i class="ti ti-circle-check" style="font-size:28px;display:block;margin-bottom:6px"></i>Todo traducido.</div></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isBookings }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Reservas" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:flex;flex-direction:column;gap:18px;min-width:0">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+          <sc-for list="{{ bkStats }}" as="s" hint-placeholder-count="4">
+            <button onClick="{{ s.onClick }}" style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;border-top:4px solid {{ s.color }}"><span style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ s.label }}</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:44px">{{ s.value }}</span><span style="font-size:13px;color:#5e534d">{{ s.sub }}</span></button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div style="position:relative;flex:1 1 220px;max-width:340px"><i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8f847c"></i><input value="{{ bq }}" onChange="{{ setBq }}" placeholder="Nombre, código o teléfono" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;padding-left:36px;font-size:14px"></div>
+          <sc-for list="{{ bFilters }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="border:0;border-radius:999px;padding:8px 12px;cursor:pointer;font-size:13px;font-weight:600;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }} <span style="opacity:0.6">{{ f.count }}</span></button>
+          </sc-for>
+          <div style="flex:1"></div>
+          <button onClick="{{ exportCsv }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-file-spreadsheet"></i>Exportar CSV</button>
+          <button onClick="{{ toggleBkCfg }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-adjustments"></i>{{ bkCfgLabel }}</button>
+        </div>
+
+        <sc-if value="{{ bkCfgOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Horarios y cupos</span>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Horarios surf (separados por coma)<input value="{{ bc.slotsSurf }}" onChange="{{ bc.setSlotsSurf }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Horarios surfskate<input value="{{ bc.slotsSkate }}" onChange="{{ bc.setSlotsSkate }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Cupo surf<input type="number" min="1" value="{{ bc.capSurf }}" onChange="{{ bc.setCapSurf }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Cupo skate<input type="number" min="1" value="{{ bc.capSkate }}" onChange="{{ bc.setCapSkate }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Cupo trip<input type="number" min="1" value="{{ bc.capTrip }}" onChange="{{ bc.setCapTrip }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              </div>
+              <span style="font-size:12px;color:#5e534d">El cupo es por horario: suma las personas de todas las reservas de esa categoría.</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Calendario</span>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Días de salida de trips</div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ bc.tripDays }}" as="d" hint-placeholder-count="7"><button onClick="{{ d.onClick }}" style="width:42px;height:42px;border-radius:50%;border:1px solid #15181e;cursor:pointer;font-weight:700;background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</button></sc-for></div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Días sin clases</div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ bc.closedDays }}" as="d" hint-placeholder-count="7"><button onClick="{{ d.onClick }}" style="width:42px;height:42px;border-radius:50%;border:1px solid #15181e;cursor:pointer;font-weight:700;background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</button></sc-for></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Anticipación (días)<input type="number" min="0" value="{{ bc.lead }}" onChange="{{ bc.setLead }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Reservar hasta (días)<input type="number" min="7" value="{{ bc.maxDays }}" onChange="{{ bc.setMaxDays }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Bloquear una fecha (mar bravo, feriado)<span style="display:flex;gap:6px"><input type="date" value="{{ bc.newBlock }}" onChange="{{ bc.setNewBlock }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><button onClick="{{ bc.addBlock }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap">Bloquear</button></span></label>
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bc.blocked }}" as="b" hint-placeholder-count="0"><button onClick="{{ b.remove }}" style="border:0;border-radius:999px;padding:6px 10px;background:#f6d8d0;color:#a8452f;font-size:13px;font-weight:600;cursor:pointer;display:flex;gap:4px;align-items:center">{{ b.label }}<i class="ti ti-x"></i></button></sc-for></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">Pagos</span>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Adelanto (%) · 0 = sin adelanto, 100 = pago total<input type="number" min="0" max="100" value="{{ bc.deposit }}" onChange="{{ bc.setDeposit }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <sc-for list="{{ bc.methods }}" as="m" hint-placeholder-count="3">
+                <button onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:10px;border:0;background:none;padding:6px 0;cursor:pointer;text-align:left;font-size:14px;font-weight:600"><span style="width:38px;height:22px;border-radius:999px;background:{{ m.bg }};display:flex;padding:3px;justify-content:{{ m.j }};flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span><i class="{{ m.icon }}"></i>{{ m.label }}</button>
+              </sc-for>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Número Yape<input value="{{ bc.yape }}" onChange="{{ bc.setYape }}" placeholder="987 654 321" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Número Plin<input value="{{ bc.plin }}" onChange="{{ bc.setPlin }}" placeholder="987 654 321" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <span style="font-size:12px;line-height:1.5;color:#5e534d">El pago con tarjeta está simulado. Para cobrar de verdad hay que conectar Mercado Pago, Culqi o Stripe (ver README).</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ bkRows }}" as="b" hint-placeholder-count="5">
+            <div style="display:flex;gap:14px;align-items:center;padding:14px 4px;border-top:1px solid #e2d5c7;flex-wrap:wrap">
+              <div style="width:64px;text-align:center;flex-shrink:0"><div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ b.month }}</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:36px">{{ b.day }}</div><div style="font-size:12px;font-weight:600">{{ b.time }}</div></div>
+              <div style="flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-weight:700;font-size:16px">{{ b.name }}</span><span style="font-size:12px;font-weight:700;color:#5e534d">{{ b.code }}</span><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:{{ b.stBg }};color:{{ b.stFg }}">{{ b.statusLabel }}</span></div>
+                <div style="font-size:14px;color:#3a3330">{{ b.svc }} · {{ b.opt }} · {{ b.persons }}</div>
+                <div style="font-size:13px;color:#5e534d">{{ b.contact }} · {{ b.meta }}</div>
+                <sc-if value="{{ b.hasNotes }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:16px">“{{ b.notes }}”</div></sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:110px"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">{{ b.total }}</span><span style="font-size:12px;color:#5e534d">{{ b.paidText }}</span><span style="font-size:12px;color:#5e534d">{{ b.method }}</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <sc-if value="{{ b.canConfirm }}" hint-placeholder-val="{{ false }}"><button onClick="{{ b.confirm }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 12px;background:#2f7d5b"><i class="ti ti-check"></i>Confirmar pago</button></sc-if>
+                <a href="{{ b.wa }}" target="_blank" rel="noreferrer" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:8px 12px"><i class="ti ti-brand-whatsapp"></i>Escribir</a>
+                <select value="{{ b.status }}" onChange="{{ b.setStatus }}" style="padding:8px 10px;border:1px solid #d8c9b9;border-radius:999px;background:#fffdfb;font-size:13px"><option value="pendiente">Pendiente</option><option value="por verificar">Por verificar</option><option value="pagada">Pagada</option><option value="completada">Completada</option><option value="cancelada">Cancelada</option></select>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noBookings }}" hint-placeholder-val="{{ false }}"><div style="padding:48px 20px;text-align:center;color:#5e534d"><i class="ti ti-calendar-off" style="font-size:30px;display:block;margin-bottom:8px"></i>{{ noBookingsText }}</div></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReviews }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Reseñas" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:flex;flex-direction:column;gap:18px;max-width:1100px">
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;align-items:end">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;grid-column:1/-1">Enlace a la ficha de Google Maps<input value="{{ rs.placeUrl }}" onChange="{{ rs.setPlaceUrl }}" placeholder="https://maps.app.goo.gl/…" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;grid-column:1/-1">Enlace «Dejar reseña» (Google Business → Pedir reseñas)<input value="{{ rs.writeUrl }}" onChange="{{ rs.setWriteUrl }}" placeholder="https://g.page/r/…/review" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Calificación promedio<input type="number" step="0.1" min="1" max="5" value="{{ rs.rating }}" onChange="{{ rs.setRating }}" placeholder="4.9" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Número de reseñas<input type="number" min="0" value="{{ rs.count }}" onChange="{{ rs.setCount }}" placeholder="120" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <span style="font-size:12px;line-height:1.5;color:#5e534d;grid-column:1/-1">Copia aquí reseñas reales de Google Maps (texto, nombre y mes). Para que se actualicen solas hace falta la API de Google Places (ver README). Si dejas la calificación vacía, no se muestra.</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px;flex:1">Reseñas en el sitio</span>
+          <sc-if value="{{ hasSamples }}" hint-placeholder-val="{{ false }}"><button onClick="{{ removeSamples }}" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-trash"></i>Quitar ejemplos</button></sc-if>
+          <button onClick="{{ addReview }}" style="border:0;background:#15181e;color:#faf4f1;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="ti ti-plus"></i>Agregar reseña</button>
+        </div>
+        <sc-for list="{{ reviewRows }}" as="r" hint-placeholder-count="3">
+          <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;opacity:{{ r.opacity }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;flex:1 1 180px">Nombre<input value="{{ r.author }}" onChange="{{ r.setAuthor }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;width:120px">Estrellas<select value="{{ r.rating }}" onChange="{{ r.setRating }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d;width:170px">Mes<input type="month" value="{{ r.date }}" onChange="{{ r.setDate }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+              <sc-if value="{{ r.sample }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:5px 9px;border-radius:999px;background:#f7e6b8;color:#8a5a00;margin-bottom:10px">EJEMPLO</span></sc-if>
+            </div>
+            <sc-for list="{{ r.texts }}" as="t" hint-placeholder-count="2">
+              <label style="display:flex;gap:8px;align-items:flex-start"><span style="width:28px;font-size:12px;font-weight:700;color:#5e534d;padding-top:12px">{{ t.code }}</span><textarea rows="2" value="{{ t.value }}" onChange="{{ t.onChange }}" placeholder="{{ t.ph }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;resize:vertical;line-height:1.5"></textarea></label>
+            </sc-for>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button onClick="{{ r.translate }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:7px 12px"><i class="ti ti-language"></i>{{ r.translateLabel }}</button>
+              <button onClick="{{ r.toggleHide }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:7px 12px"><i class="{{ r.hideIcon }}"></i>{{ r.hideLabel }}</button>
+              <div style="flex:1"></div>
+              <button onClick="{{ r.remove }}" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:7px 12px"><i class="ti ti-trash"></i>Eliminar</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Ajustes" style="padding:18px clamp(14px,2.5vw,28px) 60px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;align-items:start;max-width:1200px">
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Sitio</span>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">WhatsApp (con código de país)<input value="{{ st.whatsapp }}" onChange="{{ st.setWa }}" placeholder="51987654321" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Dominio<input value="{{ st.domain }}" onChange="{{ st.setDomain }}" placeholder="https://evolushonsurfexperience.com" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Instagram<input value="{{ st.instagram }}" onChange="{{ st.setIg }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">TikTok<input value="{{ st.tiktok }}" onChange="{{ st.setTt }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"></label>
+        </div>
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Equipo y permisos</span><button onClick="{{ addUser }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-user-plus"></i>Agregar</button></div>
+          <sc-for list="{{ users }}" as="u" hint-placeholder-count="3">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 0;border-top:1px solid #efe4d6">
+              <input value="{{ u.name }}" onChange="{{ u.setName }}" placeholder="Nombre" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;flex:1 1 120px;width:auto;padding:8px 10px;font-size:14px">
+              <input value="{{ u.user }}" onChange="{{ u.setUser }}" placeholder="Usuario" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;flex:1 1 90px;width:auto;padding:8px 10px;font-size:14px">
+              <input value="{{ u.pass }}" onChange="{{ u.setPass }}" placeholder="Clave" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;flex:1 1 90px;width:auto;padding:8px 10px;font-size:14px">
+              <select value="{{ u.role }}" onChange="{{ u.setRole }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%;flex:0 0 130px;padding:8px 10px;font-size:14px"><option value="admin">Administrador</option><option value="editor">Editor</option><option value="fotografo">Fotógrafo</option></select>
+              <button onClick="{{ u.remove }}" aria-label="Quitar" style="border:0;background:none;color:#a8452f;font-size:18px;cursor:pointer"><i class="ti ti-x"></i></button>
+            </div>
+          </sc-for>
+          <div style="font-size:12px;line-height:1.6;color:#5e534d"><strong>Administrador:</strong> todo. <strong>Editor:</strong> servicios, galería, textos, idiomas y publicar. <strong>Fotógrafo:</strong> solo subir y editar fotos; un editor publica.</div>
+        </div>
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Compresión de imágenes</span>
+          <span style="font-size:13px;line-height:1.55;color:#5e534d">Se aplica automáticamente al subir fotos a la galería o portadas de servicios, en el navegador y sin servicios externos. Si una foto ya viene liviana, se conserva tal cual.</span>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ imgPresets }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onClick }}" style="display:flex;align-items:center;gap:12px;text-align:left;border:1px solid {{ p.border }};background:{{ p.bg }};border-radius:8px;padding:12px;cursor:pointer"><span style="width:18px;height:18px;border-radius:50%;border:2px solid #15181e;display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:50%;background:{{ p.dot }}"></span></span><span style="flex:1"><span style="display:block;font-weight:700;font-size:14px">{{ p.label }}</span><span style="display:block;font-size:12px;color:#5e534d">{{ p.sub }}</span></span></button>
+            </sc-for>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">Formato
+            <select value="{{ imgFormat }}" onChange="{{ setImgFormat }}" style="padding:10px 12px;border:1px solid #d8c9b9;border-radius:6px;background:#fffdfb;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:#15181e;width:100%"><option value="webp">WebP (recomendado, ~30% más liviano)</option><option value="jpeg">JPG (máxima compatibilidad)</option></select>
+          </label>
+          <span style="font-size:12px;color:#5e534d">{{ imgCfgText }}</span>
+          <sc-if value="{{ webpFallback }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#8a5a00;background:#f7e6b8;padding:8px 10px;border-radius:6px">WebP no está disponible en este navegador; se usa JPG. En Chrome, Edge, Firefox y Safari actuales sí funciona.</span></sc-if>
+        </div>
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Datos</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onClick="{{ exportJson }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-download"></i>Exportar JSON</button>
+            <button onClick="{{ pickImport }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap"><i class="ti ti-upload"></i>Importar JSON</button>
+            <input type="file" accept="application/json,.json" ref="{{ importRef }}" onChange="{{ onImport }}" style="display:none">
+          </div>
+          <sc-if value="{{ importErr }}" hint-placeholder-val="{{ false }}"><span style="color:#a8452f;font-size:13px">{{ importErr }}</span></sc-if>
+          <span style="font-size:13px;color:#5e534d">Almacenamiento: {{ st.usage }}</span>
+          <button onClick="{{ st.reset }}" style="border:1px solid #a8452f;background:none;color:#a8452f;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;align-self:flex-start"><i class="ti ti-restore"></i>Restaurar datos originales</button>
+        </div>
+        <div style="background:#fffdfb;border:1px solid #e2d5c7;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:26px">Historial de publicaciones</span>
+          <span style="font-size:13px;color:#5e534d">Restaura servicios, textos y ajustes de una versión anterior (la galería no se toca).</span>
+          <sc-for list="{{ historyRows }}" as="h" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #efe4d6;font-size:14px;flex-wrap:wrap"><span style="flex:1;min-width:160px">{{ h.when }} · {{ h.by }}<br><span style="color:#5e534d;font-size:12px">{{ h.summary }}</span></span><button onClick="{{ h.restore }}" style="border:1px solid #15181e;background:none;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;color:#15181e;white-space:nowrap;padding:6px 12px"><i class="ti ti-history"></i>Restaurar</button></div>
+          </sc-for>
+          <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#5e534d">Aún no hay publicaciones.</div></sc-if>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <nav style="position:fixed;left:0;right:0;bottom:0;z-index:20;background:#15181e;display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom))">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6">
+        <button onClick="{{ n.onClick }}" style="flex:1;min-height:52px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:600;cursor:pointer;color:{{ n.mobFg }}"><i class="{{ n.icon }}" style="font-size:21px"></i>{{ n.short }}</button>
+      </sc-for>
+    </nav>
+  </sc-if>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:{{ toastBottom }};transform:translateX(-50%);z-index:60;background:{{ toastBg }};color:#faf4f1;padding:12px 18px;border-radius:999px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;max-width:calc(100vw - 32px)"><i class="{{ toastIcon }}"></i>{{ toastText }}</div>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  LANGS = ['es', 'en', 'fr', 'de'];
+  DKEY = 'evolushon-draft-v1';
+  HKEY = 'evolushon-history-v1';
+  CAT = { surf: 'Surf', surfskate: 'Surfskate', trip: 'Surftrips' };
+  HOMEKEYS = [['kicker', 'Antetítulo del hero', 1], ['heroTitle', 'Título del hero', 2], ['heroSub', 'Subtítulo del hero', 2], ['introTitle', 'Título de presentación', 1], ['intro', 'Texto de presentación', 5], ['servicesSub', 'Bajada de servicios', 2], ['contactTitle', 'Título de reserva', 1], ['contactSub', 'Texto de reserva', 2], ['tag', 'Lema', 1]];
+  state = { ready: false, data: null, live: null, auth: JSON.parse(sessionStorage.getItem('evo-auth3') || 'null'), user: '', pass: '', loginErr: false,
+    view: localStorage.getItem('evo-admin3-view') || 'dash', w: window.innerWidth,
+    album: 'all', q: '', gf: 'all', selMode: false, sel: [], selPhoto: null, upload: null, sitePrev: false, albumsOpen: false, sizes: {}, zoneHover: false,
+    svcMode: 'table', selSvc: null, lang: 'es', newOpen: false, busy: '', prevMobile: false, coverPick: false,
+    homeLang: 'es', bf: 'upcoming', bq: '', bkCfgOpen: false, newBlock: '', toast: null, diff: { total: 0 }, canUndo: false, canRedo: false, importErr: '' };
+  undoS = []; redoS = [];
+  fileRef = React.createRef(); importRef = React.createRef(); coverRef = React.createRef();
+
+  blank() { return { es: '', en: '', fr: '', de: '' }; }
+  blankL() { return { es: [], en: [], fr: [], de: [] }; }
+  clone(o) { return JSON.parse(JSON.stringify(o)); }
+  kb(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+  today() { return new Date().toISOString().slice(0, 10); }
+  migrate(d) {
+    d.settings = d.settings || {};
+    if (!d.settings.users) d.settings.users = [{ name: 'Administrador', user: 'admin', pass: 'evolushon', role: 'admin' }, { name: 'Equipo', user: 'editor', pass: 'editor', role: 'editor' }, { name: 'Fotógrafo', user: 'foto', pass: 'foto', role: 'fotografo' }];
+    if (!d.albums) d.albums = [['sesiones', 'Sesiones', 'Sessions', 'Sessions', 'Sessions'], ['lifestyle', 'Lifestyle', 'Lifestyle', 'Lifestyle', 'Lifestyle'], ['surfskate', 'Surfskate', 'Surfskate', 'Surfskate', 'Surfskate'], ['trips', 'Trips', 'Trips', 'Trips', 'Trips']].map(a => ({ id: a[0], name: { es: a[1], en: a[2], fr: a[3], de: a[4] } }));
+    d.home = d.home || {};
+    d.settings.reviews = d.settings.reviews || { placeUrl: '', writeUrl: '', rating: null, count: null };
+    d.settings.booking = Object.assign({ slots: { surf: ['07:00', '09:00', '11:00', '15:00'], surfskate: ['10:00', '16:00'] }, capacity: { surf: 6, surfskate: 6, trip: 12 }, tripDays: [6, 0], closedDays: [], blocked: [], deposit: 50, lead: 1, maxDays: 60, methods: { card: true, yape: true, plin: true }, yape: '', plin: '' }, d.settings.booking || {});
+    if (!d.reviews) d.reviews = [
+      { id: 'r1', author: 'Camila R.', rating: 5, date: '2026-09', sample: true, hidden: false, text: { es: 'Primera vez sobre una tabla y me paré en la segunda ola. El instructor tuvo una paciencia increíble.', en: 'First time on a board and I stood up on the second wave. The instructor was incredibly patient.', fr: '', de: '' } },
+      { id: 'r2', author: 'Thomas B.', rating: 5, date: '2026-08', sample: true, hidden: false, text: { es: 'Clase privada en inglés: eligieron la playa perfecta para mi nivel y me grabaron para corregir la técnica.', en: 'Private lesson in English: they picked the perfect beach for my level and filmed me to fix my technique.', fr: '', de: '' } },
+      { id: 'r3', author: 'Lucía M.', rating: 5, date: '2026-07', sample: true, hidden: false, text: { es: 'El surftrip a Bermejo fue increíble. Todo organizado, solo nos preocupamos por surfear.', en: 'The Bermejo surftrip was amazing. Everything organised, we only had to surf.', fr: '', de: '' } }
+    ];
+    d.reviews.forEach(r => { r.text = Object.assign(this.blank(), r.text || {}); });
+    d.services.forEach(s => {
+      s.seo = s.seo || {}; s.seo.title = s.seo.title || this.blank(); s.seo.desc = s.seo.desc || this.blank(); s.seo.slug = s.seo.slug || '';
+      s.offer = s.offer || { on: false, price: null, from: '', to: '', label: this.blank() }; s.offer.label = s.offer.label || this.blank();
+      s.duration = s.duration || this.blank(); s.distance = s.distance || this.blank();
+      ['includes', 'excludes', 'bring'].forEach(k => { s[k] = s[k] || this.blankL(); this.LANGS.forEach(l => { s[k][l] = s[k][l] || []; }); });
+      this.LANGS.forEach(l => { s.name[l] = s.name[l] || ''; s.desc[l] = s.desc[l] || ''; });
+      s.coverFocus = s.coverFocus || '50% 50%'; s.packages = s.packages || [];
+    });
+    d.gallery.forEach(g => { g.focus = g.focus || '50% 50%'; g.alt = Object.assign(this.blank(), g.alt || {}); });
+    return d;
+  }
+  componentDidMount() {
+    const init = () => {
+      if (!window.EvoStore) return setTimeout(init, 40);
+      const live = this.migrate(window.EvoStore.load());
+      let d = null; try { d = JSON.parse(localStorage.getItem(this.DKEY) || 'null'); } catch (e) {}
+      d = this.migrate(d || this.clone(live));
+      this.setState({ ready: true, data: d, live, diff: this.diff(d, live) }, () => this.measure());
+    };
+    init();
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onKey = (e) => {
+      const t = (e.target && e.target.tagName) || '';
+      if (e.key === 'Escape') this.setState({ selPhoto: null, newOpen: false });
+      if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? this.doRedo() : this.doUndo(); }
+    };
+    this.onStorage = (e) => { if (e.key === 'evolushon-bookings-v1') this.forceUpdate(); };
+    window.addEventListener('resize', this.onResize); window.addEventListener('keydown', this.onKey); window.addEventListener('storage', this.onStorage);
+  }
+  componentWillUnmount() { window.removeEventListener('storage', this.onStorage); window.removeEventListener('resize', this.onResize); window.removeEventListener('keydown', this.onKey); clearTimeout(this.tt); }
+  toast(text, kind) { clearTimeout(this.tt); this.setState({ toast: { text, kind: kind || 'ok' } }); this.tt = setTimeout(() => this.setState({ toast: null }), 2800); }
+  persist(d) { try { localStorage.setItem(this.DKEY, JSON.stringify(d)); return true; } catch (e) { this.toast('Sin espacio en el navegador. Optimiza o elimina fotos.', 'err'); return false; } }
+  update(fn) {
+    const prev = JSON.stringify(this.state.data); const d = JSON.parse(prev); fn(d);
+    if (!this.persist(d)) return;
+    this.undoS.push(prev); if (this.undoS.length > 40) this.undoS.shift(); this.redoS = [];
+    this.setState({ data: d, diff: this.diff(d, this.state.live), canUndo: true, canRedo: false });
+  }
+  doUndo() { if (!this.undoS.length) return; this.redoS.push(JSON.stringify(this.state.data)); const d = JSON.parse(this.undoS.pop()); this.persist(d); this.setState({ data: d, diff: this.diff(d, this.state.live), canUndo: this.undoS.length > 0, canRedo: true }); this.toast('Cambio deshecho'); }
+  doRedo() { if (!this.redoS.length) return; this.undoS.push(JSON.stringify(this.state.data)); const d = JSON.parse(this.redoS.pop()); this.persist(d); this.setState({ data: d, diff: this.diff(d, this.state.live), canUndo: true, canRedo: this.redoS.length > 0 }); this.toast('Cambio rehecho'); }
+  diff(d, l) {
+    if (!d || !l) return { total: 0, ids: {} };
+    const ids = {};
+    const cnt = (a, b) => { const B = {}; (b || []).forEach(x => { B[x.id] = JSON.stringify(x); }); let n = 0; const seen = {}; (a || []).forEach(x => { seen[x.id] = 1; if (JSON.stringify(x) !== B[x.id]) { n++; ids[x.id] = 1; } }); Object.keys(B).forEach(k => { if (!seen[k]) n++; }); return n; };
+    const s = cnt(d.services, l.services), g = cnt(d.gallery, l.gallery);
+    const ord = (d.services.map(x => x.id).join() !== l.services.map(x => x.id).join() ? 1 : 0) + (d.gallery.map(x => x.id).join() !== l.gallery.map(x => x.id).join() ? 1 : 0);
+    const o = (JSON.stringify(d.home || {}) !== JSON.stringify(l.home || {}) ? 1 : 0) + (JSON.stringify(d.settings) !== JSON.stringify(l.settings) ? 1 : 0) + (JSON.stringify(d.albums) !== JSON.stringify(l.albums) ? 1 : 0);
+    return { services: s, gallery: g, other: o + ord, total: s + g + o + ord, ids };
+  }
+  bookings() { try { return JSON.parse(localStorage.getItem('evolushon-bookings-v1') || '[]'); } catch (e) { return []; } }
+  saveBookings(list) { localStorage.setItem('evolushon-bookings-v1', JSON.stringify(list)); this.forceUpdate(); }
+  history() { try { return JSON.parse(localStorage.getItem(this.HKEY) || '[]'); } catch (e) { return []; } }
+  publish() {
+    const d = this.state.data;
+    try { window.EvoStore.save(d); } catch (e) { return this.toast('No se pudo publicar: sin espacio.', 'err'); }
+    const df = this.state.diff; const h = this.history();
+    h.unshift({ at: new Date().toISOString(), by: this.state.auth.name, summary: { services: df.services, gallery: df.gallery, other: df.other }, snap: { services: d.services, home: d.home, settings: d.settings, albums: d.albums } });
+    try { localStorage.setItem(this.HKEY, JSON.stringify(h.slice(0, 8))); } catch (e) { try { localStorage.setItem(this.HKEY, JSON.stringify(h.slice(0, 2))); } catch (e2) {} }
+    const live = this.clone(d); this.setState({ live, diff: this.diff(d, live) }); this.toast('Publicado en el sitio');
+  }
+  discard() { if (!confirm('¿Descartar todos los cambios sin publicar?')) return; const l = this.clone(this.state.live); this.update(d => { Object.keys(d).forEach(k => delete d[k]); Object.assign(d, l); }); this.toast('Cambios descartados'); }
+  measure() {
+    (this.state.data.gallery || []).forEach(g => {
+      if (g.src.indexOf('data:') === 0 || this.state.sizes[g.src]) return;
+      this.mq = (this.mq || Promise.resolve()).then(() => fetch(g.src, { method: 'HEAD' }).then(r => +r.headers.get('content-length') || fetch(g.src).then(r2 => r2.blob()).then(b => b.size)).then(n => { if (n) this.setState(s => ({ sizes: Object.assign({}, s.sizes, { [g.src]: n }) })); }).catch(() => {}));
+    });
+  }
+  sizeOf(g) { if (g.src.indexOf('data:') === 0) return Math.round((g.src.length - g.src.indexOf(',') - 1) * 0.75); return this.state.sizes[g.src] || 0; }
+  imgCfg() { const p = { max: { q: 0.9, max: 2000 }, balanced: { q: 0.82, max: 1600 }, light: { q: 0.72, max: 1280 } }; const c = ((this.state.data || {}).settings || {}).img || {}; const pr = p[c.preset] || p.balanced; return { q: pr.q, max: pr.max, format: c.format || 'webp', preset: c.preset || 'balanced' }; }
+  webpOk() { if (this._webp === undefined) { try { const c = document.createElement('canvas'); c.width = c.height = 1; this._webp = c.toDataURL('image/webp').indexOf('data:image/webp') === 0; } catch (e) { this._webp = false; } } return this._webp; }
+  shrink(src, maxOverride) { const cfg = this.imgCfg(); const max = maxOverride || cfg.max; const type = cfg.format === 'webp' && this.webpOk() ? 'image/webp' : 'image/jpeg';
+    return new Promise(res => { const img = new Image(); img.onload = () => { const s = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; if (type === 'image/jpeg') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height); } ctx.drawImage(img, 0, 0, c.width, c.height); res({ src: c.toDataURL(type, cfg.q), w: c.width, h: c.height, type }); }; img.onerror = () => res(null); img.src = src; }); }
+  async processFile(f) { const raw = await this.readFile(f); if (!raw) return null; const out = await this.shrink(raw); if (!out) return null; const outBytes = Math.round((out.src.length - out.src.indexOf(',') - 1) * 0.75);
+    if (outBytes >= f.size && /jpe?g|webp/.test(f.type)) { const im = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = raw; }); if (im && Math.max(im.width, im.height) <= this.imgCfg().max) return { src: raw, w: im.width, h: im.height, bytes: f.size, kept: true }; }
+    return Object.assign(out, { bytes: outBytes }); }
+  readFile(f) { return new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => res(null); r.readAsDataURL(f); }); }
+  async addFiles(files) {
+    const list = Array.from(files || []).filter(f => f.type.indexOf('image/') === 0); if (!list.length) return;
+    const album = this.state.album === 'all' ? (this.state.data.albums[0] || {}).id : this.state.album;
+    this.setState({ upload: { done: 0, total: list.length, orig: 0, saved: 0 } });
+    const added = [];
+    for (let i = 0; i < list.length; i++) {
+      const f = list[i]; const out = await this.processFile(f);
+      if (out) added.push({ id: 'u-' + Date.now() + '-' + i, src: out.src, album, featured: false, hidden: false, focus: '50% 50%', alt: this.blank(), w: out.w, h: out.h, by: this.state.auth.name });
+      this.setState(s => ({ upload: Object.assign({}, s.upload, { done: i + 1, orig: s.upload.orig + f.size, saved: s.upload.saved + (out ? out.bytes : 0) }) }));
+    }
+    if (added.length) this.update(d => { d.gallery = added.concat(d.gallery); });
+    const u = this.state.upload; this.toast(added.length + ' fotos subidas · ' + this.kb(u.orig) + ' → ' + this.kb(u.saved) + (u.orig ? ' (−' + Math.max(0, Math.round((1 - u.saved / u.orig) * 100)) + '%)' : ''));
+    setTimeout(() => this.setState({ upload: null }), 1600);
+  }
+  async optimize(ids) {
+    let n = 0;
+    for (const id of ids) { const g = this.state.data.gallery.find(x => x.id === id); if (!g || g.src.indexOf('data:') === 0) continue; const out = await this.shrink(g.src); if (out && out.src.length * 0.75 < this.sizeOf(g)) { n++; this.update(d => { const x = d.gallery.find(y => y.id === id); x.src = out.src; x.w = out.w; x.h = out.h; }); } }
+    this.toast(n ? n + ' fotos optimizadas' : 'Ya estaban optimizadas');
+  }
+  newService(t) {
+    const id = 'n-' + Date.now(); const B = () => this.blank(); const L = () => this.blankL();
+    const s = { id, cat: 'surf', active: false, cover: 'src/assets/logo.jpg', coverFocus: '50% 50%', currency: 'S/', price: null, packages: [], name: B(), desc: B(), includes: L(), excludes: L(), bring: L(), duration: B(), distance: B(), depart: '', ret: '', minPeople: 1, seo: { title: B(), desc: B(), slug: '' }, offer: { on: false, price: null, from: '', to: '', label: B() } };
+    const pk = () => [{ n: 4, price: null }, { n: 8, price: null }, { n: 12, price: null }];
+    if (t === 'surf') Object.assign(s, { cat: 'surf', price: 120, packages: pk(), cover: 'src/assets/grupales.jpg' }), s.name.es = 'Nueva clase de surf';
+    if (t === 'skate') Object.assign(s, { cat: 'surfskate', price: 80, packages: pk(), cover: 'src/assets/class-surfskate-3.jpg' }), s.name.es = 'Nueva clase de surfskate';
+    if (t === 'coaching') { s.name.es = 'Nuevo coaching'; s.includes.es = ['Videoanálisis', 'Programa personalizado']; s.cover = 'src/assets/coaching-card.jpeg'; }
+    if (t === 'trip') { Object.assign(s, { cat: 'trip', currency: '$', price: 60, minPeople: 2, depart: '7:00 AM', ret: '1:00 PM', cover: 'src/assets/surftrip-chicama.jpg' }); s.name.es = 'Nuevo surftrip'; s.duration.es = 'Un día'; s.includes.es = ['Clase de surf', 'Tabla de surf', 'Wetsuit', 'Transporte']; s.excludes.es = ['Comida', 'Agua']; s.bring.es = ['Ropa de baño', 'Bloqueador', 'Gorra', 'Agua']; }
+    this.update(d => d.services.push(s)); this.setState({ selSvc: id, svcMode: 'edit', newOpen: false, lang: 'es', coverPick: false }); window.scrollTo(0, 0);
+  }
+  duplicate(id) {
+    const nid = 'n-' + Date.now();
+    this.update(d => { const i = d.services.findIndex(x => x.id === id); const s = JSON.parse(JSON.stringify(d.services[i])); s.id = nid; s.name.es = (s.name.es || '') + ' (copia)'; s.active = false; s.seo.slug = ''; d.services.splice(i + 1, 0, s); });
+    this.setState({ selSvc: nid, svcMode: 'edit' }); this.toast('Servicio duplicado como borrador'); window.scrollTo(0, 0);
+  }
+  async uploadCover(files, sid) {
+    const f = Array.from(files || []).find(x => x.type.indexOf('image/') === 0); if (!f) return;
+    this.setState({ busy: 'cover:' + sid }); const out = await this.processFile(f); this.setState({ busy: '' });
+    if (!out) return this.toast('No se pudo leer la imagen.', 'err');
+    const s = this.state.data.services.find(x => x.id === sid); const map = { surf: 'sesiones', surfskate: 'surfskate', trip: 'trips' };
+    const album = (this.state.data.albums.find(a => a.id === map[s.cat]) || this.state.data.albums[0] || {}).id; const gid = 'u-' + Date.now();
+    this.update(d => { d.gallery.unshift({ id: gid, src: out.src, album, featured: false, hidden: true, focus: '50% 50%', alt: Object.assign(this.blank(), { es: s.name.es || '' }), w: out.w, h: out.h, by: this.state.auth.name }); const x = d.services.find(y => y.id === sid); x.cover = out.src; x.coverFocus = '50% 50%'; });
+    this.toast('Portada subida · ' + this.kb(f.size) + ' → ' + this.kb(out.bytes) + ' · guardada oculta en la galería');
+  }
+  offerLive(s) { const o = s.offer || {}; const t = this.today(); return !!(o.on && o.price != null && o.price !== '' && (!o.from || o.from <= t) && (!o.to || t <= o.to)); }
+  async translate(kind, id) {
+    if (!window.claude || !window.claude.complete) return this.toast('La traducción asistida no está disponible en este entorno.', 'err');
+    const d = this.state.data; let src = {};
+    if (kind === 'service') { const s = d.services.find(x => x.id === id); src = { name: s.name.es, desc: s.desc.es, includes: s.includes.es, excludes: s.excludes.es, bring: s.bring.es, duration: s.duration.es, distance: s.distance.es, seoTitle: s.seo.title.es, seoDesc: s.seo.desc.es, offerLabel: s.offer.label.es }; }
+    if (kind === 'photo') { const g = d.gallery.find(x => x.id === id); if (!g.alt.es) return this.toast('Primero escribe el texto en español.', 'err'); src = { alt: g.alt.es }; }
+    if (kind === 'album') { const a = d.albums.find(x => x.id === id); src = { name: a.name.es }; }
+    if (kind === 'review') { const r = d.reviews.find(x => x.id === id); const base = r.text.es || r.text.en; if (!base) return this.toast('Escribe primero el texto.', 'err'); src = { text: base }; }
+    if (kind === 'home') { this.HOMEKEYS.forEach(k => { const v = (d.home[k[0]] || {}).es; if (v) src[k[0]] = v; }); if (!Object.keys(src).length) return this.toast('No hay textos personalizados en español.', 'err'); }
+    Object.keys(src).forEach(k => { if (!src[k] || (Array.isArray(src[k]) && !src[k].filter(Boolean).length)) delete src[k]; });
+    this.setState({ busy: kind + ':' + id });
+    const prompt = 'Traduce los valores de este JSON del español al inglés (en), francés (fr) y alemán (de). Es el sitio web de una escuela de surf en Lima, Perú: tono cercano y profesional, sin traducir nombres de playas ni lugares. Conserva las mismas claves y los arrays como arrays. Responde SOLO con JSON válido de la forma {"en":{...},"fr":{...},"de":{...}}.\n\n' + JSON.stringify(src);
+    try {
+      const txt = await window.claude.complete(prompt);
+      const json = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1));
+      const empty = (v) => !v || (Array.isArray(v) && !v.filter(x => x && String(x).trim()).length);
+      this.update(dd => ['en', 'fr', 'de'].forEach(l => {
+        const t = json[l] || {}; const fill = (obj, val) => { if (val && empty(obj[l])) obj[l] = val; };
+        if (kind === 'service') { const s = dd.services.find(x => x.id === id); fill(s.name, t.name); fill(s.desc, t.desc); fill(s.includes, t.includes); fill(s.excludes, t.excludes); fill(s.bring, t.bring); fill(s.duration, t.duration); fill(s.distance, t.distance); fill(s.seo.title, t.seoTitle); fill(s.seo.desc, t.seoDesc); fill(s.offer.label, t.offerLabel); }
+        if (kind === 'photo') { const g = dd.gallery.find(x => x.id === id); fill(g.alt, t.alt); }
+        if (kind === 'album') { const a = dd.albums.find(x => x.id === id); fill(a.name, t.name); }
+        if (kind === 'review') { const r = dd.reviews.find(x => x.id === id); fill(r.text, t.text); if (!r.text.es && t.es) r.text.es = t.es; }
+        if (kind === 'home') { Object.keys(t).forEach(k => { dd.home[k] = dd.home[k] || this.blank(); fill(dd.home[k], t[k]); }); }
+      }));
+      this.toast('Traducido a EN · FR · DE');
+    } catch (e) { this.toast('No se pudo traducir. Intenta de nuevo.', 'err'); }
+    this.setState({ busy: '' });
+  }
+  missingList(d) {
+    const out = []; const ex = ['en', 'fr', 'de'];
+    d.services.forEach(s => { const langs = ex.filter(l => !s.name[l] || !s.desc[l]); if (langs.length) out.push({ kind: 'service', id: s.id, label: s.name.es || '(sin nombre)', type: 'Servicio · ' + this.CAT[s.cat], langs, thumb: s.cover }); });
+    d.albums.forEach(a => { const langs = ex.filter(l => !a.name[l]); if (langs.length) out.push({ kind: 'album', id: a.id, label: 'Álbum «' + a.name.es + '»', type: 'Galería', langs, thumb: 'src/assets/logo.jpg' }); });
+    Object.keys(d.home || {}).forEach(k => { const f = d.home[k]; if (f && f.es) { const langs = ex.filter(l => !f[l]); if (langs.length) out.push({ kind: 'home', id: k, label: f.es, type: 'Texto del inicio', langs, thumb: 'src/assets/banner-principal.jpg' }); } });
+    d.gallery.forEach(g => { if (!g.alt.es) out.push({ kind: 'photo', id: g.id, label: 'Foto sin texto alternativo', type: 'Galería · falta en español', langs: ['ES'], thumb: g.src, noEs: true }); else { const langs = ex.filter(l => !g.alt[l]); if (langs.length) out.push({ kind: 'photo', id: g.id, label: g.alt.es, type: 'Galería', langs, thumb: g.src }); } });
+    return out.map(m => Object.assign(m, { langs: m.langs.map(x => x.toUpperCase()) }));
+  }
+  go(view, extra) { localStorage.setItem('evo-admin3-view', view); this.setState(Object.assign({ view, newOpen: false, selPhoto: null }, extra || {})); window.scrollTo(0, 0); }
+  focusFromEvent(e) { const r = e.currentTarget.getBoundingClientRect(); const x = Math.max(0, Math.min(100, Math.round((e.clientX - r.left) / r.width * 100))); const y = Math.max(0, Math.min(100, Math.round((e.clientY - r.top) / r.height * 100))); return x + '% ' + y + '%'; }
+
+  renderVals() {
+    const st = this.state; const S = window.EvoStore;
+    const val = (e) => e.target.value;
+    const LANGS = this.LANGS; const CAT = this.CAT;
+    const auth = st.auth;
+    const base = {
+      showLogin: !auth, showApp: !!auth && st.ready, user: st.user, pass: st.pass, loginErr: st.loginErr,
+      setUser: (e) => this.setState({ user: val(e), loginErr: false }), setPass: (e) => this.setState({ pass: val(e), loginErr: false }),
+      login: (e) => {
+        e.preventDefault();
+        let users = null; try { const dr = JSON.parse(localStorage.getItem(this.DKEY) || 'null'); users = dr && dr.settings && dr.settings.users; } catch (er) {}
+        if (!users && S) users = (S.load().settings || {}).users;
+        users = users || [{ name: 'Administrador', user: 'admin', pass: 'evolushon', role: 'admin' }, { name: 'Equipo', user: 'editor', pass: 'editor', role: 'editor' }, { name: 'Fotógrafo', user: 'foto', pass: 'foto', role: 'fotografo' }];
+        const u = users.find(x => x.user === st.user.trim() && x.pass === st.pass);
+        if (!u) return this.setState({ loginErr: true });
+        const a = { name: u.name || u.user, user: u.user, role: u.role }; sessionStorage.setItem('evo-auth3', JSON.stringify(a));
+        this.setState({ auth: a, pass: '', view: u.role === 'fotografo' ? 'gallery' : st.view });
+      }
+    };
+    if (!auth || !st.data) return base;
+    const d = st.data; const role = auth.role;
+    const can = { bookings: role !== 'fotografo', reviews: role !== 'fotografo', services: role !== 'fotografo', home: role !== 'fotografo', langs: role !== 'fotografo', settings: role === 'admin', publish: role !== 'fotografo', del: role !== 'fotografo', dash: true, gallery: true };
+    let view = st.view; if (!can[view]) view = 'gallery';
+    const wide = st.w >= 900;
+    const missing = this.missingList(d);
+    const roleLabel = { admin: 'Administrador', editor: 'Editor', fotografo: 'Fotógrafo' }[role];
+    const navDef = [['dash', 'Resumen', 'Inicio', 'ti ti-layout-dashboard', ''], ['gallery', 'Galería', 'Galería', 'ti ti-photo', d.gallery.length], ['bookings', 'Reservas', 'Reservas', 'ti ti-calendar-event', this.bookings().filter(b => b.status === 'por verificar' || b.status === 'pendiente').length || ''], ['services', 'Servicios', 'Servicios', 'ti ti-list-details', d.services.length], ['reviews', 'Reseñas', 'Reseñas', 'ti ti-star', (d.reviews || []).length], ['home', 'Textos del inicio', 'Textos', 'ti ti-home-edit', ''], ['langs', 'Idiomas', 'Idiomas', 'ti ti-language', missing.length || ''], ['settings', 'Ajustes', 'Ajustes', 'ti ti-settings', '']];
+    const nav = navDef.filter(n => can[n[0]]).map(n => ({ label: n[1], short: n[2], icon: n[3], badge: n[4], onClick: () => this.go(n[0]),
+      bg: view === n[0] ? '#2a2f38' : 'transparent', fg: view === n[0] ? '#faf4f1' : '#c9bcb0', mobFg: view === n[0] ? '#e2b03f' : '#c9bcb0',
+      badgeBg: (n[0] === 'langs' || n[0] === 'bookings') && n[4] ? '#e2b03f' : 'transparent', badgeFg: (n[0] === 'langs' || n[0] === 'bookings') && n[4] ? '#15181e' : '#8f847c' }));
+    const df = st.diff || { total: 0, ids: {} };
+    const hist = this.history();
+    const fmtWhen = (iso) => new Date(iso).toLocaleString('es-PE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const sumTxt = (s) => [s.services ? s.services + ' servicios' : '', s.gallery ? s.gallery + ' fotos' : '', s.other ? s.other + ' ajustes' : ''].filter(Boolean).join(' · ') || 'sin cambios';
+    const historyRows = hist.map(h => ({ when: fmtWhen(h.at), by: h.by, summary: sumTxt(h.summary || {}),
+      restore: () => { if (!confirm('¿Restaurar servicios, textos y ajustes de ' + fmtWhen(h.at) + '? Quedará como borrador.')) return; this.update(dd => { dd.services = h.snap.services; dd.home = h.snap.home; dd.albums = h.snap.albums || dd.albums; const users = dd.settings.users; dd.settings = h.snap.settings; dd.settings.users = users; }); this.toast('Versión restaurada como borrador'); } }));
+    const titles = { bookings: 'Reservas', reviews: 'Reseñas de Google', dash: 'Resumen', gallery: 'Galería', services: st.svcMode === 'edit' ? 'Editar servicio' : 'Servicios y tarifas', home: 'Textos del inicio', langs: 'Idiomas', settings: 'Ajustes' };
+    const t = st.toast;
+    const out = Object.assign(base, {
+      wide, narrow: !wide, nav, title: titles[view], mainPadBottom: wide ? '0' : '76px',
+      me: { name: auth.name, initial: (auth.name || '?')[0].toUpperCase(), roleLabel },
+      logout: () => { sessionStorage.removeItem('evo-auth3'); this.setState({ auth: null }); },
+      doUndo: () => this.doUndo(), doRedo: () => this.doRedo(), undoOp: st.canUndo ? 1 : 0.35, redoOp: st.canRedo ? 1 : 0.35,
+      hasChanges: df.total > 0, noChanges: !df.total, changesText: df.total + (df.total === 1 ? ' cambio sin publicar' : ' cambios sin publicar'),
+      canPublish: can.publish, publish: () => this.publish(), discard: () => this.discard(),
+      canDelete: can.del,
+      isDash: view === 'dash', isGallery: view === 'gallery', isServices: view === 'services', isHome: view === 'home', isLangs: view === 'langs', isSettings: view === 'settings', isBookings: view === 'bookings', isReviews: view === 'reviews',
+      historyRows, noHistory: !historyRows.length,
+      hasToast: !!t, toastText: t ? t.text : '', toastBg: t && t.kind === 'err' ? '#a8452f' : '#15181e', toastIcon: t && t.kind === 'err' ? 'ti ti-alert-triangle' : 'ti ti-circle-check', toastBottom: wide ? '24px' : '88px',
+      goLangs: () => this.go('langs'),
+      imgCfgText: (() => { const c = this.imgCfg(); return (c.format === 'webp' && this.webpOk() ? 'WebP' : 'JPG') + ' · ' + c.max + ' px · calidad ' + Math.round(c.q * 100) + '%'; })()
+    });
+
+    if (view === 'dash') {
+      const pub = d.services.filter(s => s.active).length; const feat = d.gallery.filter(g => g.featured && !g.hidden).length; const hid = d.gallery.filter(g => g.hidden).length;
+      const noAlt = d.gallery.filter(g => !g.alt.es).length; const heavy = d.gallery.filter(g => this.sizeOf(g) > 350 * 1024).length;
+      out.stats = [
+        { label: 'Servicios', value: d.services.length, sub: pub + ' visibles · ' + (d.services.length - pub) + ' borrador', color: '#308dc9', onClick: () => this.go('services') },
+        { label: 'Fotos', value: d.gallery.length, sub: feat + ' destacadas · ' + hid + ' ocultas', color: '#15181e', onClick: () => this.go('gallery') },
+        { label: 'Sin texto alt', value: noAlt, sub: 'importante para SEO', color: noAlt ? '#a8452f' : '#2f7d5b', onClick: () => this.go('gallery', { gf: 'noalt' }) },
+        { label: 'Fotos pesadas', value: heavy, sub: 'más de 350 KB', color: heavy ? '#e2b03f' : '#2f7d5b', onClick: () => this.go('gallery', { gf: 'heavy' }) },
+        { label: 'Idiomas pendientes', value: missing.length, sub: 'EN · FR · DE', color: missing.length ? '#e2b03f' : '#2f7d5b', onClick: () => this.go('langs') },
+        { label: 'Sin publicar', value: df.total, sub: df.total ? 'revisa y publica' : 'todo al día', color: df.total ? '#e2b03f' : '#2f7d5b', onClick: () => {} }
+      ].filter(s => can.services || ['Fotos', 'Sin texto alt', 'Fotos pesadas'].includes(s.label));
+      out.quick = [{ label: 'Subir fotos', icon: 'ti ti-photo-up', onClick: () => this.go('gallery') }].concat(can.bookings ? [{ label: 'Ver reservas', icon: 'ti ti-calendar-event', onClick: () => this.go('bookings') }] : []).concat(can.services ? [{ label: 'Nuevo servicio', icon: 'ti ti-plus', onClick: () => this.go('services', { newOpen: true, svcMode: 'table' }) }, { label: 'Editar textos del inicio', icon: 'ti ti-home-edit', onClick: () => this.go('home') }] : []);
+      out.dashMissing = missing.slice(0, 5).map(m => ({ label: m.label, langsText: m.langs.join(' ') }));
+      out.lastPub = hist[0] ? 'Última publicación: ' + fmtWhen(hist[0].at) + ' · ' + hist[0].by : 'Aún sin publicar desde este panel';
+    }
+
+    const albumName = (id) => { const a = d.albums.find(x => x.id === id); return a ? (a.name.es || a.id) : id; };
+    out.albumOptions = d.albums.map(a => ({ id: a.id, label: a.name.es || a.id }));
+
+    if (view === 'gallery') {
+      out.albumTabs = [{ id: 'all', label: 'Todas', count: d.gallery.length }].concat(d.albums.map(a => ({ id: a.id, label: a.name.es || a.id, count: d.gallery.filter(g => g.album === a.id).length }))).map(a => Object.assign(a, { bg: st.album === a.id ? '#15181e' : 'transparent', fg: st.album === a.id ? '#faf4f1' : '#15181e', onClick: () => this.setState({ album: a.id, sel: [] }) }));
+      out.albumsOpen = st.albumsOpen; out.toggleAlbums = () => this.setState({ albumsOpen: !st.albumsOpen });
+      out.addAlbum = () => { const id = 'album-' + Date.now(); this.update(dd => dd.albums.push({ id, name: Object.assign(this.blank(), { es: 'Nuevo álbum' }) })); };
+      out.albumRows = d.albums.map(a => ({ count: d.gallery.filter(g => g.album === a.id).length,
+        names: LANGS.map(l => ({ code: l.toUpperCase(), value: a.name[l] || '', ph: l === 'es' ? 'Nombre' : a.name.es, onChange: (e) => { const v = val(e); this.update(dd => { dd.albums.find(x => x.id === a.id).name[l] = v; }); } })),
+        translate: () => this.translate('album', a.id),
+        remove: () => { if (d.albums.length < 2) return this.toast('Debe quedar al menos un álbum.', 'err'); const to = d.albums.find(x => x.id !== a.id); if (!confirm('¿Eliminar «' + a.name.es + '»? Sus fotos pasan a «' + to.name.es + '».')) return; this.update(dd => { dd.gallery.forEach(g => { if (g.album === a.id) g.album = to.id; }); dd.albums = dd.albums.filter(x => x.id !== a.id); }); if (st.album === a.id) this.setState({ album: 'all' }); } }));
+      out.q = st.q; out.setQ = (e) => this.setState({ q: val(e) });
+      const fdef = [['all', 'Todas', 'ti ti-photo', () => true], ['featured', 'Destacadas', 'ti ti-star', g => g.featured], ['hidden', 'Ocultas', 'ti ti-eye-off', g => g.hidden], ['noalt', 'Sin alt', 'ti ti-text-caption', g => !g.alt.es], ['heavy', 'Pesadas', 'ti ti-weight', g => this.sizeOf(g) > 350 * 1024]];
+      const inAlbum = d.gallery.filter(g => st.album === 'all' || g.album === st.album);
+      out.gFilters = fdef.map(f => ({ label: f[1], icon: f[2], count: inAlbum.filter(f[3]).length, bg: st.gf === f[0] ? '#308dc9' : '#efe4d6', fg: st.gf === f[0] ? '#faf4f1' : '#15181e', onClick: () => this.setState({ gf: f[0] }) }));
+      const fn = (fdef.find(f => f[0] === st.gf) || fdef[0])[3]; const q = st.q.trim().toLowerCase();
+      const shown = inAlbum.filter(fn).filter(g => !q || LANGS.some(l => (g.alt[l] || '').toLowerCase().indexOf(q) >= 0));
+      const canDrag = !st.selMode && !q && st.gf === 'all';
+      const sel = st.sel;
+      const toggleSel = (id, shift) => this.setState(s => {
+        let next = s.sel.slice();
+        if (shift && this.lastSel) { const ids = shown.map(x => x.id); const a = ids.indexOf(this.lastSel), b = ids.indexOf(id); if (a >= 0 && b >= 0) { ids.slice(Math.min(a, b), Math.max(a, b) + 1).forEach(x => { if (next.indexOf(x) < 0) next.push(x); }); return { sel: next }; } }
+        next = next.indexOf(id) >= 0 ? next.filter(x => x !== id) : next.concat([id]); this.lastSel = id; return { sel: next };
+      });
+      const stop = (f) => (e) => { e.stopPropagation(); f(); };
+      out.tiles = shown.map((g, i) => {
+        const sz = this.sizeOf(g); const isSel = sel.indexOf(g.id) >= 0;
+        return {
+          src: g.src, alt: g.alt.es, pos: g.focus, posLabel: String(i + 1).padStart(2, '0'), opacity: g.hidden ? 0.35 : 1,
+          outline: isSel ? '#308dc9' : (st.selPhoto === g.id ? '#15181e' : 'transparent'),
+          checkDisplay: st.selMode ? 'flex' : 'none', checkBg: isSel ? '#308dc9' : 'rgba(21,24,30,0.35)', checkIcon: isSel ? 'ti ti-check' : '',
+          starIcon: g.featured ? 'ti ti-star-filled' : 'ti ti-star', starColor: g.featured ? '#c8921c' : '#15181e', eyeIcon: g.hidden ? 'ti ti-eye-off' : 'ti ti-eye',
+          size: sz ? this.kb(sz) : '…', sizeBg: sz > 700 * 1024 ? '#a8452f' : sz > 350 * 1024 ? '#e2b03f' : 'rgba(21,24,30,0.7)', sizeFg: sz > 350 * 1024 && sz <= 700 * 1024 ? '#15181e' : '#faf4f1',
+          noAlt: !g.alt.es, draggable: canDrag ? 'true' : 'false',
+          onClick: (e) => { if (st.selMode) toggleSel(g.id, e.shiftKey); else if (e.shiftKey) { this.setState({ selMode: true }); toggleSel(g.id, false); } else this.setState({ selPhoto: g.id }); },
+          toggleFeat: stop(() => this.update(dd => { const x = dd.gallery.find(y => y.id === g.id); x.featured = !x.featured; })),
+          toggleHide: stop(() => this.update(dd => { const x = dd.gallery.find(y => y.id === g.id); x.hidden = !x.hidden; })),
+          onDragStart: (e) => { if (!canDrag) return; this.dragId = g.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', g.id); },
+          onDragOver: (e) => { if (this.dragId) e.preventDefault(); },
+          onDrop: (e) => { e.preventDefault(); e.stopPropagation(); const from = this.dragId; this.dragId = null; if (!from || from === g.id) return; this.update(dd => { const a = dd.gallery; const it = a.splice(a.findIndex(x => x.id === from), 1)[0]; a.splice(a.findIndex(x => x.id === g.id), 0, it); }); }
+        };
+      });
+      out.noTiles = !shown.length; out.shownCount = shown.length;
+      out.gridHint = st.selMode ? 'Toca para seleccionar · Mayús + clic selecciona un rango.' : canDrag ? 'Arrastra para ordenar · toca para editar · Mayús + clic para seleccionar varias.' : 'Quita la búsqueda y los filtros para reordenar arrastrando.';
+      out.selMode = st.selMode; out.selModeLabel = st.selMode ? 'Listo' : 'Seleccionar'; out.selModeIcon = st.selMode ? 'ti ti-check' : 'ti ti-checkbox';
+      out.toggleSelMode = () => this.setState({ selMode: !st.selMode, sel: [], selPhoto: null });
+      out.hasSel = sel.length > 0; out.selCount = sel.length;
+      const bulk = (fn2) => { this.update(dd => dd.gallery.forEach(g => { if (sel.indexOf(g.id) >= 0) fn2(g); })); };
+      out.bulkMove = (e) => { const v = val(e); if (!v) return; bulk(g => { g.album = v; }); this.toast(sel.length + ' fotos movidas a «' + albumName(v) + '»'); };
+      out.bulkFeat = () => bulk(g => { g.featured = true; }); out.bulkUnfeat = () => bulk(g => { g.featured = false; });
+      out.bulkHide = () => bulk(g => { g.hidden = true; }); out.bulkShow = () => bulk(g => { g.hidden = false; });
+      out.bulkOptimize = () => this.optimize(sel);
+      out.bulkDelete = () => { if (!confirm('¿Eliminar ' + sel.length + ' fotos?')) return; this.update(dd => { dd.gallery = dd.gallery.filter(g => sel.indexOf(g.id) < 0); }); this.setState({ sel: [] }); };
+      out.selAll = () => this.setState({ sel: shown.map(g => g.id) }); out.selNone = () => this.setState({ sel: [], selMode: false });
+      out.sitePrev = st.sitePrev; out.gridMode = !st.sitePrev; out.sitePrevLabel = st.sitePrev ? 'Volver a editar' : 'Vista del sitio'; out.toggleSitePrev = () => this.setState({ sitePrev: !st.sitePrev });
+      const pat = [['span 2', 'span 2'], ['span 1', 'span 1'], ['span 1', 'span 2'], ['span 1', 'span 1'], ['span 2', 'span 1'], ['span 1', 'span 1'], ['span 1', 'span 1'], ['span 1', 'span 2']];
+      out.previewTiles = inAlbum.filter(g => !g.hidden).map((g, i) => ({ src: g.src, pos: g.focus, col: pat[i % 8][0], row: pat[i % 8][1] }));
+      out.uploadAlbum = albumName(st.album === 'all' ? (d.albums[0] || {}).id : st.album);
+      out.fileRef = this.fileRef; out.pickFiles = () => this.fileRef.current && this.fileRef.current.click();
+      out.onFiles = (e) => { this.addFiles(e.target.files); e.target.value = ''; };
+      out.zoneOver = (e) => { if (this.dragId) return; e.preventDefault(); if (!st.zoneHover) this.setState({ zoneHover: true }); };
+      out.zoneLeave = () => this.setState({ zoneHover: false });
+      out.zoneDrop = (e) => { if (this.dragId) return; e.preventDefault(); this.setState({ zoneHover: false }); this.addFiles(e.dataTransfer.files); };
+      out.zoneBorder = st.zoneHover ? '#308dc9' : '#b3a597'; out.zoneBg = st.zoneHover ? '#e8f2f9' : '#fffdfb'; out.zoneText = st.zoneHover ? 'Suelta para subir' : 'Arrastra fotos aquí o toca para elegir';
+      const up = st.upload; out.uploading = !!up;
+      out.up = up ? { pct: Math.round(up.done / up.total * 100) + '%', text: 'Procesando ' + up.done + ' de ' + up.total + ' · ' + this.kb(up.orig) + ' → ' + this.kb(up.saved) } : {};
+      const p = d.gallery.find(g => g.id === st.selPhoto);
+      out.showPhotoPanel = !!p && !st.selMode;
+      out.pp = wide ? { pad: '18px', width: '340px', border: '1px solid #e2d5c7', position: 'sticky', top: '63px', left: 'auto', bottom: 'auto', z: 1, maxh: 'calc(100vh - 63px)' } : { pad: '18px 18px 96px', width: 'auto', border: 'none', position: 'fixed', top: '0', left: '0', bottom: '0', z: 30, maxh: 'none' };
+      out.closePhoto = () => this.setState({ selPhoto: null });
+      if (p) {
+        const setP = (f) => this.update(dd => f(dd.gallery.find(y => y.id === p.id)));
+        const sz = this.sizeOf(p); const fp = p.focus.split(' ');
+        out.ph = {
+          src: p.src, pos: p.focus, fx: fp[0], fy: fp[1], album: p.album,
+          setFocus: (e) => { const v = this.focusFromEvent(e); setP(x => { x.focus = v; }); },
+          weight: (sz ? this.kb(sz) : 'calculando…') + (p.w ? ' · ' + p.w + '×' + p.h + ' px' : '') + (sz > 350 * 1024 ? ' · conviene optimizar' : sz ? ' · peso correcto' : ''),
+          weightBg: sz > 700 * 1024 ? '#f6d8d0' : sz > 350 * 1024 ? '#f7e6b8' : '#e6f0e9', canOptimize: sz > 350 * 1024 && p.src.indexOf('data:') !== 0,
+          optimize: () => this.optimize([p.id]),
+          setAlbum: (e) => { const v = val(e); setP(x => { x.album = v; }); },
+          translate: () => this.translate('photo', p.id), translateLabel: st.busy === 'photo:' + p.id ? 'Traduciendo…' : 'Traducir',
+          alts: LANGS.map(l => ({ code: l.toUpperCase(), value: p.alt[l] || '', ph: l === 'es' ? 'Describe la foto: quién, dónde, qué' : (p.alt.es || 'Traducción'), onChange: (e) => { const v = val(e); setP(x => { x.alt[l] = v; }); } })),
+          featBg: p.featured ? '#308dc9' : '#d8c9b9', featJ: p.featured ? 'flex-end' : 'flex-start', visBg: !p.hidden ? '#308dc9' : '#d8c9b9', visJ: !p.hidden ? 'flex-end' : 'flex-start',
+          toggleFeat: () => setP(x => { x.featured = !x.featured; }), toggleHide: () => setP(x => { x.hidden = !x.hidden; }),
+          remove: () => { if (!confirm('¿Eliminar esta foto?')) return; this.update(dd => { dd.gallery = dd.gallery.filter(y => y.id !== p.id); }); this.setState({ selPhoto: null }); }
+        };
+      } else out.ph = {};
+    }
+
+    const money = (c, n) => (n === null || n === undefined || n === '') ? 'Consultar' : c + ' ' + Number(n).toLocaleString('es-PE');
+    if (view === 'services') {
+      out.isTable = st.svcMode !== 'edit' || !d.services.find(x => x.id === st.selSvc); out.isEdit = !out.isTable;
+      out.newOpen = st.newOpen; out.toggleNew = () => this.setState({ newOpen: !st.newOpen });
+      out.templates = [['surf', 'Clase de surf', 'Precio por clase + paquetes 4/8/12', 'ti ti-ripple'], ['skate', 'Clase de surfskate', 'Precio por clase + paquetes', 'ti ti-skateboarding'], ['coaching', 'Coaching', 'Precio a consultar + qué incluye', 'ti ti-target-arrow'], ['trip', 'Surftrip', 'Precio por persona + horarios y logística', 'ti ti-bus']].map(x => ({ label: x[1], sub: x[2], icon: x[3], onClick: () => this.newService(x[0]) }));
+      const setS = (id, f) => this.update(dd => f(dd.services.find(y => y.id === id)));
+      const num = (v) => v === '' ? null : Number(v);
+      out.svcGroups = ['surf', 'surfskate', 'trip'].map(c => {
+        const rows = d.services.filter(s => s.cat === c);
+        return { label: CAT[c], count: rows.length + (rows.length === 1 ? ' servicio' : ' servicios'), rows: rows.map(s => ({
+          name: s.name.es, cover: s.cover, coverPos: s.coverFocus, currency: s.currency, price: s.price == null ? '' : s.price, unit: s.cat === 'trip' ? 'Por persona' : 'Por clase',
+          setName: (e) => { const v = val(e); setS(s.id, x => { x.name.es = v; }); },
+          setPrice: (e) => { const v = val(e); setS(s.id, x => { x.price = num(v); }); },
+          packages: s.packages.map((pk, i) => ({ label: pk.n + ' clases', price: pk.price == null ? '' : pk.price, setPrice: (e) => { const v = val(e); setS(s.id, x => { x.packages[i].price = num(v); }); } })),
+          status: s.active ? 'Visible' : 'Borrador', statusBg: s.active ? '#e6f0e9' : '#efe4d6', statusFg: s.active ? '#2f7d5b' : '#5e534d', opacity: s.active ? 1 : 0.7,
+          offerOn: this.offerLive(s), offerText: 'Oferta ' + money(s.currency, s.offer.price),
+          changed: !!(df.ids || {})[s.id],
+          langDots: LANGS.map(l => { const ok = s.name[l] && s.desc[l]; return { code: l.toUpperCase(), bg: ok ? '#e6f0e9' : '#f7e6b8', fg: ok ? '#2f7d5b' : '#8a5a00', title: ok ? 'Traducido' : 'Falta traducir' }; }),
+          activeBg: s.active ? '#308dc9' : '#d8c9b9', activeJ: s.active ? 'flex-end' : 'flex-start', activeTitle: s.active ? 'Ocultar (borrador)' : 'Hacer visible',
+          toggleActive: () => setS(s.id, x => { x.active = !x.active; }),
+          edit: () => { this.setState({ selSvc: s.id, svcMode: 'edit', coverPick: false }); window.scrollTo(0, 0); }, duplicate: () => this.duplicate(s.id),
+          onDragStart: (e) => { this.dragSvc = s.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', s.id); },
+          onDragOver: (e) => { if (this.dragSvc) e.preventDefault(); },
+          onDrop: (e) => { e.preventDefault(); const from = this.dragSvc; this.dragSvc = null; if (!from || from === s.id) return; this.update(dd => { const a = dd.services; const it = a.splice(a.findIndex(x => x.id === from), 1)[0]; a.splice(a.findIndex(x => x.id === s.id), 0, it); }); }
+        })) };
+      }).filter(g => g.rows.length);
+      out.backToTable = () => this.setState({ svcMode: 'table', coverPick: false });
+      const s = d.services.find(x => x.id === st.selSvc);
+      const L = st.lang;
+      out.langCode = L.toUpperCase();
+      out.langTabs = LANGS.map(l => ({ code: l.toUpperCase(), bg: l === L ? '#15181e' : 'transparent', fg: l === L ? '#faf4f1' : '#5e534d', dot: s && (!s.name[l] || !s.desc[l]) ? '#e2b03f' : 'transparent', onClick: () => this.setState({ lang: l }) }));
+      out.prevDesk = () => this.setState({ prevMobile: false }); out.prevMob = () => this.setState({ prevMobile: true });
+      out.prevDeskBg = st.prevMobile ? 'transparent' : '#15181e'; out.prevDeskFg = st.prevMobile ? '#15181e' : '#faf4f1'; out.prevMobBg = st.prevMobile ? '#15181e' : 'transparent'; out.prevMobFg = st.prevMobile ? '#faf4f1' : '#15181e';
+      out.prevMax = st.prevMobile ? '320px' : '100%'; out.prevTitleSize = st.prevMobile ? '36px' : '48px';
+      out.coverRef = this.coverRef; out.pickCover = () => this.coverRef.current && this.coverRef.current.click(); out.onCoverFile = (e) => { this.uploadCover(e.target.files, st.selSvc); e.target.value = ''; }; out.coverUploadLabel = st.busy === 'cover:' + st.selSvc ? 'Comprimiendo…' : 'Subir portada';
+      out.coverPick = st.coverPick; out.coverPickLabel = st.coverPick ? 'Cerrar' : 'Elegir de la galería'; out.toggleCoverPick = () => this.setState({ coverPick: !st.coverPick });
+      if (s) {
+        const set = (f) => setS(s.id, f);
+        const ui = S ? S.UI[L] : {};
+        const live = this.offerLive(s);
+        const seo = s.seo; const tl = seo.title[L] || ''; const ds = seo.desc[L] || '';
+        const autoT = (s.name[L] || s.name.es || '') + ' | Evolushon Surf Experience'; const autoD = (s.desc[L] || s.desc.es || '').slice(0, 155);
+        const slugify = (x) => (x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const slug = seo.slug || slugify(s.name.es) || s.id;
+        const dom = ((d.settings || {}).domain || 'https://evolushonsurfexperience.com').replace(/^https?:\/\//, '').replace(/\/$/, '');
+        const sec = { es: 'servicios', en: 'services', fr: 'services', de: 'angebote' }[L];
+        const cfp = s.coverFocus.split(' ');
+        const effPrice = live ? s.offer.price : s.price;
+        out.coverOptions = d.gallery.map(g => ({ src: g.src, outline: s.cover === g.src ? '#308dc9' : 'transparent', onClick: () => { set(x => { x.cover = g.src; x.coverFocus = g.focus || '50% 50%'; }); this.setState({ coverPick: false }); } }));
+        out.ed = {
+          name: s.name[L], namePh: L === 'es' ? 'Nombre del servicio' : s.name.es, desc: s.desc[L], descPh: L === 'es' ? '' : s.desc.es,
+          setName: (e) => { const v = val(e); set(x => { x.name[L] = v; }); }, setDesc: (e) => { const v = val(e); set(x => { x.desc[L] = v; }); },
+          cat: s.cat, setCat: (e) => { const v = val(e); set(x => { x.cat = v; }); }, catLabel: CAT[s.cat],
+          translate: () => this.translate('service', s.id), translateLabel: st.busy === 'service:' + s.id ? 'Traduciendo…' : 'Traducir faltantes',
+          activeBg: s.active ? '#308dc9' : '#d8c9b9', activeJ: s.active ? 'flex-end' : 'flex-start', activeLabel: s.active ? 'Visible' : 'Borrador', toggleActive: () => set(x => { x.active = !x.active; }),
+          duplicate: () => this.duplicate(s.id),
+          cover: s.cover, coverPos: s.coverFocus, cfx: cfp[0], cfy: cfp[1], setCoverFocus: (e) => { const v = this.focusFromEvent(e); set(x => { x.coverFocus = v; }); },
+          currency: s.currency, setCurrency: (e) => { const v = val(e); set(x => { x.currency = v; }); },
+          price: s.price == null ? '' : s.price, setPrice: (e) => { const v = val(e); set(x => { x.price = num(v); }); }, priceLabel: s.cat === 'trip' ? 'Precio por persona' : 'Precio por clase',
+          isTrip: s.cat === 'trip', notTrip: s.cat !== 'trip',
+          packages: s.packages.map((pk, i) => ({ n: pk.n == null ? '' : pk.n, price: pk.price == null ? '' : pk.price, each: pk.price && pk.n ? '= ' + s.currency + ' ' + Math.round(pk.price / pk.n) + ' c/u' : '',
+            setN: (e) => { const v = val(e); set(x => { x.packages[i].n = num(v); }); }, setPrice: (e) => { const v = val(e); set(x => { x.packages[i].price = num(v); }); }, remove: () => set(x => { x.packages.splice(i, 1); }) })),
+          addPackage: () => set(x => { const last = x.packages[x.packages.length - 1]; x.packages.push({ n: last && last.n ? last.n + 4 : 4, price: null }); }),
+          offerOn: !!s.offer.on, offerBg: s.offer.on ? '#e2b03f' : '#d8c9b9', offerJ: s.offer.on ? 'flex-end' : 'flex-start', offerState: s.offer.on ? 'Activa' : 'Apagada',
+          toggleOffer: () => set(x => { x.offer.on = !x.offer.on; if (x.offer.on && !x.offer.from) x.offer.from = this.today(); }),
+          offerPrice: s.offer.price == null ? '' : s.offer.price, setOfferPrice: (e) => { const v = val(e); set(x => { x.offer.price = num(v); }); },
+          offerFrom: s.offer.from, setOfferFrom: (e) => { const v = val(e); set(x => { x.offer.from = v; }); },
+          offerTo: s.offer.to, setOfferTo: (e) => { const v = val(e); set(x => { x.offer.to = v; }); },
+          offerLabel: s.offer.label[L] || '', setOfferLabel: (e) => { const v = val(e); set(x => { x.offer.label[L] = v; }); },
+          offerStatus: live ? 'En curso: el sitio muestra ' + money(s.currency, s.offer.price) + (s.offer.to ? ' hasta el ' + s.offer.to : '') : (s.offer.from && s.offer.from > this.today() ? 'Programada: empieza el ' + s.offer.from : (s.offer.price == null ? 'Falta el precio de oferta' : 'Terminada o fuera de fecha')),
+          offerStatusColor: live ? '#2f7d5b' : '#8a5a00', offerLive: live, offerBadge: s.offer.label[L] || s.offer.label.es || 'Oferta',
+          depart: s.depart || '', ret: s.ret || '', minPeople: s.minPeople || 1,
+          setDepart: (e) => { const v = val(e); set(x => { x.depart = v; }); }, setRet: (e) => { const v = val(e); set(x => { x.ret = v; }); }, setMin: (e) => { const v = val(e); set(x => { x.minPeople = num(v); }); },
+          duration: s.duration[L] || '', distance: s.distance[L] || '',
+          setDuration: (e) => { const v = val(e); set(x => { x.duration[L] = v; }); }, setDistance: (e) => { const v = val(e); set(x => { x.distance[L] = v; }); },
+          lists: [['includes', 'Incluye'], ['excludes', 'No incluye'], ['bring', 'Qué llevar']].map(k => ({ label: k[1], value: (s[k[0]][L] || []).join('\n'), onChange: (e) => { const v = val(e); set(x => { x[k[0]][L] = v.split('\n'); }); } })),
+          seoTitle: tl, seoDesc: ds, seoTitlePh: autoT, seoDescPh: autoD, slug, seoTitleShown: tl || autoT, seoDescShown: ds || autoD || 'Sin descripción', seoUrl: dom + ' › ' + L + ' › ' + sec + ' › ' + slug,
+          seoTitleCount: (tl || autoT).length, seoDescCount: (ds || autoD).length, seoTitleColor: (tl || autoT).length > 60 ? '#a8452f' : '#5e534d', seoDescColor: (ds || autoD).length > 155 ? '#a8452f' : '#5e534d',
+          setSeoTitle: (e) => { const v = val(e); set(x => { x.seo.title[L] = v; }); }, setSeoDesc: (e) => { const v = val(e); set(x => { x.seo.desc[L] = v; }); },
+          setSlug: (e) => { const v = val(e).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''); set(x => { x.seo.slug = v; }); },
+          remove: () => { if (!confirm('¿Eliminar «' + s.name.es + '»?')) return; this.update(dd => { dd.services = dd.services.filter(y => y.id !== s.id); }); this.setState({ svcMode: 'table', selSvc: null }); },
+          previewName: s.name[L] || s.name.es || '—', previewDesc: s.desc[L] || s.desc.es || '', previewPrice: effPrice == null ? (ui.consult || 'Consultar') : money(s.currency, effPrice), regularPrice: money(s.currency, s.price),
+          unitText: s.price == null ? '' : (s.cat === 'trip' ? ui.perPerson : ui.perClass), bookLabel: ui.bookThis || 'Reservar',
+          prevPackages: s.packages.map(pk => ({ label: pk.n + ' ' + (ui.classes || 'clases'), price: money(s.currency, pk.price) }))
+        };
+      } else out.ed = {};
+    }
+
+    if (view === 'home') {
+      const L = st.homeLang; const ui = S ? S.UI[L] : {};
+      out.homeLangTabs = LANGS.map(l => ({ code: l.toUpperCase(), bg: l === L ? '#15181e' : 'transparent', fg: l === L ? '#faf4f1' : '#5e534d', dot: Object.keys(d.home).some(k => d.home[k] && d.home[k].es && !d.home[k][l]) ? '#e2b03f' : 'transparent', onClick: () => this.setState({ homeLang: l }) }));
+      out.translateHome = () => this.translate('home', 'all'); out.homeTranslateLabel = st.busy === 'home:all' ? 'Traduciendo…' : 'Traducir personalizados';
+      out.homeFields = this.HOMEKEYS.map(k => { const f = d.home[k[0]] || {}; const v = f[L] || ''; return { label: k[1], rows: k[2], value: v, ph: ui[k[0]] || '', custom: !!v,
+        onChange: (e) => { const nv = val(e); this.update(dd => { dd.home[k[0]] = Object.assign(this.blank(), dd.home[k[0]] || {}); dd.home[k[0]][L] = nv; }); },
+        reset: (e) => { e.preventDefault(); this.update(dd => { if (dd.home[k[0]]) dd.home[k[0]][L] = ''; }); } }; });
+      const hv = (k) => ((d.home[k] || {})[L]) || ui[k] || '';
+      out.hp = { kicker: hv('kicker'), heroTitle: hv('heroTitle'), heroSub: hv('heroSub'), introTitle: hv('introTitle'), intro: hv('intro') };
+    }
+
+    if (view === 'langs') {
+      const total = d.services.length * 2 + d.gallery.length + d.albums.length;
+      out.langProgress = LANGS.map(l => { let done = 0; d.services.forEach(s => { if (s.name[l]) done++; if (s.desc[l]) done++; }); d.gallery.forEach(g => { if (g.alt[l]) done++; }); d.albums.forEach(a => { if (a.name[l]) done++; }); const pct = total ? Math.round(done / total * 100) : 100;
+        return { name: { es: 'Español', en: 'English', fr: 'Français', de: 'Deutsch' }[l], pct: pct + '%', color: pct >= 95 ? '#2f7d5b' : pct >= 60 ? '#308dc9' : '#e2b03f', sub: done + ' de ' + total + ' textos' }; });
+      out.missing = missing.map(m => ({ thumb: m.thumb, label: m.label, type: m.type, langs: m.langs,
+        translate: () => m.noEs ? this.go('gallery', { selPhoto: m.id }) : this.translate(m.kind, m.id),
+        translateLabel: m.noEs ? 'Escribir' : (st.busy === m.kind + ':' + m.id ? 'Traduciendo…' : 'Traducir'),
+        open: () => { if (m.kind === 'service') this.go('services', { selSvc: m.id, svcMode: 'edit', lang: (m.langs[0] || 'EN').toLowerCase() }); else if (m.kind === 'photo') { this.go('gallery', { album: 'all', gf: 'all', q: '' }); this.setState({ selPhoto: m.id }); } else if (m.kind === 'album') this.go('gallery', { albumsOpen: true }); else this.go('home', { homeLang: (m.langs[0] || 'EN').toLowerCase() }); } }));
+      out.noMissing = !missing.length;
+      out.translateAll = async () => { const todo = missing.filter(m => !m.noEs); if (!todo.length) return this.toast('Nada que traducir automáticamente.'); for (const m of todo) { await this.translate(m.kind, m.id); } };
+      out.translateAllLabel = st.busy ? 'Traduciendo…' : 'Traducir todo lo pendiente';
+    }
+
+    if (view === 'bookings') {
+      const all = this.bookings(); const tdy = this.today();
+      const money2 = (c, n) => (c || 'S/') + ' ' + Number(n || 0).toLocaleString('es-PE');
+      const stLab = { pendiente: 'Pendiente', 'por verificar': 'Por verificar', pagada: 'Pagada', completada: 'Completada', cancelada: 'Cancelada' };
+      const stCol = { pendiente: ['#efe4d6', '#5e534d'], 'por verificar': ['#f7e6b8', '#8a5a00'], pagada: ['#e6f0e9', '#2f7d5b'], completada: ['#e8f2f9', '#1f5f8b'], cancelada: ['#f6d8d0', '#a8452f'] };
+      const fdefs = [['upcoming', 'Próximas', b => b.date >= tdy && b.status !== 'cancelada'], ['verify', 'Por verificar', b => b.status === 'por verificar'], ['paid', 'Pagadas', b => b.status === 'pagada'], ['past', 'Pasadas', b => b.date < tdy], ['cancel', 'Canceladas', b => b.status === 'cancelada'], ['all', 'Todas', () => true]];
+      out.bFilters = fdefs.map(f => ({ label: f[1], count: all.filter(f[2]).length, bg: st.bf === f[0] ? '#308dc9' : '#efe4d6', fg: st.bf === f[0] ? '#faf4f1' : '#15181e', onClick: () => this.setState({ bf: f[0] }) }));
+      const fn = (fdefs.find(f => f[0] === st.bf) || fdefs[0])[2]; const q = st.bq.trim().toLowerCase();
+      const rows = all.filter(fn).filter(b => !q || [b.name, b.code, b.phone, b.email].join(' ').toLowerCase().indexOf(q) >= 0).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time) * (st.bf === 'past' ? -1 : 1));
+      const setB = (code, patch) => { const list = this.bookings(); const b = list.find(x => x.code === code); if (b) Object.assign(b, patch); this.saveBookings(list); };
+      const optName = (b) => b.opt === 'single' ? (b.cat === 'trip' ? 'Cupo trip' : 'Clase suelta') : 'Paquete ' + b.opt + ' clases';
+      const waNum = (p) => (p || '').replace(/\D/g, '');
+      out.bkRows = rows.map(b => { const dt = new Date(b.date + 'T12:00:00'); const c = stCol[b.status] || stCol.pendiente;
+        return { code: b.code, name: b.name, svc: b.svcEs || b.svc, opt: optName(b), persons: b.persons + (b.persons === 1 ? ' persona' : ' personas'), contact: b.phone + ' · ' + b.email,
+          meta: ({ beginner: 'Principiante', intermediate: 'Intermedio', advanced: 'Avanzado' }[b.level] || b.level) + ' · clase en ' + (b.classLang || 'es').toUpperCase(), notes: b.notes, hasNotes: !!(b.notes || '').trim(),
+          month: dt.toLocaleDateString('es-PE', { month: 'short' }), day: dt.getDate(), time: b.time, total: money2(b.currency, b.total),
+          paidText: b.paid ? 'Pagado ' + money2(b.currency, b.paid) : 'Adelanto ' + money2(b.currency, b.due), method: { card: 'Tarjeta', yape: 'Yape', plin: 'Plin' }[b.method] || b.method,
+          status: b.status, statusLabel: stLab[b.status] || b.status, stBg: c[0], stFg: c[1], canConfirm: b.status === 'por verificar' || b.status === 'pendiente',
+          confirm: () => { setB(b.code, { status: 'pagada', paid: b.due }); this.toast('Pago confirmado · ' + b.code); },
+          setStatus: (e) => { const v = val(e); setB(b.code, { status: v, paid: v === 'pagada' && !b.paid ? b.due : b.paid }); },
+          wa: 'https://wa.me/' + waNum(b.phone) + '?text=' + encodeURIComponent('Hola ' + b.name.split(' ')[0] + ', te escribimos de Evolushon por tu reserva ' + b.code + ' (' + (b.svcEs || b.svc) + ', ' + b.date + ' ' + b.time + ').') }; });
+      out.noBookings = !rows.length; out.noBookingsText = all.length ? 'No hay reservas con este filtro.' : 'Aún no hay reservas. Cuando un cliente reserve desde el sitio aparecerá aquí.';
+      out.bq = st.bq; out.setBq = (e) => this.setState({ bq: val(e) });
+      const paidSum = all.filter(b => b.status === 'pagada' || b.status === 'completada').reduce((a, b) => { a[b.currency || 'S/'] = (a[b.currency || 'S/'] || 0) + (+b.paid || 0); return a; }, {});
+      out.bkStats = [
+        { label: 'Hoy', value: all.filter(b => b.date === tdy && b.status !== 'cancelada').length, sub: 'clases y trips', color: '#308dc9', onClick: () => this.setState({ bf: 'upcoming' }) },
+        { label: 'Próximos 7 días', value: all.filter(b => { const d7 = new Date(); d7.setDate(d7.getDate() + 7); return b.date >= tdy && b.date <= d7.toISOString().slice(0, 10) && b.status !== 'cancelada'; }).length, sub: 'reservas', color: '#15181e', onClick: () => this.setState({ bf: 'upcoming' }) },
+        { label: 'Por verificar', value: all.filter(b => b.status === 'por verificar').length, sub: 'pagos Yape / Plin', color: '#e2b03f', onClick: () => this.setState({ bf: 'verify' }) },
+        { label: 'Cobrado', value: Object.keys(paidSum).map(k => k + ' ' + paidSum[k].toLocaleString('es-PE')).join(' · ') || '0', sub: 'pagos confirmados', color: '#2f7d5b', onClick: () => this.setState({ bf: 'paid' }) }
+      ];
+      out.exportCsv = () => { const cols = ['code', 'date', 'time', 'svcEs', 'opt', 'persons', 'name', 'phone', 'email', 'level', 'classLang', 'method', 'currency', 'total', 'due', 'paid', 'status', 'notes', 'createdAt']; const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; const csv = [cols.join(',')].concat(all.map(b => cols.map(c => esc(b[c])).join(','))).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv' })); a.download = 'reservas-evolushon-' + tdy + '.csv'; document.body.appendChild(a); a.click(); a.remove(); };
+      out.bkCfgOpen = st.bkCfgOpen; out.toggleBkCfg = () => this.setState({ bkCfgOpen: !st.bkCfgOpen }); out.bkCfgLabel = st.bkCfgOpen ? 'Cerrar configuración' : 'Configurar reservas';
+      const cfg = d.settings.booking; const setC = (f) => this.update(dd => f(dd.settings.booking));
+      const num = (v) => v === '' ? 0 : Number(v);
+      const DAYS = [['L', 1], ['M', 2], ['X', 3], ['J', 4], ['V', 5], ['S', 6], ['D', 0]];
+      const tog = (key, n) => setC(c => { c[key] = c[key] || []; c[key] = c[key].indexOf(n) >= 0 ? c[key].filter(x => x !== n) : c[key].concat([n]); });
+      out.bc = {
+        slotsSurf: (cfg.slots.surf || []).join(', '), slotsSkate: (cfg.slots.surfskate || []).join(', '),
+        setSlotsSurf: (e) => { const v = val(e); setC(c => { c.slots.surf = v.split(',').map(x => x.trim()).filter(Boolean); }); },
+        setSlotsSkate: (e) => { const v = val(e); setC(c => { c.slots.surfskate = v.split(',').map(x => x.trim()).filter(Boolean); }); },
+        capSurf: cfg.capacity.surf, capSkate: cfg.capacity.surfskate, capTrip: cfg.capacity.trip,
+        setCapSurf: (e) => { const v = num(val(e)); setC(c => { c.capacity.surf = v; }); }, setCapSkate: (e) => { const v = num(val(e)); setC(c => { c.capacity.surfskate = v; }); }, setCapTrip: (e) => { const v = num(val(e)); setC(c => { c.capacity.trip = v; }); },
+        tripDays: DAYS.map(x => { const on = (cfg.tripDays || []).indexOf(x[1]) >= 0; return { label: x[0], bg: on ? '#15181e' : 'transparent', fg: on ? '#faf4f1' : '#15181e', onClick: () => tog('tripDays', x[1]) }; }),
+        closedDays: DAYS.map(x => { const on = (cfg.closedDays || []).indexOf(x[1]) >= 0; return { label: x[0], bg: on ? '#a8452f' : 'transparent', fg: on ? '#faf4f1' : '#15181e', onClick: () => tog('closedDays', x[1]) }; }),
+        lead: cfg.lead, maxDays: cfg.maxDays, setLead: (e) => { const v = num(val(e)); setC(c => { c.lead = v; }); }, setMaxDays: (e) => { const v = num(val(e)); setC(c => { c.maxDays = v; }); },
+        newBlock: st.newBlock, setNewBlock: (e) => this.setState({ newBlock: val(e) }),
+        addBlock: () => { if (!st.newBlock) return; setC(c => { c.blocked = (c.blocked || []).filter(x => x !== st.newBlock).concat([st.newBlock]).sort(); }); this.setState({ newBlock: '' }); },
+        blocked: (cfg.blocked || []).map(x => ({ label: new Date(x + 'T12:00:00').toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' }), remove: () => setC(c => { c.blocked = c.blocked.filter(y => y !== x); }) })),
+        deposit: cfg.deposit, setDeposit: (e) => { const v = Math.max(0, Math.min(100, num(val(e)))); setC(c => { c.deposit = v; }); },
+        methods: [['card', 'Tarjeta (crédito / débito)', 'ti ti-credit-card'], ['yape', 'Yape', 'ti ti-device-mobile-dollar'], ['plin', 'Plin', 'ti ti-device-mobile-dollar']].map(x => { const on = cfg.methods[x[0]] !== false; return { label: x[1], icon: x[2], bg: on ? '#308dc9' : '#d8c9b9', j: on ? 'flex-end' : 'flex-start', onClick: () => setC(c => { c.methods[x[0]] = !on; }) }; }),
+        yape: cfg.yape || '', plin: cfg.plin || '', setYape: (e) => { const v = val(e); setC(c => { c.yape = v; }); }, setPlin: (e) => { const v = val(e); setC(c => { c.plin = v; }); }
+      };
+    }
+
+    if (view === 'reviews') {
+      const rs = d.settings.reviews; const setR = (k, isNum) => (e) => { const v = val(e); this.update(dd => { dd.settings.reviews[k] = isNum ? (v === '' ? null : Number(v)) : v; }); };
+      out.rs = { placeUrl: rs.placeUrl || '', writeUrl: rs.writeUrl || '', rating: rs.rating == null ? '' : rs.rating, count: rs.count == null ? '' : rs.count, setPlaceUrl: setR('placeUrl'), setWriteUrl: setR('writeUrl'), setRating: setR('rating', true), setCount: setR('count', true) };
+      out.hasSamples = d.reviews.some(r => r.sample); out.removeSamples = () => { if (!confirm('¿Quitar las reseñas de ejemplo?')) return; this.update(dd => { dd.reviews = dd.reviews.filter(r => !r.sample); }); };
+      out.addReview = () => this.update(dd => dd.reviews.unshift({ id: 'r-' + Date.now(), author: '', rating: 5, date: this.today().slice(0, 7), hidden: false, text: this.blank() }));
+      out.reviewRows = d.reviews.map(r => { const setRv = (f) => this.update(dd => f(dd.reviews.find(x => x.id === r.id)));
+        return { author: r.author, rating: String(r.rating || 5), date: r.date || '', sample: !!r.sample, opacity: r.hidden ? 0.5 : 1,
+          setAuthor: (e) => { const v = val(e); setRv(x => { x.author = v; x.sample = false; }); }, setRating: (e) => { const v = +val(e); setRv(x => { x.rating = v; }); }, setDate: (e) => { const v = val(e); setRv(x => { x.date = v; }); },
+          texts: ['es', 'en', 'fr', 'de'].map(l => ({ code: l.toUpperCase(), value: r.text[l] || '', ph: l === 'es' ? 'Texto de la reseña (como aparece en Google)' : 'Traducción (opcional)', onChange: (e) => { const v = val(e); setRv(x => { x.text[l] = v; x.sample = false; }); } })),
+          translate: () => this.translate('review', r.id), translateLabel: st.busy === 'review:' + r.id ? 'Traduciendo…' : 'Traducir',
+          hideIcon: r.hidden ? 'ti ti-eye' : 'ti ti-eye-off', hideLabel: r.hidden ? 'Mostrar' : 'Ocultar', toggleHide: () => setRv(x => { x.hidden = !x.hidden; }),
+          remove: () => { if (!confirm('¿Eliminar esta reseña?')) return; this.update(dd => { dd.reviews = dd.reviews.filter(x => x.id !== r.id); }); } }; });
+    }
+
+    if (view === 'settings') {
+      const set = d.settings;
+      let usage = 0; try { Object.keys(localStorage).forEach(k => { if (k.indexOf('evolushon') === 0) usage += (localStorage.getItem(k) || '').length; }); } catch (e) {}
+      const setSet = (k) => (e) => { const v = val(e); this.update(dd => { dd.settings[k] = v; }); };
+      out.st = { whatsapp: set.whatsapp || '', domain: set.domain || '', instagram: set.instagram || '', tiktok: set.tiktok || '', usage: this.kb(usage * 2) + ' de ~5 MB (borrador + publicado + historial)',
+        setWa: setSet('whatsapp'), setDomain: setSet('domain'), setIg: setSet('instagram'), setTt: setSet('tiktok'),
+        reset: () => { if (!confirm('Se reemplazará el borrador por los datos originales. ¿Continuar?')) return; const def = this.migrate(this.clone(S.DEFAULT)); def.settings.users = d.settings.users; this.update(dd => { Object.keys(dd).forEach(k => delete dd[k]); Object.assign(dd, def); }); this.toast('Datos originales restaurados en el borrador'); } };
+      const cfg = this.imgCfg();
+      const setImg = (patch) => this.update(dd => { dd.settings.img = Object.assign({}, dd.settings.img || {}, patch); });
+      out.imgPresets = [['max', 'Máxima calidad', 'Hasta 2000 px · calidad 90% · ~300–500 KB'], ['balanced', 'Equilibrada (recomendada)', 'Hasta 1600 px · calidad 82% · ~150–300 KB, sin diferencia visible'], ['light', 'Ligera', 'Hasta 1280 px · calidad 72% · ~80–160 KB, ideal para móviles']].map(x => ({ label: x[1], sub: x[2], border: cfg.preset === x[0] ? '#15181e' : '#e2d5c7', bg: cfg.preset === x[0] ? '#f6eee5' : '#fffdfb', dot: cfg.preset === x[0] ? '#15181e' : 'transparent', onClick: () => setImg({ preset: x[0] }) }));
+      out.imgFormat = cfg.format; out.webpFallback = cfg.format === 'webp' && !this.webpOk(); out.setImgFormat = (e) => { const v = val(e); setImg({ format: v }); };
+      out.users = set.users.map((u, i) => { const su = (k) => (e) => { const v = val(e); this.update(dd => { dd.settings.users[i][k] = v; }); };
+        return { name: u.name, user: u.user, pass: u.pass, role: u.role, setName: su('name'), setUser: su('user'), setPass: su('pass'), setRole: su('role'),
+          remove: () => { if (set.users.filter(x => x.role === 'admin').length < 2 && u.role === 'admin') return this.toast('Debe quedar al menos un administrador.', 'err'); this.update(dd => { dd.settings.users.splice(i, 1); }); } }; });
+      out.addUser = () => this.update(dd => dd.settings.users.push({ name: 'Nuevo', user: 'usuario' + (dd.settings.users.length + 1), pass: '', role: 'editor' }));
+      out.exportJson = () => { const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'evolushon-datos-' + this.today() + '.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
+      out.importRef = this.importRef; out.pickImport = () => this.importRef.current && this.importRef.current.click();
+      out.importErr = st.importErr;
+      out.onImport = (e) => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; const r = new FileReader(); r.onload = () => { try { const j = JSON.parse(r.result); if (!Array.isArray(j.services) || !Array.isArray(j.gallery)) throw new Error('x'); const m = this.migrate(j); this.update(dd => { Object.keys(dd).forEach(k => delete dd[k]); Object.assign(dd, m); }); this.setState({ importErr: '' }); this.toast('Datos importados al borrador'); } catch (er) { this.setState({ importErr: 'El archivo no tiene el formato de Evolushon (services y gallery).' }); } }; r.readAsText(f); };
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

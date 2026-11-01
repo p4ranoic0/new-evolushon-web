@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&amp;family=Instrument+Serif:ital@0;1&amp;family=Figtree:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script src="evo-store.js"></script>
+<script src="doodles.js"></script>
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#faf4f1;color:#15181e;font-family:'Figtree',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1f5f8b;text-decoration:none}a:hover{color:#15181e}
+button{font-family:inherit}*{box-sizing:border-box}
+::selection{background:#e2b03f;color:#15181e}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#faf4f1;overflow-x:clip">
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:30;background:{{ hdrBg }};color:{{ hdrFg }};border-bottom:1px solid {{ hdrLine }};transition:background .35s,color .35s,border-color .35s">
+  <div style="max-width:1440px;margin:0 auto;padding:clamp(8px,1.4vw,14px) clamp(14px,3vw,40px);display:flex;align-items:center;gap:clamp(10px,2vw,20px)">
+    <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;color:inherit">
+      <img src="src/assets/logo.jpg" alt="Evolushon" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(21px,2vw,24px);letter-spacing:0;text-transform:uppercase;line-height:1">Evolushon</span>
+    </button>
+    <div style="flex:1"></div>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;gap:4px">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.onClick }}" style="background:none;border:0;padding:8px 14px;font-size:14px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:inherit;cursor:pointer;opacity:{{ n.opacity }}" style-hover="opacity:1">{{ n.label }}</button>
+        </sc-for>
+      </nav>
+      <div style="display:flex;gap:2px;font-size:12px;font-weight:600">
+        <sc-for list="{{ langs }}" as="l" hint-placeholder-count="4">
+          <button onClick="{{ l.onClick }}" style="background:none;border:0;padding:6px;color:inherit;cursor:pointer;opacity:{{ l.opacity }};text-decoration:{{ l.deco }};text-underline-offset:4px">{{ l.code }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hdrLabel }}" hint-placeholder-val="{{ true }}"><a href="{{ waGeneric }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:8px;background:#e2b03f;color:#15181e;padding:11px 20px;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.06em;text-transform:uppercase" style-hover="background:#faf4f1;color:#15181e"><i class="ti ti-brand-whatsapp" style="font-size:18px"></i>{{ ui.book }}</a></sc-if>
+    <sc-if value="{{ hdrIcon }}" hint-placeholder-val="{{ false }}"><a href="{{ waGeneric }}" target="_blank" rel="noreferrer" aria-label="WhatsApp" style="width:44px;height:44px;border-radius:50%;background:#e2b03f;color:#15181e;display:flex;align-items:center;justify-content:center;font-size:22px"><i class="ti ti-brand-whatsapp"></i></a></sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openMenu }}" aria-label="Menú" style="width:44px;height:44px;border-radius:50%;border:1px solid currentColor;background:none;color:inherit;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ti ti-menu-2"></i></button>
+    </sc-if>
+  </div>
+</header>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:40;background:#15181e;color:#faf4f1;display:flex;flex-direction:column;padding:20px 20px 32px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:24px;text-transform:uppercase">Evolushon</span>
+      <button onClick="{{ closeMenu }}" aria-label="{{ ui.close }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #faf4f1;background:none;color:#faf4f1;font-size:20px;cursor:pointer"><i class="ti ti-x"></i></button>
+    </div>
+    <nav style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+        <button onClick="{{ n.onClick }}" style="background:none;border:0;padding:4px 0;text-align:left;color:{{ n.menuColor }};font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(48px,14vw,88px);line-height:0.95;text-transform:uppercase;cursor:pointer">{{ n.label }}</button>
+      </sc-for>
+    </nav>
+    <div style="display:flex;gap:8px">
+      <sc-for list="{{ langs }}" as="l" hint-placeholder-count="4">
+        <button onClick="{{ l.onClick }}" style="min-width:48px;height:44px;border-radius:999px;border:1px solid #faf4f1;background:{{ l.menuBg }};color:{{ l.menuFg }};font-weight:600;cursor:pointer">{{ l.code }}</button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<main style="flex:1">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <section data-screen-label="Inicio hero" style="position:relative;height:100svh;min-height:600px;overflow:hidden;background:#15181e;color:#faf4f1">
+    <video src="{{ heroVideo }}" poster="src/assets/banner-principal.jpg" preload="metadata" aria-hidden="true" autoplay="" muted="" loop="" playsinline="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></video>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,24,30,0.45) 0%,rgba(21,24,30,0.1) 35%,rgba(21,24,30,0.75) 100%)"></div>
+    <div style="position:relative;height:100%;max-width:1440px;margin:0 auto;padding:110px clamp(16px,3vw,40px) clamp(20px,3vw,36px);display:flex;flex-direction:column;justify-content:flex-end;gap:16px">
+      <div data-reveal="" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(28px,3.4vw,52px);line-height:1.02;max-width:640px;text-wrap:balance">{{ ui.heroTitle }}</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;text-align:right;color:#e4c69b">
+          <h1 style="margin:0;font:inherit;letter-spacing:inherit">{{ ui.kicker }}</h1><span>ES · EN · FR · DE</span>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <div style="background:#e2b03f;color:#15181e;overflow:hidden;border-top:1px solid #15181e;border-bottom:1px solid #15181e">
+    
+  </div>
+
+  <section style="position:relative;max-width:1440px;margin:0 auto;padding:clamp(72px,10vw,140px) clamp(16px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(32px,5vw,80px);align-items:center">
+    <evo-doodle aria-hidden="true" name="sun" float="" style="position:absolute;top:clamp(12px,2vw,28px);right:clamp(16px,3vw,40px);width:clamp(56px,6vw,96px);height:clamp(56px,6vw,96px);color:#e2b03f;z-index:2"></evo-doodle><evo-doodle aria-hidden="true" name="waves" float="" style="position:absolute;bottom:clamp(16px,3vw,40px);left:clamp(8px,2vw,32px);width:clamp(80px,9vw,140px);height:clamp(60px,6vw,100px);color:#308dc9"></evo-doodle>
+    <div data-reveal="" style="display:flex;flex-direction:column;gap:28px">
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(56px,7vw,112px);line-height:0.88;text-transform:uppercase;text-wrap:balance">{{ ui.introTitle }}</h2>
+      <p style="margin:0;font-size:clamp(17px,1.4vw,20px);line-height:1.6;color:#3a3330;max-width:560px;text-wrap:pretty">{{ ui.intro }}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button onClick="{{ goServices }}" style="background:#15181e;color:#faf4f1;border:0;padding:16px 26px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;display:flex;gap:8px;align-items:center" style-hover="background:#308dc9">{{ ui.seeServices }}<i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+    <div data-reveal="" style="position:relative;aspect-ratio:4/5;max-height:760px">
+      <img loading="lazy" decoding="async" src="src/assets/galeria-sesion-18.jpg" alt="" style="position:absolute;inset:0 18% 12% 0;width:82%;height:88%;object-fit:cover;border-radius:4px">
+      <img loading="lazy" decoding="async" src="src/assets/class-surfskate-1.jpg" alt="" style="position:absolute;right:0;bottom:0;width:46%;height:44%;object-fit:cover;border-radius:4px;border:8px solid #faf4f1">
+      <span style="position:absolute;left:-8px;bottom:6%;background:#308dc9;color:#faf4f1;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(22px,2vw,30px);padding:8px 18px;border-radius:999px;transform:rotate(-4deg)">{{ ui.tag }}</span>
+    </div>
+  </section>
+
+  <section style="position:relative;overflow:hidden;background:#15181e;color:#faf4f1;padding:clamp(64px,8vw,110px) 0"><evo-doodle aria-hidden="true" name="gull" float="" style="position:absolute;top:clamp(8px,1.5vw,20px);right:clamp(16px,3vw,40px);width:clamp(56px,5vw,84px);height:clamp(56px,5vw,84px);color:#e4c69b"></evo-doodle>
+    <div style="max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,40px);display:flex;flex-direction:column;gap:36px">
+      <div data-reveal="" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+        <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(52px,6.5vw,104px);line-height:0.88;text-transform:uppercase">{{ ui.offer }}</h2>
+        <p style="margin:0;max-width:380px;color:#c9bcb0;font-size:16px;line-height:1.55">{{ ui.servicesSub }}</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;min-height:min(78vh,640px)">
+        <sc-for list="{{ catBlocks }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.onClick }}" style="position:relative;flex:1 1 280px;min-height:clamp(240px,62vw,420px);border:0;padding:0;border-radius:6px;overflow:hidden;cursor:pointer;background:#2a2f38;color:#faf4f1;text-align:left;transition:flex-grow .6s cubic-bezier(.22,.61,.36,1)" style-hover="flex-grow:1.9">
+            <img loading="lazy" decoding="async" src="{{ c.img }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,24,30,0) 40%,rgba(21,24,30,0.85) 100%)"></div>
+                        <span style="position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:50%;background:#faf4f1;color:#15181e;display:flex;align-items:center;justify-content:center;font-size:22px"><i class="ti ti-arrow-up-right"></i></span>
+            <div style="position:absolute;left:20px;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(44px,4.6vw,76px);line-height:0.85;text-transform:uppercase">{{ c.label }}</span>
+              <span style="display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:#e4c69b;font-weight:600;letter-spacing:0.06em;text-transform:uppercase">{{ c.from }}</span>
+              <span style="font-size:14px;color:#c9bcb0">{{ c.list }}</span>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="position:relative;padding:clamp(64px,8vw,110px) 0 clamp(48px,6vw,80px)"><evo-doodle aria-hidden="true" name="palm" float="" rotate="-6" style="position:absolute;top:clamp(28px,4vw,60px);left:clamp(240px,40vw,620px);width:clamp(64px,7vw,110px);height:clamp(64px,7vw,110px);color:#15181e"></evo-doodle>
+    <div data-reveal="" style="max-width:1440px;margin:0 auto 28px;padding:0 clamp(16px,3vw,40px);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(52px,6.5vw,104px);line-height:0.88;text-transform:uppercase">{{ ui.featured }}</h2>
+      <button onClick="{{ goGallery }}" style="background:none;border:1px solid #15181e;padding:14px 22px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;display:flex;gap:8px;align-items:center;color:#15181e" style-hover="background:#15181e;color:#faf4f1">{{ ui.seeGallery }}<i class="ti ti-arrow-right"></i></button>
+    </div>
+    <div style="display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 clamp(16px,3vw,40px) 12px;scrollbar-width:thin">
+      <sc-for list="{{ featured }}" as="f" hint-placeholder-count="6">
+        <button onClick="{{ f.onClick }}" style="flex:0 0 auto;width:max(min(72vw,320px),min(26vw,400px));aspect-ratio:3/4;border:0;padding:0;border-radius:4px;overflow:hidden;cursor:zoom-in;scroll-snap-align:start;background:#f1e6da"><img loading="lazy" decoding="async" src="{{ f.src }}" alt="{{ f.alt }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ f.pos }};display:block;transition:transform .8s cubic-bezier(.22,.61,.36,1)" style-hover="transform:scale(1.06)"></button>
+      </sc-for>
+    </div>
+  </section>
+
+  <sc-if value="{{ hasReviews }}" hint-placeholder-val="{{ true }}">
+  <section data-screen-label="Reseñas" style="position:relative;overflow:hidden;background:#f1e6da;padding:clamp(64px,8vw,110px) 0">
+    <evo-doodle aria-hidden="true" name="star" float="" rotate="10" style="position:absolute;top:clamp(16px,3vw,40px);right:clamp(16px,4vw,60px);width:clamp(50px,5vw,80px);height:clamp(50px,5vw,80px);color:#e2b03f"></evo-doodle>
+    <div style="max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,40px);display:flex;flex-direction:column;gap:32px">
+      <div data-reveal="" style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:clamp(52px,6.5vw,104px);line-height:0.88">{{ bkT.reviewsTitle }}</h2>
+          <sc-if value="{{ rv.hasRating }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:64px">{{ rv.rating }}</span>
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="display:flex;gap:2px;color:#c8921c;font-size:20px"><sc-for list="{{ rv.stars }}" as="s" hint-placeholder-count="5"><i class="{{ s.icon }}"></i></sc-for></span><span style="font-size:14px;color:#3a3330">{{ rv.countText }}</span></div>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="{{ rv.placeUrl }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:8px;border:1px solid #15181e;color:#15181e;padding:14px 22px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase" style-hover="background:#15181e;color:#faf4f1"><i class="ti ti-brand-google-maps"></i>{{ bkT.seeAll }}</a>
+          <a href="{{ rv.writeUrl }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:8px;background:#15181e;color:#faf4f1;padding:14px 22px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase" style-hover="background:#308dc9;color:#faf4f1"><i class="ti ti-pencil"></i>{{ bkT.write }}</a>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin">
+        <sc-for list="{{ rv.items }}" as="r" hint-placeholder-count="3">
+          <article style="flex:0 0 auto;width:clamp(280px,32vw,420px);scroll-snap-align:start;background:#fffdfb;border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="display:flex;gap:2px;color:#c8921c;font-size:18px"><sc-for list="{{ r.stars }}" as="s" hint-placeholder-count="5"><i class="{{ s.icon }}"></i></sc-for></span><i class="ti ti-brand-google" style="font-size:20px;color:#5e534d"></i></div>
+            <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;font-size:clamp(20px,1.7vw,24px);line-height:1.25;flex:1">“{{ r.text }}”</p>
+            <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #e2d5c7;padding-top:14px">
+              <span style="width:38px;height:38px;border-radius:50%;background:#308dc9;color:#faf4f1;display:flex;align-items:center;justify-content:center;font-weight:700">{{ r.initial }}</span>
+              <div style="flex:1"><div style="font-weight:600">{{ r.author }}</div><div style="font-size:13px;color:#5e534d">{{ r.date }}</div></div>
+              <sc-if value="{{ r.sample }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#f7e6b8;color:#8a5a00">Ejemplo</span></sc-if>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <section style="position:relative;min-height:min(90vh,760px);display:flex;align-items:center;overflow:hidden;background:#15181e;color:#faf4f1">
+    <img loading="lazy" decoding="async" src="src/assets/banner4.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.7">
+    <div data-reveal="" style="position:relative;max-width:1440px;width:100%;margin:0 auto;padding:80px clamp(16px,3vw,40px);display:flex;flex-direction:column;align-items:flex-start;gap:28px">
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(56px,12vw,200px);line-height:0.82;text-transform:uppercase;max-width:1100px">{{ ui.contactTitle }}</h2>
+      <a href="{{ waGeneric }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:12px;background:#e2b03f;color:#15181e;padding:20px 32px;border-radius:999px;font-size:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase" style-hover="background:#faf4f1;color:#15181e"><i class="ti ti-brand-whatsapp" style="font-size:24px"></i>{{ ui.whatsappCta }}</a>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isServices }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Servicios" style="position:relative;overflow:hidden;background:#15181e;color:#faf4f1;padding:140px 0 48px"><evo-doodle aria-hidden="true" name="sun" float="" stroke="2.5" style="position:absolute;top:100px;right:clamp(16px,5vw,90px);width:clamp(70px,8vw,130px);height:clamp(70px,8vw,130px);color:#e2b03f"></evo-doodle><evo-doodle aria-hidden="true" name="skate" float="" style="position:absolute;width:clamp(70px,7vw,110px);height:clamp(70px,7vw,110px);color:#e4c69b;left:637px;top:327px"></evo-doodle>
+    <div style="max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,40px);display:flex;flex-direction:column;gap:28px">
+      <h1 data-split="" style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(72px,13vw,210px);line-height:0.8;text-transform:uppercase;white-space:nowrap">{{ ui.services }}</h1>
+      <div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end;position:relative">
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(22px,2vw,30px);line-height:1.2;max-width:560px;color:#f1e6da">{{ ui.servicesSub }}</p>
+        <div style="display:flex;gap:8px;overflow-x:auto;max-width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+            <button onClick="{{ f.onClick }}" style="flex-shrink:0;white-space:nowrap;min-height:44px;border:1px solid #faf4f1;border-radius:999px;padding:11px 20px;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }} <span style="opacity:0.55">{{ f.count }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section style="max-width:1440px;margin:0 auto;padding:24px clamp(16px,3vw,40px) 120px;display:flex;flex-direction:column">
+    <sc-for list="{{ cardsShown }}" as="c" hint-placeholder-count="4">
+      <article data-reveal="" style="display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,64px);padding:clamp(32px,4vw,56px) 0;border-bottom:1px solid #15181e;flex-direction:{{ c.dir }}">
+        <div style="flex:1 1 360px;position:relative;aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:#f1e6da">
+          <img loading="lazy" decoding="async" src="{{ c.cover }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ c.coverPos }};display:block;transition:transform .9s cubic-bezier(.22,.61,.36,1)" style-hover="transform:scale(1.05)">
+          <span style="position:absolute;left:16px;top:16px;background:#faf4f1;color:#15181e;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:7px 12px;border-radius:999px">{{ c.catLabel }}</span>
+          <sc-if value="{{ c.hasOffer }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:16px;top:16px;background:#e2b03f;color:#15181e;font-size:13px;font-weight:700;padding:7px 14px;border-radius:999px">{{ c.offerLabel }}</span></sc-if>
+        </div>
+        <div style="position:relative;flex:1 1 400px;display:flex;flex-direction:column;gap:18px;justify-content:center">
+          <evo-doodle aria-hidden="true" name="{{ c.doodle }}" float="" style="position:absolute;top:-8px;right:0;width:clamp(52px,5vw,80px);height:clamp(52px,5vw,80px);color:{{ c.doodleColor }}"></evo-doodle>
+          <h2 style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(44px,5vw,80px);line-height:0.88;text-transform:uppercase;text-wrap:balance">{{ c.name }}</h2>
+          <p style="margin:0;font-size:17px;line-height:1.6;color:#3a3330;max-width:560px;text-wrap:pretty">{{ c.desc }}</p>
+          <sc-if value="{{ c.isTrip }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span style="border:1px solid #15181e;border-radius:999px;padding:7px 14px;font-size:14px;display:flex;gap:6px;align-items:center"><i class="ti ti-map-pin"></i>{{ c.distance }}</span>
+              <span style="border:1px solid #15181e;border-radius:999px;padding:7px 14px;font-size:14px;display:flex;gap:6px;align-items:center"><i class="ti ti-clock"></i>{{ c.duration }}</span>
+              <span style="border:1px solid #15181e;border-radius:999px;padding:7px 14px;font-size:14px;display:flex;gap:6px;align-items:center"><i class="ti ti-users"></i>{{ c.minText }}</span>
+            </div>
+          </sc-if>
+          <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column">
+              <span style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5e534d">{{ c.unitText }}</span>
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(56px,5.5vw,88px);line-height:0.9;background:linear-gradient(transparent 62%,#e2b03f 62%,#e2b03f 90%,transparent 90%)">{{ c.priceText }}</span>
+              <sc-if value="{{ c.hasOffer }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:#5e534d;text-decoration:line-through">{{ c.oldPrice }}</span></sc-if>
+            </div>
+            <sc-if value="{{ c.hasPackages }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex:1 1 260px;border-top:1px solid #15181e">
+                <sc-for list="{{ c.packages }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.book }}" style="flex:1;padding:10px 12px 6px;display:flex;flex-direction:column;gap:2px;border:0;border-right:1px solid #e2d5c7;background:none;text-align:left;cursor:pointer;color:#15181e;font-family:inherit" style-hover="background:#f1e6da">
+                    <span style="font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5e534d">{{ p.label }}</span>
+                    <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:28px">{{ p.price }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:16px;background:#f1e6da;border-radius:6px;padding:18px">
+              <sc-if value="{{ c.isTrip }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:24px;flex-wrap:wrap">
+                  <div><div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ ui.depart }}</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px">{{ c.depart }}</div></div>
+                  <div><div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ ui.ret }}</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px">{{ c.ret }}</div></div>
+                </div>
+              </sc-if>
+              <sc-for list="{{ c.lists }}" as="li" hint-placeholder-count="0">
+                <div>
+                  <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="{{ li.icon }}" style="color:{{ li.color }};font-size:16px"></i>{{ li.title }}</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ li.items }}" as="it" hint-placeholder-count="0">
+                      <span style="background:#faf4f1;border-radius:999px;padding:5px 12px;font-size:14px">{{ it }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <sc-if value="{{ c.canBook }}" hint-placeholder-val="{{ true }}"><button onClick="{{ c.book }}" style="display:flex;align-items:center;gap:8px;background:#e2b03f;color:#15181e;border:0;padding:15px 24px;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:inherit" style-hover="background:#15181e;color:#faf4f1"><i class="ti ti-calendar-check" style="font-size:18px"></i>{{ bkT.reserve }}</button></sc-if>
+            <a href="{{ c.wa }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:8px;border:1px solid #15181e;color:#15181e;padding:14px 22px;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.08em;text-transform:uppercase" style-hover="background:#15181e;color:#faf4f1"><i class="ti ti-brand-whatsapp" style="font-size:18px"></i>{{ c.waLabel }}</a>
+            <sc-if value="{{ c.hasDetails }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ c.toggle }}" style="background:none;border:1px solid #15181e;padding:14px 22px;border-radius:999px;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;display:flex;gap:8px;align-items:center;color:#15181e">{{ c.toggleLabel }}<i class="{{ c.toggleIcon }}"></i></button>
+            </sc-if>
+          </div>
+        </div>
+      </article>
+    </sc-for>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isGallery }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Galería" style="position:relative;overflow:hidden;background:#15181e;color:#faf4f1;padding:140px 0 120px;min-height:100vh"><evo-doodle aria-hidden="true" name="gull" float="" style="position:absolute;top:110px;right:clamp(24px,10vw,200px);width:clamp(70px,8vw,120px);height:clamp(70px,8vw,120px);color:#e4c69b"></evo-doodle><evo-doodle aria-hidden="true" name="splash" float="" style="position:absolute;top:clamp(220px,20vw,300px);right:clamp(140px,26vw,440px);width:clamp(50px,5vw,80px);height:clamp(50px,5vw,80px);color:#308dc9"></evo-doodle>
+    <div style="max-width:1440px;margin:0 auto;padding:0 clamp(16px,3vw,40px);display:flex;flex-direction:column;gap:28px">
+      <h1 data-split="" style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(72px,13vw,210px);line-height:0.8;text-transform:uppercase;white-space:nowrap">{{ ui.galleryTitle }}</h1>
+      <div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end">
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(22px,2vw,30px);color:#f1e6da">{{ ui.gallerySub }}</p>
+        <div style="display:flex;gap:8px;overflow-x:auto;max-width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px">
+          <sc-for list="{{ albumChips }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="flex-shrink:0;white-space:nowrap;min-height:44px;border:1px solid #faf4f1;border-radius:999px;padding:11px 20px;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }} <span style="opacity:0.55">{{ f.count }}</span></button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));grid-auto-rows:clamp(160px,18vw,260px);grid-auto-flow:dense;gap:8px;margin-top:12px">
+        <sc-for list="{{ photos }}" as="p" hint-placeholder-count="12">
+          <button onClick="{{ p.onClick }}" style="grid-column:{{ p.col }};grid-row:{{ p.row }};border:0;padding:0;border-radius:4px;overflow:hidden;cursor:zoom-in;background:#2a2f38"><img loading="lazy" decoding="async" src="{{ p.src }}" alt="{{ p.alt }}" style="width:100%;height:100%;object-fit:cover;object-position:{{ p.pos }};display:block;transition:transform .8s cubic-bezier(.22,.61,.36,1)" style-hover="transform:scale(1.06)"></button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Contacto" style="min-height:100vh;display:flex;flex-wrap:wrap;background:#15181e;color:#faf4f1">
+    <div style="position:relative;flex:1 1 520px;padding:140px clamp(16px,3vw,40px) 64px;display:flex;flex-direction:column;justify-content:space-between;gap:48px"><evo-doodle aria-hidden="true" name="wave" float="" style="position:absolute;top:110px;right:clamp(16px,4vw,60px);width:clamp(80px,9vw,140px);height:clamp(80px,9vw,140px);color:#e2b03f"></evo-doodle>
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <h1 data-split="" style="margin:0;font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(64px,9vw,150px);line-height:0.82;text-transform:uppercase">{{ ui.contact }}</h1>
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(24px,2.2vw,34px);line-height:1.15;max-width:520px;color:#f1e6da">{{ ui.contactSub }}</p>
+        <a href="{{ waGeneric }}" target="_blank" rel="noreferrer" style="align-self:flex-start;display:flex;align-items:center;gap:12px;background:#e2b03f;color:#15181e;padding:20px 32px;border-radius:999px;font-size:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase" style-hover="background:#faf4f1;color:#15181e"><i class="ti ti-brand-whatsapp" style="font-size:24px"></i>{{ ui.whatsappCta }}</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px;border-top:1px solid #4a4f58;padding-top:24px">
+        <div><div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e4c69b;margin-bottom:8px">{{ ui.where }}</div><div style="color:#f1e6da;line-height:1.5">{{ ui.whereBody }}</div></div>
+        <div><div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e4c69b;margin-bottom:8px">{{ ui.langs }}</div><div style="color:#f1e6da;line-height:1.5">{{ ui.langsBody }}</div></div>
+        <div><div style="font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#e4c69b;margin-bottom:8px">{{ ui.follow }}</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <a href="{{ instagram }}" target="_blank" rel="noreferrer" style="color:#faf4f1;display:flex;gap:6px;align-items:center" style-hover="color:#e2b03f"><i class="ti ti-brand-instagram"></i>Instagram</a>
+            <a href="{{ tiktok }}" target="_blank" rel="noreferrer" style="color:#faf4f1;display:flex;gap:6px;align-items:center" style-hover="color:#e2b03f"><i class="ti ti-brand-tiktok"></i>TikTok</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1 1 420px;min-height:clamp(260px,60vw,420px);position:relative">
+      <img loading="lazy" decoding="async" src="src/assets/galeria-sesion-21.jpeg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+    </div>
+  </section>
+</sc-if>
+
+</main>
+
+<footer style="background:#15181e;color:#f1e6da">
+  <div style="max-width:1440px;margin:0 auto;padding:clamp(56px,7vw,96px) clamp(16px,3vw,40px) 28px;display:flex;flex-direction:column;gap:clamp(40px,5vw,72px)">
+    <div style="position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:clamp(32px,4vw,56px);border-bottom:1px solid #3a3f48"><evo-doodle aria-hidden="true" name="star" float="" rotate="12" style="position:absolute;top:-12px;right:clamp(100px,14vw,240px);width:clamp(48px,5vw,76px);height:clamp(48px,5vw,76px);color:#e2b03f"></evo-doodle><evo-doodle aria-hidden="true" name="shades" float="" style="position:absolute;bottom:clamp(28px,3vw,48px);right:clamp(8px,2vw,24px);width:clamp(60px,6vw,96px);height:clamp(60px,6vw,96px);color:#308dc9"></evo-doodle>
+      <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(36px,4.6vw,72px);line-height:1;color:#faf4f1;max-width:760px;text-wrap:balance">{{ footLine }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;font-size:15px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#e4c69b">Menú</span>
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.onClick }}" style="background:none;border:0;padding:6px 0;text-align:left;color:#f1e6da;font-size:15px;cursor:pointer" style-hover="color:#e2b03f">{{ n.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#e4c69b">{{ ui.services }}</span>
+        <sc-for list="{{ catBlocks }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.onClick }}" style="background:none;border:0;padding:6px 0;text-align:left;color:#f1e6da;font-size:15px;cursor:pointer;display:flex;gap:8px;align-items:baseline" style-hover="color:#e2b03f">{{ c.label }}<span style="font-size:13px;color:#8f847c">{{ c.from }}</span></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#e4c69b">{{ ui.where }}</span>
+        <span style="line-height:1.5">{{ ui.whereBody }}</span>
+        <span style="line-height:1.5;color:#c9bcb0">{{ ui.langsBody }}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#e4c69b">{{ ui.follow }}</span>
+        <a href="{{ instagram }}" target="_blank" rel="noreferrer" style="color:#f1e6da;display:flex;gap:8px;align-items:center" style-hover="color:#e2b03f"><i class="ti ti-brand-instagram" style="font-size:18px"></i>Instagram</a>
+        <a href="{{ tiktok }}" target="_blank" rel="noreferrer" style="color:#f1e6da;display:flex;gap:8px;align-items:center" style-hover="color:#e2b03f"><i class="ti ti-brand-tiktok" style="font-size:18px"></i>TikTok</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:flex-end;gap:clamp(12px,2vw,28px)">
+        <img src="src/assets/logo.jpg" alt="" style="width:clamp(44px,9vw,140px);height:clamp(44px,9vw,140px);border-radius:50%;object-fit:cover;flex-shrink:0">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;font-size:clamp(44px,15.5vw,236px);line-height:0.78;text-transform:uppercase;color:#faf4f1;white-space:nowrap">Evolushon</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#8f847c;border-top:1px solid #3a3f48;padding-top:16px">
+        <span>© {{ year }} Evolushon Surf Experience · Lima, Perú</span>
+        <a href="Evolushon Admin v3.dc.html" style="color:#8f847c" style-hover="color:#e2b03f">Admin</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<sc-if value="{{ showBar }}" hint-placeholder-val="{{ false }}">
+  <div style="height:76px;background:#15181e"></div>
+  <div style="position:fixed;left:0;right:0;bottom:0;z-index:35;background:#15181e;border-top:1px solid #3a3f48;padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px">
+    <button onClick="{{ goServices }}" style="flex:1;min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;background:#e2b03f;color:#15181e;border:0;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:inherit"><i class="ti ti-calendar-check" style="font-size:18px"></i>{{ ui.seeServices }}</button>
+    <a href="{{ waGeneric }}" target="_blank" rel="noreferrer" aria-label="WhatsApp" style="width:52px;height:52px;flex-shrink:0;border-radius:50%;border:1px solid #faf4f1;color:#faf4f1;display:flex;align-items:center;justify-content:center;font-size:24px"><i class="ti ti-brand-whatsapp"></i></a>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
+  <a href="{{ waGeneric }}" target="_blank" rel="noreferrer" aria-label="WhatsApp" style="position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:35;width:58px;height:58px;border-radius:50%;background:#e2b03f;color:#15181e;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid #15181e"><i class="ti ti-brand-whatsapp"></i></a>
+</sc-if>
+
+<sc-if value="{{ bkOpen }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Reserva" style="position:fixed;inset:0;z-index:45;background:rgba(21,24,30,0.72);display:flex;align-items:center;justify-content:center;padding:{{ bkL.pad }}">
+    <div role="dialog" aria-modal="true" style="background:#faf4f1;width:100%;max-width:1000px;max-height:{{ bkL.maxH }};height:{{ bkL.h }};border-radius:{{ bkL.radius }};overflow:auto;display:flex;flex-wrap:wrap;align-content:flex-start">
+      <aside style="flex:1 1 300px;background:#15181e;color:#faf4f1;display:flex;flex-direction:column;min-width:0">
+        <div style="position:relative;aspect-ratio:{{ bkL.ratio }};overflow:hidden"><img src="{{ bk.cover }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ bk.coverPos }}"><span style="position:absolute;left:14px;top:14px;background:#faf4f1;color:#15181e;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:6px 10px;border-radius:999px">{{ bk.cat }}</span></div>
+        <div style="padding:clamp(14px,2.4vw,20px);display:flex;flex-direction:column;gap:clamp(8px,1.6vw,14px);flex:1">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:clamp(32px,3.4vw,44px)">{{ bk.name }}</span>
+          <sc-if value="{{ bkL.full }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column">
+            <sc-for list="{{ bk.summary }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #2f343d;font-size:14px"><span style="color:#c9bcb0">{{ r.label }}</span><span style="font-weight:600;text-align:right">{{ r.value }}</span></div>
+            </sc-for>
+          </div></sc-if>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #faf4f1;padding-top:12px"><span style="font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#e4c69b">{{ bkT.total }}</span><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:44px;color:#e2b03f">{{ bk.totalText }}</span></div>
+          <sc-if value="{{ bk.isDeposit }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#c9bcb0;display:flex;justify-content:space-between"><span>{{ bk.dueLabel }}</span><span style="font-weight:700;color:#faf4f1">{{ bk.dueText }}</span></div></sc-if>
+          <sc-if value="{{ bkL.full }}" hint-placeholder-val="{{ true }}"><div style="flex:1"></div>
+          <div style="font-size:12px;color:#8f847c;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-shield-lock"></i>{{ bkT.demo }}</div></sc-if>
+        </div>
+      </aside>
+      <div style="flex:2 1 440px;min-width:0;padding:clamp(18px,3vw,32px);display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap">
+            <sc-for list="{{ bk.steps }}" as="s" hint-placeholder-count="4">
+              <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:7px 12px;border-radius:999px;background:{{ s.bg }};color:{{ s.fg }}"><span>{{ s.n }}</span>{{ s.shown }}</span>
+            </sc-for>
+          </div>
+          <button onClick="{{ bkClose }}" aria-label="{{ ui.close }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #15181e;background:none;cursor:pointer;font-size:18px;flex-shrink:0"><i class="ti ti-x"></i></button>
+        </div>
+
+        <sc-if value="{{ bk.s1 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.option }}</span>
+            <sc-for list="{{ bk.options }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.onClick }}" style="display:flex;align-items:center;gap:14px;text-align:left;border:1px solid {{ o.border }};background:{{ o.bg }};border-radius:10px;padding:14px 16px;cursor:pointer;font-family:inherit;color:#15181e">
+                <span style="width:20px;height:20px;border-radius:50%;border:2px solid #15181e;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:10px;height:10px;border-radius:50%;background:{{ o.dot }}"></span></span>
+                <span style="flex:1"><span style="display:block;font-weight:700;font-size:16px">{{ o.label }}</span><span style="display:block;font-size:13px;color:#5e534d">{{ o.sub }}</span></span>
+                <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:28px">{{ o.price }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid #e2d5c7;padding-top:18px">
+            <div><div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.persons }}</div><div style="font-size:13px;color:#5e534d;margin-top:4px">{{ bk.personsNote }}</div></div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <button onClick="{{ bk.dec }}" aria-label="−" style="width:48px;height:48px;border-radius:50%;border:1px solid #15181e;background:none;font-size:20px;cursor:pointer"><i class="ti ti-minus"></i></button>
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:40px;min-width:56px;text-align:center">{{ bk.persons }}</span>
+              <button onClick="{{ bk.inc }}" aria-label="+" style="width:48px;height:48px;border-radius:50%;border:1px solid #15181e;background:none;font-size:20px;cursor:pointer"><i class="ti ti-plus"></i></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ bk.s2 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <button onClick="{{ bk.prevMonth }}" aria-label="Anterior" style="width:44px;height:44px;border-radius:50%;border:1px solid #15181e;background:none;cursor:pointer;opacity:{{ bk.prevOp }}"><i class="ti ti-chevron-left"></i></button>
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:30px">{{ bk.monthLabel }}</span>
+              <button onClick="{{ bk.nextMonth }}" aria-label="Siguiente" style="width:44px;height:44px;border-radius:50%;border:1px solid #15181e;background:none;cursor:pointer;opacity:{{ bk.nextOp }}"><i class="ti ti-chevron-right"></i></button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">
+              <sc-for list="{{ bk.weekdays }}" as="w" hint-placeholder-count="7"><span style="text-align:center;font-size:11px;font-weight:700;letter-spacing:0.1em;color:#5e534d;padding:4px 0">{{ w }}</span></sc-for>
+              <sc-for list="{{ bk.days }}" as="d" hint-placeholder-count="35">
+                <button onClick="{{ d.onClick }}" style="aspect-ratio:1;min-height:40px;border-radius:8px;border:1px solid {{ d.border }};background:{{ d.bg }};color:{{ d.fg }};font-size:15px;font-weight:600;cursor:{{ d.cursor }};opacity:{{ d.op }};visibility:{{ d.vis }};font-family:inherit">{{ d.label }}</button>
+              </sc-for>
+            </div>
+            <span style="font-size:13px;color:#5e534d">{{ bk.calNote }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #e2d5c7;padding-top:16px">
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bk.timeLabel }}</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ bk.slots }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.onClick }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:96px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.fg }};border-radius:10px;padding:10px 14px;cursor:{{ t.cursor }};opacity:{{ t.op }};font-family:inherit"><span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:24px">{{ t.time }}</span><span style="font-size:12px">{{ t.left }}</span></button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ bk.noSlots }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#5e534d">{{ bk.noSlotsText }}</span></sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ bk.s3 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d;grid-column:1/-1">{{ bkT.name }}<input value="{{ bk.f.name }}" onChange="{{ bk.f.setName }}" autocomplete="name" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.email }}<input type="email" value="{{ bk.f.email }}" onChange="{{ bk.f.setEmail }}" autocomplete="email" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.phone }}<input type="tel" value="{{ bk.f.phone }}" onChange="{{ bk.f.setPhone }}" autocomplete="tel" placeholder="+51 9…" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.level }}<select value="{{ bk.f.level }}" onChange="{{ bk.f.setLevel }}" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"><sc-for list="{{ bk.levels }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.classLang }}<select value="{{ bk.f.classLang }}" onChange="{{ bk.f.setClassLang }}" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option></select></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d;grid-column:1/-1">{{ bkT.notes }}<textarea rows="3" value="{{ bk.f.notes }}" onChange="{{ bk.f.setNotes }}" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%;resize:vertical"></textarea></label>
+          </div>
+          <sc-if value="{{ bk.f.err }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#a8452f">{{ bkT.fillAll }}</span></sc-if>
+        </sc-if>
+
+        <sc-if value="{{ bk.s4 }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ bk.allowDeposit }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ bk.payModes }}" as="m" hint-placeholder-count="2">
+                <button onClick="{{ m.onClick }}" style="flex:1 1 180px;text-align:left;border:1px solid {{ m.border }};background:{{ m.bg }};border-radius:10px;padding:12px 14px;cursor:pointer;font-family:inherit;color:#15181e"><span style="display:block;font-weight:700">{{ m.label }}</span><span style="display:block;font-size:13px;color:#5e534d">{{ m.sub }}</span></button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.method }}</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ bk.methods }}" as="m" hint-placeholder-count="3">
+                <button onClick="{{ m.onClick }}" style="flex:1 1 120px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.fg }};border-radius:10px;padding:14px;cursor:pointer;font-weight:700;font-size:15px;font-family:inherit"><i class="{{ m.icon }}" style="font-size:20px"></i>{{ m.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ bk.isCard }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d;grid-column:1/-1">{{ bkT.cardNum }}<input inputmode="numeric" value="{{ bk.f.card }}" onChange="{{ bk.f.setCard }}" placeholder="4242 4242 4242 4242" autocomplete="cc-number" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%;letter-spacing:0.08em"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.exp }}<input inputmode="numeric" value="{{ bk.f.exp }}" onChange="{{ bk.f.setExp }}" placeholder="MM/AA" autocomplete="cc-exp" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">CVC<input inputmode="numeric" value="{{ bk.f.cvc }}" onChange="{{ bk.f.setCvc }}" placeholder="123" autocomplete="cc-csc" style="padding:12px 14px;border:1px solid #d8c9b9;border-radius:8px;background:#fffdfb;font-size:16px;font-family:inherit;color:#15181e;width:100%"></label>
+            </div>
+          </sc-if>
+          <sc-if value="{{ bk.isWallet }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#15181e;color:#faf4f1;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:13px;color:#c9bcb0">{{ bk.walletHelp }}</span>
+              <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:40px;color:#e2b03f">{{ bk.walletNumber }}</span>
+              <span style="font-size:13px;color:#c9bcb0">{{ bkT.walletNote }}</span>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ bk.s5 }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start;padding:12px 0">
+            <span style="width:64px;height:64px;border-radius:50%;background:{{ bk.doneBg }};color:#faf4f1;display:flex;align-items:center;justify-content:center;font-size:32px"><i class="{{ bk.doneIcon }}"></i></span>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:clamp(40px,5vw,64px)">{{ bk.doneTitle }}</span>
+            <p style="margin:0;font-size:17px;line-height:1.55;color:#3a3330;max-width:460px">{{ bk.doneSub }}</p>
+            <div style="border:1px dashed #15181e;border-radius:10px;padding:12px 18px"><span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5e534d">{{ bkT.code }}</span><div style="font-family:'Bricolage Grotesque',sans-serif;font-variation-settings:'wdth' 75;font-weight:800;text-transform:uppercase;line-height:0.9;font-size:36px;letter-spacing:0.04em">{{ bk.code }}</div></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button onClick="{{ bk.ics }}" style="display:flex;align-items:center;gap:8px;border:1px solid #15181e;background:none;color:#15181e;padding:13px 20px;border-radius:999px;font-weight:700;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:inherit"><i class="ti ti-calendar-plus"></i>{{ bkT.addCal }}</button>
+              <a href="{{ bk.waConfirm }}" target="_blank" rel="noreferrer" style="display:flex;align-items:center;gap:8px;background:#15181e;color:#faf4f1;padding:14px 20px;border-radius:999px;font-weight:700;font-size:13px;letter-spacing:0.08em;text-transform:uppercase"><i class="ti ti-brand-whatsapp"></i>{{ bkT.sendWa }}</a>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ bk.showFooter }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #15181e;padding:14px 0 calc(14px + env(safe-area-inset-bottom));margin-top:auto;position:sticky;bottom:0;background:#faf4f1;z-index:2">
+            <button onClick="{{ bk.back }}" style="border:0;background:none;font-weight:700;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;visibility:{{ bk.backVis }};display:flex;gap:6px;align-items:center;font-family:inherit;color:#15181e"><i class="ti ti-arrow-left"></i>{{ bkT.back }}</button>
+            <button onClick="{{ bk.next }}" style="display:flex;align-items:center;gap:8px;border:0;background:{{ bk.nextBg }};color:{{ bk.nextFg }};padding:16px 26px;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;opacity:{{ bk.nextOp }};font-family:inherit"><i class="{{ bk.nextIcon }}"></i>{{ bk.nextLabel }}</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ lbOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ lbClose }}" onTouchStart="{{ lbTs }}" onTouchEnd="{{ lbTe }}" style="position:fixed;inset:0;z-index:50;touch-action:pan-y;background:rgba(21,24,30,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:56px 16px">
+    <img loading="lazy" decoding="async" src="{{ lbSrc }}" alt="{{ lbAlt }}" style="max-width:min(100%,1400px);max-height:80vh;object-fit:contain;border-radius:2px">
+    <div style="color:#f1e6da;display:flex;gap:16px;align-items:baseline"><span style="font-family:'Instrument Serif',serif;font-style:italic;font-size:22px">{{ lbAlt }}</span><span style="font-size:13px;letter-spacing:0.1em;color:#8f847c">{{ lbCount }}</span></div>
+    <button onClick="{{ lbPrev }}" aria-label="Anterior" style="position:absolute;left:16px;top:50%;width:52px;height:52px;border-radius:50%;border:1px solid #f1e6da;background:none;color:#f1e6da;font-size:22px;cursor:pointer"><i class="ti ti-arrow-left"></i></button>
+    <button onClick="{{ lbNext }}" aria-label="Siguiente" style="position:absolute;right:16px;top:50%;width:52px;height:52px;border-radius:50%;border:1px solid #f1e6da;background:none;color:#f1e6da;font-size:22px;cursor:pointer"><i class="ti ti-arrow-right"></i></button>
+    <button onClick="{{ lbClose }}" aria-label="{{ ui.close }}" style="position:absolute;right:16px;top:16px;width:48px;height:48px;border-radius:50%;border:1px solid #f1e6da;background:none;color:#f1e6da;font-size:22px;cursor:pointer"><i class="ti ti-x"></i></button>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroVideo&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://raw.githubusercontent.com/p4ranoic0/new-evolushon-web/main/src/assets/Video-drone.mp4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;animaciones&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;idiomaInicial&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;es&quot;,&quot;en&quot;,&quot;fr&quot;,&quot;de&quot;],&quot;default&quot;:&quot;es&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { data: null, lang: 'es', page: localStorage.getItem('evo-v2-page') || 'home', filter: 'all', album: 'all', open: {}, lb: null, scrolled: false, w: window.innerWidth, menu: false, bk: null, bkMonth: 0 };
+
+  componentDidMount() {
+    const init = () => {
+      if (!window.EvoStore) return setTimeout(init, 40);
+      const q = new URLSearchParams(location.search);
+      const qp = q.get('p'), ql = q.get('lang');
+      this.setState(Object.assign({ data: window.EvoStore.load(), lang: (ql && window.EvoStore.LANGS.includes(ql)) ? ql : (localStorage.getItem('evo-site-lang') || this.props.idiomaInicial || 'es') },
+        ['home', 'services', 'gallery', 'contact'].includes(qp) ? { page: qp } : {}), () => this.applySeo());
+      this.unsub = window.EvoStore.subscribe(d => this.setState({ data: d }));
+    };
+    init();
+    this.onKey = e => {
+      if (e.key === 'Escape' && this.state.bk && !this.state.lb) return this.setState({ bk: null });
+      if (!this.state.lb) return;
+      if (e.key === 'Escape') this.setState({ lb: null });
+      if (e.key === 'ArrowRight') this.step(1);
+      if (e.key === 'ArrowLeft') this.step(-1);
+    };
+    this.onScroll = () => { const s = window.scrollY > 40; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onResize);
+    if ('IntersectionObserver' in window) {
+      this.io = new IntersectionObserver(entries => entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const el = en.target; this.io.unobserve(el);
+        el.animate([{ opacity: 0, transform: 'translateY(48px)' }, { opacity: 1, transform: 'none' }], { duration: 1000, easing: 'cubic-bezier(.22,.61,.36,1)' });
+        el.style.opacity = '1';
+      }), { threshold: 0.12 });
+    }
+    setTimeout(() => this.wire(), 60);
+  }
+  applySeo() {
+    const S = window.EvoStore; const d = this.state.data; if (!S || !d) return;
+    const { lang, page } = this.state;
+    const set = d.settings || {};
+    const domain = (set.domain || 'https://evolushonsurfexperience.com').replace(/\/$/, '');
+    const slugs = { home: '', services: { es: 'servicios', en: 'services', fr: 'services', de: 'angebote' }, gallery: { es: 'galeria', en: 'gallery', fr: 'galerie', de: 'galerie' }, contact: { es: 'contacto', en: 'contact', fr: 'contact', de: 'kontakt' } };
+    const pathFor = (l) => '/' + l + '/' + (page === 'home' ? '' : slugs[page][l]);
+    const D = {
+      home: { es: ['Clases de surf en Lima | Evolushon Surf Experience', 'Escuela de surf en Lima: clases grupales, privadas, coaching y tándem para niños, surfskate y surftrips a Punta Hermosa, Puerto Viejo y Bermejo. Clases en español, inglés, francés y alemán.'],
+        en: ['Surf lessons in Lima, Peru | Evolushon Surf Experience', 'Surf school in Lima: group, private, coaching and kids tandem lessons, surfskate and surftrips to Punta Hermosa, Puerto Viejo and Bermejo. Lessons in English, Spanish, French and German.'],
+        fr: ['Cours de surf à Lima, Pérou | Evolushon Surf Experience', 'École de surf à Lima : cours collectifs, privés, coaching et tandem enfants, surfskate et surftrips. Cours en français, anglais, espagnol et allemand.'],
+        de: ['Surfkurse in Lima, Peru | Evolushon Surf Experience', 'Surfschule in Lima: Gruppen-, Privat-, Coaching- und Kinder-Tandemkurse, Surfskate und Surftrips. Kurse auf Deutsch, Englisch, Spanisch und Französisch.'] },
+      services: { es: ['Clases de surf, surfskate y surftrips: precios | Evolushon', 'Tarifas de clases de surf en Lima desde S/ 120, surfskate desde S/ 80 y surftrips desde $60. Paquetes de 4, 8 y 12 clases.'],
+        en: ['Surf lessons, surfskate and surftrips: prices | Evolushon', 'Surf lesson rates in Lima from S/ 120, surfskate from S/ 80 and surftrips from $60. Packages of 4, 8 and 12 lessons.'],
+        fr: ['Cours de surf, surfskate et surftrips : tarifs | Evolushon', 'Tarifs des cours de surf à Lima dès S/ 120, surfskate dès S/ 80 et surftrips dès 60 $.'],
+        de: ['Surfkurse, Surfskate und Surftrips: Preise | Evolushon', 'Preise für Surfkurse in Lima ab S/ 120, Surfskate ab S/ 80 und Surftrips ab 60 $.'] },
+      gallery: { es: ['Galería de surf en Lima | Evolushon', 'Fotos de nuestras sesiones de surf, clases de surfskate y surftrips por la costa peruana.'],
+        en: ['Surf gallery, Lima | Evolushon', 'Photos from our surf sessions, surfskate lessons and surftrips along the Peruvian coast.'],
+        fr: ['Galerie surf, Lima | Evolushon', 'Photos de nos sessions de surf, cours de surfskate et surftrips sur la côte péruvienne.'],
+        de: ['Surf-Galerie, Lima | Evolushon', 'Fotos unserer Surf-Sessions, Surfskate-Kurse und Surftrips an der peruanischen Küste.'] },
+      contact: { es: ['Reserva tu clase de surf por WhatsApp | Evolushon', 'Reserva clases de surf y surfskate en la Costa Verde y el Sur Chico de Lima por WhatsApp.'],
+        en: ['Book your surf lesson on WhatsApp | Evolushon', 'Book surf and surfskate lessons on Lima’s Costa Verde and Sur Chico via WhatsApp.'],
+        fr: ['Réservez votre cours de surf sur WhatsApp | Evolushon', 'Réservez vos cours de surf et de surfskate à Lima via WhatsApp.'],
+        de: ['Surfkurs per WhatsApp buchen | Evolushon', 'Surf- und Surfskate-Kurse in Lima per WhatsApp buchen.'] }
+    };
+    const ov = ((set.seo || {})[page] || {})[lang] || {};
+    const [title, desc] = [ov.title || D[page][lang][0], ov.desc || D[page][lang][1]];
+    const ogImg = domain + '/og-image.jpg';
+    const head = document.head;
+    const meta = (attr, key, val) => { let m = head.querySelector('meta[' + attr + '="' + key + '"]'); if (!m) { m = document.createElement('meta'); m.setAttribute(attr, key); head.appendChild(m); } m.setAttribute('content', val); };
+    const link = (rel, href, hl) => { const sel = 'link[rel="' + rel + '"]' + (hl ? '[hreflang="' + hl + '"]' : ''); let l = head.querySelector(sel); if (!l) { l = document.createElement('link'); l.rel = rel; if (hl) l.hreflang = hl; head.appendChild(l); } l.href = href; };
+    document.documentElement.lang = lang;
+    document.title = title;
+    meta('name', 'description', desc);
+    meta('property', 'og:title', title); meta('property', 'og:description', desc); meta('property', 'og:type', 'website');
+    meta('property', 'og:image', ogImg); meta('property', 'og:url', domain + pathFor(lang)); meta('property', 'og:locale', { es: 'es_PE', en: 'en_US', fr: 'fr_FR', de: 'de_DE' }[lang]);
+    meta('name', 'twitter:card', 'summary_large_image');
+    link('canonical', domain + pathFor(lang));
+    S.LANGS.forEach(l => link('alternate', domain + pathFor(l), l)); link('alternate', domain + pathFor('es'), 'x-default');
+    const cur = { 'S/': 'PEN', '$': 'USD' };
+    const ld = {
+      '@context': 'https://schema.org', '@type': ['LocalBusiness', 'SportsActivityLocation'], '@id': domain + '/#business',
+      name: 'Evolushon Surf Experience', url: domain, logo: domain + '/logo.png', image: ogImg, description: D.home[lang][1],
+      address: { '@type': 'PostalAddress', addressLocality: 'Lima', addressCountry: 'PE' },
+      areaServed: ['Costa Verde, Lima', 'Sur Chico, Lima', 'Punta Hermosa', 'San Bartolo', 'Puerto Viejo', 'Bermejo'],
+      knowsLanguage: ['es', 'en', 'fr', 'de'], sameAs: [set.instagram, set.tiktok].filter(Boolean),
+      telephone: set.whatsapp ? '+' + set.whatsapp.replace(/\D/g, '') : undefined,
+      makesOffer: d.services.filter(s => s.active).map(s => {
+        const o = { '@type': 'Offer', name: S.tr(s.name, lang), description: S.tr((s.seo || {}).desc, lang) || S.tr(s.desc, lang), url: domain + '/' + lang + '/' + slugs.services[lang] + '/' + ((s.seo || {}).slug || s.id),
+          itemOffered: s.cat === 'trip' ? { '@type': 'TouristTrip', name: S.tr(s.name, lang), touristType: 'Surf' } : { '@type': 'Service', name: S.tr(s.name, lang), serviceType: s.cat === 'surf' ? 'Surf lessons' : 'Surfskate lessons' } };
+        if (s.price != null) { o.price = String(s.price); o.priceCurrency = cur[s.currency] || 'PEN'; }
+        return o;
+      })
+    };
+    let sc = document.getElementById('evo-ld'); if (!sc) { sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.id = 'evo-ld'; head.appendChild(sc); }
+    sc.textContent = JSON.stringify(ld);
+    try { const u = new URL(location.href); u.searchParams.set('p', page); u.searchParams.set('lang', lang); history.replaceState(null, '', u); } catch (e) {}
+  }
+  componentDidUpdate() {
+    const p = this._prev || {}; const s = this.state;
+    if (s.data && (p.page !== s.page || p.lang !== s.lang || p.data !== s.data)) this.applySeo();
+    if (p.page !== s.page || p.filter !== s.filter || p.album !== s.album || !p.data) setTimeout(() => this.wire(), 30);
+    this._prev = { page: s.page, lang: s.lang, data: s.data, filter: s.filter, album: s.album };
+  }
+  componentWillUnmount() {
+    this.unsub && this.unsub(); this.io && this.io.disconnect(); this.mq && this.mq.cancel();
+    window.removeEventListener('keydown', this.onKey); window.removeEventListener('scroll', this.onScroll); window.removeEventListener('resize', this.onResize);
+  }
+  wire() {
+    const anim = this.props.animaciones !== false;
+    document.querySelectorAll('[data-reveal]:not([data-wired])').forEach(el => {
+      el.setAttribute('data-wired', '');
+      if (anim && this.io) { el.style.opacity = '0'; this.io.observe(el); }
+    });
+    document.querySelectorAll('[data-split]:not([data-wired])').forEach(el => {
+      el.setAttribute('data-wired', '');
+      if (!anim) return;
+      el.animate([{ clipPath: 'inset(0 0 100% 0)', transform: 'translateY(30%)' }, { clipPath: 'inset(0 0 0 0)', transform: 'none' }], { duration: 1100, easing: 'cubic-bezier(.22,.61,.36,1)', delay: 150, fill: 'backwards' });
+    });
+    const mq = document.querySelector('[data-marquee]:not([data-wired])');
+    if (mq) {
+      mq.setAttribute('data-wired', '');
+      this.mq && this.mq.cancel();
+      if (anim) this.mq = mq.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: 28000, iterations: Infinity });
+    }
+  }
+
+  bkCfg() { const b = ((this.state.data || {}).settings || {}).booking || {}; return Object.assign({ slots: { surf: ['07:00', '09:00', '11:00', '15:00'], surfskate: ['10:00', '16:00'] }, capacity: { surf: 6, surfskate: 6, trip: 12 }, tripDays: [6, 0], closedDays: [], blocked: [], deposit: 50, lead: 1, maxDays: 60, methods: { card: true, yape: true, plin: true }, yape: '', plin: '' }, b); }
+  bookings() { try { return JSON.parse(localStorage.getItem('evolushon-bookings-v1') || '[]'); } catch (e) { return []; } }
+  openBk(sid, opt) { this.setState({ bk: { sid, opt: opt || 'single', persons: 1, date: '', time: '', step: 1, name: '', email: '', phone: '', level: 'beginner', classLang: this.state.lang, notes: '', method: '', payFull: false, card: '', exp: '', cvc: '', err: false, processing: false, code: '', status: '' }, bkMonth: 0, menu: false }); }
+  bkSet(p) { this.setState(s => ({ bk: Object.assign({}, s.bk, p) })); }
+  go(page, extra) { localStorage.setItem('evo-v2-page', page); this.setState(Object.assign({ page, menu: false }, extra || {})); window.scrollTo(0, 0); }
+  step(d) { this.setState(s => { const n = s.lb.list.length; return { lb: Object.assign({}, s.lb, { i: (s.lb.i + d + n) % n }) }; }); }
+  openLb(list, i) { this.setState({ lb: { list, i } }); }
+
+  renderVals() {
+    const S = window.EvoStore;
+    const { lang, page, filter, album, open, lb, scrolled, w, menu } = this.state;
+    const data = this.state.data || { services: [], gallery: [], settings: {} };
+    const ui = Object.assign({}, S ? S.UI[lang] : {});
+    Object.keys(data.home || {}).forEach(k => { const f = data.home[k]; if (f && (f[lang] || f.es)) ui[k] = f[lang] || f.es; });
+    const tr = (f) => S ? S.tr(f, lang) : '';
+    const tdy = new Date().toISOString().slice(0, 10);
+    const offerOn = (s) => { const o = s.offer || {}; return !!(o.on && o.price != null && o.price !== '' && (!o.from || o.from <= tdy) && (!o.to || tdy <= o.to)); };
+    const money = (c, n) => S ? S.money(c, n) : '';
+    const wa = (t) => S ? S.waUrl(data.settings || {}, t) : '#';
+    const services = data.services.filter(s => s.active);
+    const visible = data.gallery.filter(g => !g.hidden);
+    const catName = { surf: ui.surf, surfskate: ui.surfskate, trip: ui.trip };
+    const pad = (n) => String(n).padStart(2, '0');
+    const overDark = !scrolled && !menu;
+    const solid = scrolled;
+
+    const navItems = [['home', ui.home], ['services', ui.services], ['gallery', ui.gallery], ['contact', ui.contact]].map(([k, l]) => ({
+      label: l, onClick: () => this.go(k), opacity: page === k ? 1 : 0.6, menuColor: page === k ? '#e2b03f' : '#faf4f1'
+    }));
+    const langs = (S ? S.LANGS : []).map(c => ({ code: c.toUpperCase(), opacity: c === lang ? 1 : 0.55, deco: c === lang ? 'underline' : 'none',
+      menuBg: c === lang ? '#faf4f1' : 'transparent', menuFg: c === lang ? '#15181e' : '#faf4f1',
+      onClick: () => { localStorage.setItem('evo-site-lang', c); this.setState({ lang: c }); } }));
+
+    const minPrice = (list) => { const p = list.filter(s => s.price != null); if (!p.length) return null; const m = p.reduce((a, b) => (+a.price <= +b.price ? a : b)); return money(m.currency, m.price); };
+    const covers = { surf: 'src/assets/galeria-sesion-16.jpg', surfskate: 'src/assets/class-surfskate-3.jpg', trip: 'src/assets/surftrip-chicama.jpg' };
+    const catBlocks = ['surf', 'surfskate', 'trip'].map((c, i) => {
+      const list = services.filter(s => s.cat === c); const mp = minPrice(list);
+      return { num: pad(i + 1), label: catName[c], img: covers[c], from: mp ? ui.from + ' ' + mp : '', list: list.map(s => tr(s.name)).join(' · '), onClick: () => this.go('services', { filter: c }) };
+    });
+    const featList = visible.filter(g => g.featured);
+    const featured = featList.map((g, i) => ({ src: g.src, alt: tr(g.alt), pos: g.focus || '50% 50%', onClick: () => this.openLb(featList, i) }));
+    const words = [ui.surf, ui.surfskate, ui.trip, 'Lima', 'ES · EN · FR · DE'];
+    const marquee = words.concat(words, words, words).map(word => ({ word }));
+
+    const filters = [['all', ui.all]].concat(['surf', 'surfskate', 'trip'].map(c => [c, catName[c]])).map(([k, l]) => ({
+      label: l, count: k === 'all' ? services.length : services.filter(s => s.cat === k).length,
+      bg: filter === k ? '#faf4f1' : 'transparent', fg: filter === k ? '#15181e' : '#faf4f1', onClick: () => this.setState({ filter: k })
+    }));
+    const cards = services.map((s, idx) => {
+      const isTrip = s.cat === 'trip';
+      const lists = [
+        { title: ui.includes, items: tr(s.includes), icon: 'ti ti-check', color: '#2f7d5b' },
+        { title: ui.excludes, items: tr(s.excludes), icon: 'ti ti-x', color: '#a8452f' },
+        { title: ui.bring, items: tr(s.bring), icon: 'ti ti-backpack', color: '#1f5f8b' }
+      ].map(l => Object.assign(l, { items: (l.items || []).filter(x => x && x.trim()) })).filter(l => l.items.length);
+      const isOpen = !!open[s.id];
+      return {
+        id: s.id, num: pad(idx + 1), dir: idx % 2 ? 'row-reverse' : 'row',
+        name: tr(s.name), desc: tr(s.desc), cover: s.cover, catLabel: catName[s.cat], isTrip,
+        distance: tr(s.distance), duration: tr(s.duration), minText: (s.minPeople || 1) + ' min.',
+        depart: s.depart, ret: s.ret,
+        priceText: money(s.currency, offerOn(s) ? s.offer.price : s.price) || ui.consult, coverPos: s.coverFocus || '50% 50%',
+        hasOffer: offerOn(s), oldPrice: money(s.currency, s.price), offerLabel: offerOn(s) ? (tr(s.offer.label) || 'Oferta') : '',
+        unitText: s.price == null ? '' : (isTrip ? ui.perPerson : ui.perClass),
+        hasPackages: (s.packages || []).length > 0,
+        packages: (s.packages || []).map(p => ({ label: p.n + ' ' + ui.classes, price: money(s.currency, p.price) })),
+        lists, hasDetails: lists.length > 0 || isTrip, open: isOpen,
+        toggleLabel: isOpen ? ui.hide : ui.details, toggleIcon: isOpen ? 'ti ti-minus' : 'ti ti-plus',
+        toggle: () => this.setState(st => ({ open: Object.assign({}, st.open, { [s.id]: !st.open[s.id] }) })),
+        wa: wa(ui.waMsg + tr(s.name)), canBook: s.price != null, book: () => this.openBk(s.id, 'single'), waLabel: s.price == null ? ui.bookThis : 'WhatsApp'
+      };
+    });
+
+    const shownSvc = services.filter(s => filter === 'all' || s.cat === filter);
+    const cardsShown = cards.filter(c => shownSvc.some(s => s.id === c.id)).map((c, i) => Object.assign({}, c, {
+      dir: i % 2 ? 'row-reverse' : 'row',
+      doodle: (() => { const s = services.find(x => x.id === c.id); const m = { surf: ['wave', 'fin', 'waves', 'shell'], surfskate: ['skate', 'wheel', 'swirl'], trip: ['palm', 'tent', 'mountains', 'gull'] }[s.cat] || ['wave']; return m[i % m.length]; })(),
+      doodleColor: ['#308dc9', '#e2b03f', '#15181e'][i % 3],
+      packages: (services.find(s => s.id === c.id).packages || []).map(p => { const s = services.find(x => x.id === c.id); return { book: () => this.openBk(s.id, p.n), label: p.n + ' ' + ui.classes, price: money(s.currency, p.price), wa: wa(ui.waMsg + tr(s.name) + ' (' + p.n + ' ' + ui.classes + ')') }; })
+    }));
+    const activeSvc = shownSvc.find(s => s.id === this.state.hover) || shownSvc[0];
+    const svcGroups = ['surf', 'surfskate', 'trip'].filter(c => filter === 'all' || filter === c).map((c, gi) => {
+      const list = services.filter(s => s.cat === c); const mp = minPrice(list);
+      return {
+        num: pad(['surf', 'surfskate', 'trip'].indexOf(c) + 1), label: catName[c], from: mp ? ui.from + ' ' + mp : '',
+        rows: list.map(s => {
+          const base = cards.find(x => x.id === s.id);
+          const isA = activeSvc && activeSvc.id === s.id;
+          return Object.assign({}, base, {
+            meta: (base.open && s.cat !== 'trip') ? '' : s.cat === 'trip' ? [tr(s.distance), tr(s.duration)].filter(Boolean).join(' · ') : (tr(s.desc) || '').split('. ')[0].slice(0, 90),
+            minPeople: s.minPeople || 1,
+            line: isA ? '#15181e' : '#e2d5c7', bg: base.open ? '#f1e6da' : (isA ? '#f6eee5' : 'transparent'),
+            iconBg: base.open ? '#15181e' : 'transparent', iconFg: base.open ? '#faf4f1' : '#15181e',
+            lists: base.lists.map(l => Object.assign({}, l, { joined: l.items.join(' · ') })),
+            packages: (s.packages || []).map(p => ({ label: p.n + ' ' + ui.classes, price: money(s.currency, p.price), wa: wa(ui.waMsg + tr(s.name) + ' (' + p.n + ' ' + ui.classes + ')') })),
+            onEnter: () => { if (this.state.hover !== s.id) this.setState({ hover: s.id }); }
+          });
+        })
+      };
+    }).filter(g => g.rows.length);
+    const albumDefs = data.albums || (S ? S.ALBUMS : []).map(a => ({ id: a, name: { es: ui[a] || a } }));
+    const albumChips = [['all', ui.all]].concat(albumDefs.map(a => [a.id, tr(a.name) || a.id])).map(([k, l]) => ({
+      label: l, count: k === 'all' ? visible.length : visible.filter(g => g.album === k).length,
+      bg: album === k ? '#faf4f1' : 'transparent', fg: album === k ? '#15181e' : '#faf4f1', onClick: () => this.setState({ album: k })
+    }));
+    const photoList = visible.filter(g => album === 'all' || g.album === album);
+    const pattern = [['span 2', 'span 2'], ['span 1', 'span 1'], ['span 1', 'span 2'], ['span 1', 'span 1'], ['span 2', 'span 1'], ['span 1', 'span 1'], ['span 1', 'span 1'], ['span 1', 'span 2']];
+    const photos = photoList.map((g, i) => { const pt = pattern[i % pattern.length]; return { src: g.src, alt: tr(g.alt), pos: g.focus || '50% 50%', col: pt[0], row: pt[1], onClick: () => this.openLb(photoList, i) }; });
+
+    const BKT = {
+      es: { reserve: 'Reservar y pagar', steps: ['Opción', 'Fecha', 'Datos', 'Pago'], option: 'Elige una opción', single: 'Clase suelta', singleTrip: 'Cupo en el trip', pack: 'Paquete de {n} clases', packSub: '{x} por clase · la primera clase en la fecha que elijas', persons: 'Personas', total: 'Total', time: 'Elige el horario', depart: 'Salida desde Lima', left: '{n} cupos', full: 'Lleno', noSlots: 'Elige un día disponible para ver horarios.', calNote: 'Reserva con al menos {n} día de anticipación.', tripNote: 'Los trips salen los días marcados.', name: 'Nombre completo', email: 'Correo', phone: 'WhatsApp', level: 'Nivel', levels: ['Principiante', 'Intermedio', 'Avanzado'], classLang: 'Idioma de la clase', notes: 'Comentarios (opcional)', fillAll: 'Completa nombre, correo y WhatsApp.', method: 'Método de pago', card: 'Tarjeta', cardNum: 'Número de tarjeta', exp: 'Vencimiento', deposit: 'Adelanto {p}%', depositSub: 'Pagas {x} ahora y el resto el día de la clase', fullPay: 'Pago total', fullSub: 'Pagas {x} ahora', due: 'A pagar ahora', walletHelp: 'Envía {x} por {m} a este número:', walletNote: 'Luego toca «Ya pagué». Confirmamos tu reserva por WhatsApp al verificar el pago.', pay: 'Pagar {x}', paid: 'Ya pagué', processing: 'Procesando…', back: 'Atrás', next: 'Continuar', doneTitle: 'Reserva confirmada', doneSub: 'Te esperamos el {d} a las {t}. Te escribiremos por WhatsApp con la playa del día según las condiciones del mar.', pendTitle: 'Reserva recibida', pendSub: 'Verificaremos tu pago y te confirmaremos por WhatsApp. Tu cupo queda separado.', code: 'Código de reserva', addCal: 'Añadir al calendario', sendWa: 'Enviar por WhatsApp', demo: 'Modo demostración: no se realiza ningún cobro real.', personsNote: 'Precio por persona', minTrip: 'El trip sale con mínimo {n} personas', option2: 'Opción', date: 'Fecha', hour: 'Hora', reviewsTitle: 'Lo que dicen en Google', seeAll: 'Ver en Google Maps', write: 'Dejar una reseña', basedOn: '{n} reseñas en Google' },
+      en: { reserve: 'Book and pay', steps: ['Option', 'Date', 'Details', 'Payment'], option: 'Choose an option', single: 'Single lesson', singleTrip: 'Trip seat', pack: '{n}-lesson package', packSub: '{x} per lesson · first lesson on the date you choose', persons: 'People', total: 'Total', time: 'Choose a time', depart: 'Departure from Lima', left: '{n} spots', full: 'Full', noSlots: 'Pick an available day to see times.', calNote: 'Book at least {n} day in advance.', tripNote: 'Trips depart on the highlighted days.', name: 'Full name', email: 'Email', phone: 'WhatsApp', level: 'Level', levels: ['Beginner', 'Intermediate', 'Advanced'], classLang: 'Lesson language', notes: 'Comments (optional)', fillAll: 'Please fill in name, email and WhatsApp.', method: 'Payment method', card: 'Card', cardNum: 'Card number', exp: 'Expiry', deposit: '{p}% deposit', depositSub: 'Pay {x} now, the rest on the day', fullPay: 'Full payment', fullSub: 'Pay {x} now', due: 'Due now', walletHelp: 'Send {x} via {m} to this number:', walletNote: 'Then tap “I have paid”. We confirm on WhatsApp once the payment is verified.', pay: 'Pay {x}', paid: 'I have paid', processing: 'Processing…', back: 'Back', next: 'Continue', doneTitle: 'Booking confirmed', doneSub: 'See you on {d} at {t}. We will message you on WhatsApp with the beach of the day, based on sea conditions.', pendTitle: 'Booking received', pendSub: 'We will verify your payment and confirm on WhatsApp. Your spot is held.', code: 'Booking code', addCal: 'Add to calendar', sendWa: 'Send via WhatsApp', demo: 'Demo mode: no real charge is made.', personsNote: 'Price per person', minTrip: 'The trip runs with at least {n} people', option2: 'Option', date: 'Date', hour: 'Time', reviewsTitle: 'What people say on Google', seeAll: 'See on Google Maps', write: 'Write a review', basedOn: '{n} Google reviews' },
+      fr: { reserve: 'Réserver et payer', steps: ['Option', 'Date', 'Infos', 'Paiement'], option: 'Choisissez une option', single: 'Cours à l’unité', singleTrip: 'Place sur le trip', pack: 'Forfait {n} cours', packSub: '{x} par cours · premier cours à la date choisie', persons: 'Personnes', total: 'Total', time: 'Choisissez l’horaire', depart: 'Départ de Lima', left: '{n} places', full: 'Complet', noSlots: 'Choisissez un jour disponible.', calNote: 'Réservez au moins {n} jour à l’avance.', tripNote: 'Les trips partent les jours indiqués.', name: 'Nom complet', email: 'E-mail', phone: 'WhatsApp', level: 'Niveau', levels: ['Débutant', 'Intermédiaire', 'Avancé'], classLang: 'Langue du cours', notes: 'Commentaires (facultatif)', fillAll: 'Indiquez nom, e-mail et WhatsApp.', method: 'Moyen de paiement', card: 'Carte', cardNum: 'Numéro de carte', exp: 'Expiration', deposit: 'Acompte {p} %', depositSub: '{x} maintenant, le reste le jour du cours', fullPay: 'Paiement total', fullSub: '{x} maintenant', due: 'À payer', walletHelp: 'Envoyez {x} via {m} à ce numéro :', walletNote: 'Puis touchez « J’ai payé ». Confirmation sur WhatsApp après vérification.', pay: 'Payer {x}', paid: 'J’ai payé', processing: 'Traitement…', back: 'Retour', next: 'Continuer', doneTitle: 'Réservation confirmée', doneSub: 'À bientôt le {d} à {t}. Nous vous indiquerons la plage du jour sur WhatsApp.', pendTitle: 'Réservation reçue', pendSub: 'Nous vérifions votre paiement et confirmons sur WhatsApp.', code: 'Code de réservation', addCal: 'Ajouter au calendrier', sendWa: 'Envoyer par WhatsApp', demo: 'Mode démo : aucun paiement réel.', personsNote: 'Prix par personne', minTrip: 'Départ avec au moins {n} personnes', option2: 'Option', date: 'Date', hour: 'Heure', reviewsTitle: 'Ils en parlent sur Google', seeAll: 'Voir sur Google Maps', write: 'Laisser un avis', basedOn: '{n} avis Google' },
+      de: { reserve: 'Buchen und zahlen', steps: ['Option', 'Datum', 'Daten', 'Zahlung'], option: 'Option wählen', single: 'Einzelstunde', singleTrip: 'Platz im Trip', pack: '{n}er-Paket', packSub: '{x} pro Stunde · erste Stunde am gewählten Datum', persons: 'Personen', total: 'Gesamt', time: 'Uhrzeit wählen', depart: 'Abfahrt in Lima', left: '{n} Plätze', full: 'Voll', noSlots: 'Wähle einen freien Tag.', calNote: 'Mindestens {n} Tag im Voraus buchen.', tripNote: 'Trips starten an den markierten Tagen.', name: 'Vollständiger Name', email: 'E-Mail', phone: 'WhatsApp', level: 'Niveau', levels: ['Anfänger', 'Mittel', 'Fortgeschritten'], classLang: 'Kurssprache', notes: 'Kommentar (optional)', fillAll: 'Bitte Name, E-Mail und WhatsApp angeben.', method: 'Zahlungsart', card: 'Karte', cardNum: 'Kartennummer', exp: 'Ablauf', deposit: '{p} % Anzahlung', depositSub: '{x} jetzt, Rest am Kurstag', fullPay: 'Vollzahlung', fullSub: '{x} jetzt', due: 'Jetzt fällig', walletHelp: 'Sende {x} per {m} an diese Nummer:', walletNote: 'Dann „Ich habe bezahlt“ tippen. Bestätigung per WhatsApp nach Prüfung.', pay: '{x} bezahlen', paid: 'Ich habe bezahlt', processing: 'Wird verarbeitet…', back: 'Zurück', next: 'Weiter', doneTitle: 'Buchung bestätigt', doneSub: 'Bis {d} um {t}. Wir schicken dir per WhatsApp den Strand des Tages.', pendTitle: 'Buchung erhalten', pendSub: 'Wir prüfen die Zahlung und bestätigen per WhatsApp.', code: 'Buchungscode', addCal: 'Zum Kalender', sendWa: 'Per WhatsApp senden', demo: 'Demo-Modus: keine echte Abbuchung.', personsNote: 'Preis pro Person', minTrip: 'Der Trip findet ab {n} Personen statt', option2: 'Option', date: 'Datum', hour: 'Uhrzeit', reviewsTitle: 'Was man auf Google sagt', seeAll: 'Auf Google Maps ansehen', write: 'Bewertung schreiben', basedOn: '{n} Google-Bewertungen' }
+    };
+    const bkT = BKT[lang] || BKT.es;
+    const fmt = (s, o) => String(s).replace(/\{(\w+)\}/g, (m, k) => (o[k] !== undefined ? o[k] : m));
+    const set = data.settings || {};
+    const rset = set.reviews || {};
+    const samples = [
+      { id: 'r1', author: 'Camila R.', rating: 5, date: '2026-09', sample: true, text: { es: 'Primera vez sobre una tabla y me paré en la segunda ola. El instructor tuvo una paciencia increíble.', en: 'First time on a board and I stood up on the second wave. The instructor was incredibly patient.' } },
+      { id: 'r2', author: 'Thomas B.', rating: 5, date: '2026-08', sample: true, text: { es: 'Clase privada en inglés: eligieron la playa perfecta para mi nivel y me grabaron para corregir la técnica.', en: 'Private lesson in English: they picked the perfect beach for my level and filmed me to fix my technique.' } },
+      { id: 'r3', author: 'Lucía M.', rating: 5, date: '2026-07', sample: true, text: { es: 'El surftrip a Bermejo fue increíble. Todo organizado, solo nos preocupamos por surfear.', en: 'The Bermejo surftrip was amazing. Everything organised, we only had to surf.' } }
+    ];
+    const revs = (data.reviews || samples).filter(r => !r.hidden);
+    const starsOf = (n) => [1, 2, 3, 4, 5].map(i => ({ icon: i <= Math.round(n) ? 'ti ti-star-filled' : 'ti ti-star' }));
+    const rv = {
+      hasRating: !!rset.rating, rating: rset.rating ? String(rset.rating).replace('.', ',') : '', stars: starsOf(rset.rating || 0), countText: rset.count ? fmt(bkT.basedOn, { n: rset.count }) : '',
+      placeUrl: rset.placeUrl || 'https://www.google.com/maps/search/Evolushon+Surf+Experience', writeUrl: rset.writeUrl || rset.placeUrl || 'https://www.google.com/maps/search/Evolushon+Surf+Experience',
+      items: revs.map(r => ({ author: r.author, initial: (r.author || '?')[0], text: tr(r.text), date: r.date ? new Date(r.date + (r.date.length === 7 ? '-01T12:00:00' : 'T12:00:00')).toLocaleDateString(lang, { month: 'long', year: 'numeric' }) : '', sample: !!r.sample, stars: starsOf(r.rating || 5) }))
+    };
+
+    const bkS = this.state.bk; let bkV = {};
+    const cfg = this.bkCfg();
+    if (bkS) {
+      const s = data.services.find(x => x.id === bkS.sid) || {};
+      const isTrip = s.cat === 'trip';
+      const unitSingle = offerOn(s) ? s.offer.price : s.price;
+      const pk = (s.packages || []).find(p => p.n === bkS.opt);
+      const unit = bkS.opt === 'single' ? unitSingle : (pk ? pk.price : unitSingle);
+      const subtotal = (+unit || 0) * bkS.persons;
+      const due = bkS.payFull || !cfg.deposit ? subtotal : Math.round(subtotal * cfg.deposit / 100);
+      const m = (n) => money(s.currency, n);
+      const tdate = new Date(); tdate.setHours(0, 0, 0, 0);
+      const iso = (dt) => dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      const minD = new Date(tdate); minD.setDate(minD.getDate() + (cfg.lead || 0)); const maxD = new Date(tdate); maxD.setDate(maxD.getDate() + (cfg.maxDays || 60));
+      const mStart = new Date(tdate.getFullYear(), tdate.getMonth() + this.state.bkMonth, 1);
+      const offset = (mStart.getDay() + 6) % 7; const dim = new Date(mStart.getFullYear(), mStart.getMonth() + 1, 0).getDate();
+      const all = this.bookings().filter(b => b.status !== 'cancelada');
+      const used = (date, time) => all.filter(b => b.date === date && b.time === time && b.cat === s.cat).reduce((a, b) => a + (+b.persons || 1), 0);
+      const slotsFor = (date) => (isTrip ? [s.depart || '07:00 AM'] : ((cfg.slots || {})[s.cat] || []));
+      const cap = (cfg.capacity || {})[s.cat] || 6;
+      const dayOk = (dt) => { const k = iso(dt); const wd = dt.getDay(); if (dt < minD || dt > maxD) return false; if ((cfg.blocked || []).includes(k)) return false; if ((cfg.closedDays || []).includes(wd)) return false; if (isTrip && !(cfg.tripDays || []).includes(wd)) return false; return slotsFor(k).some(t => cap - used(k, t) >= bkS.persons); };
+      const days = [];
+      for (let i = 0; i < offset; i++) days.push({ label: '', vis: 'hidden', onClick: () => {}, bg: 'transparent', fg: '#15181e', border: 'transparent', cursor: 'default', op: 1 });
+      for (let dd = 1; dd <= dim; dd++) { const dt = new Date(mStart.getFullYear(), mStart.getMonth(), dd); const k = iso(dt); const ok = dayOk(dt); const sel = bkS.date === k;
+        days.push({ label: dd, vis: 'visible', onClick: () => { if (ok) this.bkSet({ date: k, time: '' }); }, bg: sel ? '#15181e' : ok ? '#fffdfb' : 'transparent', fg: sel ? '#faf4f1' : '#15181e', border: sel ? '#15181e' : ok ? '#d8c9b9' : 'transparent', cursor: ok ? 'pointer' : 'default', op: ok ? 1 : 0.3 }); }
+      const slots = bkS.date ? slotsFor(bkS.date).map(t => { const left = cap - used(bkS.date, t); const ok = left >= bkS.persons; const sel = bkS.time === t;
+        return { time: t, left: ok ? fmt(bkT.left, { n: left }) : bkT.full, onClick: () => { if (ok) this.bkSet({ time: t }); }, bg: sel ? '#15181e' : '#fffdfb', fg: sel ? '#faf4f1' : '#15181e', border: sel ? '#15181e' : '#d8c9b9', cursor: ok ? 'pointer' : 'default', op: ok ? 1 : 0.4 }; }) : [];
+      const step = bkS.step;
+      const f = bkS;
+      const emailOk = /.+@.+\..+/.test(f.email); const phoneOk = (f.phone || '').replace(/\D/g, '').length >= 7;
+      const cardOk = (f.card || '').replace(/\D/g, '').length >= 15 && /^\d\d\/\d\d$/.test(f.exp || '') && /^\d{3,4}$/.test(f.cvc || '');
+      const valid = { 1: subtotal > 0, 2: !!(f.date && f.time), 3: !!(f.name.trim() && emailOk && phoneOk), 4: !!f.method && (f.method !== 'card' || cardOk) }[step];
+      const methodsCfg = cfg.methods || {};
+      const methodDefs = [['card', bkT.card, 'ti ti-credit-card'], ['yape', 'Yape', 'ti ti-device-mobile-dollar'], ['plin', 'Plin', 'ti ti-device-mobile-dollar']].filter(x => methodsCfg[x[0]] !== false);
+      const dateLabel = f.date ? new Date(f.date + 'T12:00:00').toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' }) : '—';
+      const finish = (status) => {
+        const code = 'EVO-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+        const b = { code, sid: s.id, svc: tr(s.name), svcEs: s.name.es, cat: s.cat, opt: f.opt, persons: f.persons, date: f.date, time: f.time, name: f.name.trim(), email: f.email.trim(), phone: f.phone.trim(), level: f.level, classLang: f.classLang, notes: f.notes, method: f.method, currency: s.currency, total: subtotal, due, paid: status === 'pagada' ? due : 0, status, createdAt: new Date().toISOString(), lang };
+        const list = this.bookings(); list.unshift(b); try { localStorage.setItem('evolushon-bookings-v1', JSON.stringify(list)); } catch (e) {}
+        this.bkSet({ step: 5, code, status, processing: false });
+      };
+      const next = () => {
+        if (!valid || f.processing) { if (step === 3) this.bkSet({ err: true }); return; }
+        if (step < 4) return this.bkSet({ step: step + 1, err: false });
+        if (f.method === 'card') { this.bkSet({ processing: true }); setTimeout(() => finish('pagada'), 1500); } else finish('por verificar');
+      };
+      const optLabel = f.opt === 'single' ? (isTrip ? bkT.singleTrip : bkT.single) : fmt(bkT.pack, { n: f.opt });
+      const waText = (ui.waMsg || '') + tr(s.name) + ' · ' + optLabel + ' · ' + dateLabel + ' ' + (f.time || '') + ' · ' + f.persons + ' · ' + bkT.code + ' ' + (f.code || '');
+      bkV = {
+        cover: s.cover, coverPos: s.coverFocus || '50% 50%', cat: catName[s.cat], name: tr(s.name),
+        summary: [{ label: bkT.option2, value: optLabel }, { label: bkT.persons, value: f.persons }].concat(f.date ? [{ label: bkT.date, value: dateLabel }] : []).concat(f.time ? [{ label: isTrip ? bkT.depart : bkT.hour, value: f.time }] : []),
+        totalText: m(subtotal), isDeposit: due < subtotal, dueLabel: bkT.due, dueText: m(due),
+        steps: bkT.steps.map((l, i) => ({ n: i + 1, label: l, shown: (w < 760 && step !== i + 1) ? '' : l, bg: step === i + 1 ? '#15181e' : step > i + 1 ? '#e6f0e9' : '#efe4d6', fg: step === i + 1 ? '#faf4f1' : step > i + 1 ? '#2f7d5b' : '#5e534d' })),
+        s1: step === 1, s2: step === 2, s3: step === 3, s4: step === 4, s5: step === 5,
+        options: [{ k: 'single', label: isTrip ? bkT.singleTrip : bkT.single, sub: isTrip ? (tr(s.duration) || '') : bkT.personsNote, price: m(unitSingle) }].concat(isTrip ? [] : (s.packages || []).filter(p => p.price != null).map(p => ({ k: p.n, label: fmt(bkT.pack, { n: p.n }), sub: fmt(bkT.packSub, { x: m(Math.round(p.price / p.n)) }), price: m(p.price) })))
+          .map(o => ({ label: o.label, sub: o.sub, price: o.price, border: f.opt === o.k ? '#15181e' : '#e2d5c7', bg: f.opt === o.k ? '#f6eee5' : '#fffdfb', dot: f.opt === o.k ? '#15181e' : 'transparent', onClick: () => this.bkSet({ opt: o.k }) })),
+        persons: f.persons, personsNote: isTrip ? fmt(bkT.minTrip, { n: s.minPeople || 1 }) : bkT.personsNote,
+        dec: () => this.bkSet({ persons: Math.max(1, f.persons - 1), time: '' }), inc: () => this.bkSet({ persons: Math.min(cap, f.persons + 1), time: '' }),
+        monthLabel: mStart.toLocaleDateString(lang, { month: 'long', year: 'numeric' }), weekdays: [1, 2, 3, 4, 5, 6, 0].map(i => new Date(2024, 0, i === 0 ? 7 : i).toLocaleDateString(lang, { weekday: 'short' }).slice(0, 2).toUpperCase()),
+        days, prevOp: this.state.bkMonth > 0 ? 1 : 0.3, nextOp: this.state.bkMonth < 2 ? 1 : 0.3,
+        prevMonth: () => { if (this.state.bkMonth > 0) this.setState({ bkMonth: this.state.bkMonth - 1 }); }, nextMonth: () => { if (this.state.bkMonth < 2) this.setState({ bkMonth: this.state.bkMonth + 1 }); },
+        calNote: (isTrip ? bkT.tripNote + ' ' : '') + fmt(bkT.calNote, { n: cfg.lead || 0 }),
+        timeLabel: isTrip ? bkT.depart : bkT.time, slots, noSlots: !f.date, noSlotsText: bkT.noSlots,
+        f: { name: f.name, email: f.email, phone: f.phone, level: f.level, classLang: f.classLang, notes: f.notes, card: f.card, exp: f.exp, cvc: f.cvc, err: !!f.err && step === 3 && !valid,
+          setName: (e) => this.bkSet({ name: e.target.value }), setEmail: (e) => this.bkSet({ email: e.target.value }), setPhone: (e) => this.bkSet({ phone: e.target.value }),
+          setLevel: (e) => this.bkSet({ level: e.target.value }), setClassLang: (e) => this.bkSet({ classLang: e.target.value }), setNotes: (e) => this.bkSet({ notes: e.target.value }),
+          setCard: (e) => this.bkSet({ card: e.target.value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ') }),
+          setExp: (e) => { let v = e.target.value.replace(/\D/g, '').slice(0, 4); if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2); this.bkSet({ exp: v }); },
+          setCvc: (e) => this.bkSet({ cvc: e.target.value.replace(/\D/g, '').slice(0, 4) }) },
+        levels: bkT.levels.map((l, i) => ({ v: ['beginner', 'intermediate', 'advanced'][i], l })),
+        allowDeposit: !!cfg.deposit && cfg.deposit < 100,
+        payModes: [{ full: false, label: fmt(bkT.deposit, { p: cfg.deposit }), sub: fmt(bkT.depositSub, { x: m(Math.round(subtotal * cfg.deposit / 100)) }) }, { full: true, label: bkT.fullPay, sub: fmt(bkT.fullSub, { x: m(subtotal) }) }].map(x => ({ label: x.label, sub: x.sub, border: f.payFull === x.full ? '#15181e' : '#e2d5c7', bg: f.payFull === x.full ? '#f6eee5' : '#fffdfb', onClick: () => this.bkSet({ payFull: x.full }) })),
+        methods: methodDefs.map(x => ({ label: x[1], icon: x[2], border: f.method === x[0] ? '#15181e' : '#d8c9b9', bg: f.method === x[0] ? '#15181e' : '#fffdfb', fg: f.method === x[0] ? '#faf4f1' : '#15181e', onClick: () => this.bkSet({ method: x[0] }) })),
+        isCard: f.method === 'card', isWallet: f.method === 'yape' || f.method === 'plin',
+        walletHelp: fmt(bkT.walletHelp, { x: m(due), m: f.method === 'plin' ? 'Plin' : 'Yape' }), walletNumber: (f.method === 'plin' ? cfg.plin : cfg.yape) || set.whatsapp || '9XX XXX XXX',
+        doneBg: f.status === 'pagada' ? '#2f7d5b' : '#c8921c', doneIcon: f.status === 'pagada' ? 'ti ti-check' : 'ti ti-clock', doneTitle: f.status === 'pagada' ? bkT.doneTitle : bkT.pendTitle,
+        doneSub: f.status === 'pagada' ? fmt(bkT.doneSub, { d: dateLabel, t: f.time }) : bkT.pendSub, code: f.code,
+        ics: () => { const [y, mo, da] = f.date.split('-'); const tm = (f.time || '07:00').match(/(\d+):(\d+)\s*(AM|PM)?/i) || []; let hh = +(tm[1] || 7); if (tm[3] && /pm/i.test(tm[3]) && hh < 12) hh += 12; const st = y + mo + da + 'T' + String(hh).padStart(2, '0') + (tm[2] || '00') + '00'; const en = y + mo + da + 'T' + String(Math.min(23, hh + 2)).padStart(2, '0') + (tm[2] || '00') + '00';
+          const txt = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Evolushon//ES', 'BEGIN:VEVENT', 'UID:' + f.code + '@evolushon', 'DTSTART:' + st, 'DTEND:' + en, 'SUMMARY:' + tr(s.name) + ' · Evolushon', 'DESCRIPTION:' + bkT.code + ' ' + f.code, 'LOCATION:Lima, Perú', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+          const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/calendar' })); a.download = f.code + '.ics'; document.body.appendChild(a); a.click(); a.remove(); },
+        waConfirm: wa(waText),
+        showFooter: step < 5, backVis: step > 1 ? 'visible' : 'hidden', back: () => this.bkSet({ step: Math.max(1, step - 1) }), next,
+        nextLabel: f.processing ? bkT.processing : step < 4 ? bkT.next : (f.method === 'card' ? fmt(bkT.pay, { x: m(due) }) : f.method ? bkT.paid : fmt(bkT.pay, { x: m(due) })),
+        nextIcon: step < 4 ? 'ti ti-arrow-right' : 'ti ti-lock', nextBg: step === 4 ? '#e2b03f' : '#15181e', nextFg: step === 4 ? '#15181e' : '#faf4f1', nextOp: valid && !f.processing ? 1 : 0.4
+      };
+    }
+    const narrowBk = w < 760;
+    const showBar = w < 760 && page !== 'services' && !bkS && !menu && !lb;
+    const cur = lb ? lb.list[lb.i] : null;
+    const stop = (fn) => (e) => { e.stopPropagation(); fn(); };
+    const darkTop = !solid && (page === 'home' || page === 'services' || page === 'gallery' || page === 'contact');
+
+    return {
+      footLine: ({ es: 'Nos vemos en el agua.', en: 'See you in the water.', fr: 'Rendez-vous dans l’eau.', de: 'Wir sehen uns im Wasser.' })[lang],
+      year: new Date().getFullYear(),
+      bkT, rv, hasReviews: rv.items.length > 0, bkOpen: !!bkS, bk: bkV, bkClose: () => this.setState({ bk: null }),
+      bkL: narrowBk ? { pad: '0', maxH: '100dvh', h: '100%', radius: '0', ratio: '16/6', full: false } : { pad: '24px', maxH: 'calc(100vh - 48px)', h: 'auto', radius: '14px', ratio: '4/3', full: true },
+      showFab: w < 1080 && !showBar && !bkS && !menu, showBar, hdrLabel: w >= 560, hdrIcon: w < 560,
+      lbTs: (e) => { this._tx = e.touches[0].clientX; },
+      lbTe: (e) => { const dx = e.changedTouches[0].clientX - (this._tx || 0); if (Math.abs(dx) > 50) { e.preventDefault(); this.step(dx < 0 ? 1 : -1); } },
+      cardsShown, svcGroups, svcImg: activeSvc ? activeSvc.cover : '', svcName: activeSvc ? tr(activeSvc.name) : '', svcCat: activeSvc ? catName[activeSvc.cat] : '',
+      svcPrice: activeSvc ? ((money(activeSvc.currency, activeSvc.price) || ui.consult)) : '',
+      ui, navItems, langs, catBlocks, featured, marquee, filters, cards, albumChips, photos,
+      wide: w >= 1080, narrow: w < 1080, menuOpen: menu,
+      openMenu: () => this.setState({ menu: true }), closeMenu: () => this.setState({ menu: false }),
+      hdrBg: darkTop ? 'linear-gradient(180deg,rgba(21,24,30,0.82) 0%,rgba(21,24,30,0.45) 65%,rgba(21,24,30,0) 100%)' : '#faf4f1', hdrFg: darkTop ? '#faf4f1' : '#15181e', hdrLine: darkTop ? 'transparent' : '#15181e',
+      heroVideo: (navigator.connection && navigator.connection.saveData) ? '' : this.props.heroVideo || 'https://raw.githubusercontent.com/p4ranoic0/new-evolushon-web/main/src/assets/Video-drone.mp4',
+      isHome: page === 'home', isServices: page === 'services', isGallery: page === 'gallery', isContact: page === 'contact',
+      goHome: () => this.go('home'), goServices: () => this.go('services'), goGallery: () => this.go('gallery'),
+      waGeneric: wa(ui.waGeneric || ''),
+      instagram: (data.settings || {}).instagram, tiktok: (data.settings || {}).tiktok,
+      lbOpen: !!cur, lbSrc: cur ? cur.src : '', lbAlt: cur ? tr(cur.alt) : '', lbCount: lb ? pad(lb.i + 1) + ' / ' + pad(lb.list.length) : '',
+      lbClose: () => this.setState({ lb: null }), lbPrev: stop(() => this.step(-1)), lbNext: stop(() => this.step(1))
+    };
+  }
+}
+</script>
+</body>
+</html>

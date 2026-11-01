@@ -1,199 +1,37 @@
-# 🚀 Guía de Despliegue en GitHub Pages
+# Despliegue en Hostinger
 
-Esta guía te ayudará a desplegar tu proyecto React + Vite en GitHub Pages usando GitHub Actions.
+Esta app está preparada para la raíz de `https://evolushonsurfexperience.com`, con Apache y React Router. GitHub Pages quedó desactivado en `.github/workflows/deploy.yml.disabled`.
 
-## ✅ Pre-requisitos
+## Construir y subir
 
-1. Un repositorio en GitHub
-2. Node.js 20.x o superior instalado localmente
-3. El proyecto debe construirse correctamente con `npm run build`
+1. Ejecuta `npm install`, `npm run lint` y `npm run build` (Node 20.19+ o 22.12+).
+2. Prueba `npm run preview -- --host 127.0.0.1`. La vista previa de Vite no interpreta `.htaccess`; las respuestas HTTP/301 de Apache se verifican después de subir.
+3. En hPanel abre **Archivos → Administrador de archivos → public_html** del dominio. Haz una copia de los archivos actuales antes de reemplazarlos.
+4. Sube **el contenido de `dist/`**, incluido el archivo oculto `.htaccess`, directamente a `public_html/`. No subas la carpeta `dist` como subdirectorio. También puedes usar FTP/SFTP con las credenciales gestionadas en hPanel.
+5. Deben existir `public_html/index.html`, `public_html/.htaccess`, `public_html/assets/`, `public_html/robots.txt` y `public_html/sitemap.xml`.
+6. Activa el certificado SSL desde hPanel y la redirección a HTTPS. Si usas CDN/caché de Hostinger, purga la caché tras reemplazar `index.html`.
+7. Comprueba `/es/`, `/en/services`, `/fr/services`, `/de/angebote`, un detalle (`/es/servicios/s-grupal`), `/es/galeria`, `/es/contacto` y `/admin` recargando cada URL directamente.
+8. Comprueba `curl -I https://evolushonsurfexperience.com/clases/surf`: debe devolver `301` a `/es/servicios?category=surf`. Las rutas desconocidas fuera de los patrones de la SPA devuelven `404` y muestran la pantalla React. Los slugs de servicio desconocidos también devuelven HTTP 404.
 
-## 📋 Pasos para el Despliegue
+No requiere procesos Node, backend, base de datos ni variables de entorno en Hostinger. Los archivos reales no se reescriben. Los recursos con hash tienen caché de un año; HTML y metadatos se revalidan. `.htaccess` activa deflate cuando Apache ofrece el módulo.
 
-### 1. Configurar GitHub Pages
+## Alcance de la demo local
 
-1. Ve a tu repositorio en GitHub
-2. Click en **Settings** (Configuración)
-3. En el menú lateral, selecciona **Pages**
-4. En **Source** (Origen), selecciona **GitHub Actions**
+- `/admin` usa las credenciales demo `admin` / `evolushon`. También existen `editor` / `editor` y `foto` / `foto`, con los roles del prototipo. Es una interfaz demo, no autenticación de servidor.
+- **Publicar guarda solamente en localStorage del origen y navegador actuales.** No modifica `dist`, no sube archivos a Hostinger y no transmite cambios a otros clientes. Borrador y publicado comparten claves con el prototipo. Recarga o navega a «Ver sitio publicado» para verlo; otras pestañas del mismo origen se sincronizan por `storage`.
+- Las reservas y cupos también son locales. El pago por tarjeta es simulado; no se envían ni persisten número, vencimiento o CVC. Usa números ficticios. Yape/Plin quedan «por verificar». No se procesa ningún cobro.
+- El contenido inicial trae reseñas de ejemplo claramente señaladas; se pueden reemplazar o quitar en Reseñas.
+- El número de WhatsApp viene vacío del original. En Ajustes configura un número con país (por ejemplo, prefijo `51`) para garantizar el mensaje prellenado en `wa.me`. Mientras tanto se conserva el enlace corto del diseño; su proveedor puede ignorar el parámetro `text`.
+- La traducción asistida del prototipo dependía de `window.claude.complete`, que no existe fuera de Claude Design. Los botones lo explican. La edición manual de ES/EN/FR/DE y el fallback español funcionan sin servicios externos.
+- Los tres perfiles de compresión son Máxima (2000 px, 90%), Equilibrada (1600 px, 82%) y Ligera (1280 px, 72%). Los nuevos archivos se convierten a WebP o JPEG en canvas. Hay avisos si el navegador se queda sin cuota.
+- El historial conserva hasta 8 publicaciones de servicios, ajustes, reseñas, álbumes y textos; no duplica imágenes. Restaurar una versión la lleva al borrador y conserva las fotos actuales. Exportar JSON en Ajustes incluye todo el contenido, imágenes subidas y usuarios **demo**. No uses credenciales reales en esta fase.
 
-![GitHub Pages Settings](https://docs.github.com/assets/cb-47528/mw-1440/images/help/pages/create-site-from-source.webp)
+## Cambiar el contenido inicial para todos
 
-### 2. Verificar la Configuración de Vite
+El contenido base está en `src/store/seed.ts`, los textos UI en `src/store/ui.ts` y `src/store/booking-ui.ts`, y el SEO en `src/store/seo-defaults.ts`. Actualiza esos archivos, recompila y vuelve a subir `dist/`. Los navegadores con una publicación local seguirán usando su localStorage; se puede restaurar el contenido original desde Ajustes.
 
-El archivo `vite.config.ts` debe incluir la propiedad `base` con el nombre de tu repositorio:
+Si se añaden servicios o cambian sus slugs de forma permanente, actualiza también las reglas de detalle de `public/.htaccess` y `public/sitemap.xml`. Incluye los cuatro idiomas y `x-default`; el sitemap y Apache no pueden conocer cambios guardados solo en un navegador. Un slug nuevo de la demo puede navegarse desde React; su carga directa en Apache devolverá 404 hasta actualizar la lista de rutas del despliegue. Para un CMS compartido, reservas globales o autenticación real hace falta una fase posterior con backend.
 
-```typescript
-export default defineConfig({
-  base: "/new-evolushon-web/", // 👈 Cambiar por tu nombre de repo
-  plugins: [react()],
-});
-```
+## Fuentes visuales
 
-**⚠️ Importante**: La ruta debe coincidir con el nombre de tu repositorio:
-
-- Formato: `/<nombre-del-repo>/`
-- Ejemplo: Si tu repo es `my-surf-app`, usa `/my-surf-app/`
-
-### 3. Verificar el Workflow
-
-El archivo `.github/workflows/deploy.yml` ya está configurado y listo para usar. Este workflow:
-
-- ✅ Se ejecuta automáticamente en cada push a `main`
-- ✅ Instala las dependencias con `npm ci`
-- ✅ Construye el proyecto con `npm run build`
-- ✅ Despliega la carpeta `dist/` a GitHub Pages
-
-### 4. Hacer Push de los Cambios
-
-```bash
-# Agregar todos los archivos
-git add .
-
-# Commit con mensaje descriptivo
-git commit -m "Configure GitHub Pages deployment"
-
-# Push a la rama main
-git push origin main
-```
-
-### 5. Monitorear el Despliegue
-
-1. Ve a la pestaña **Actions** en tu repositorio
-2. Verás el workflow "Deploy to GitHub Pages" ejecutándose
-3. Una vez completado (✅), tu sitio estará disponible en:
-   ```
-   https://[tu-usuario].github.io/[nombre-del-repo]/
-   ```
-
-## 🔄 Despliegues Posteriores
-
-Una vez configurado, cada vez que hagas push a la rama `main`, el sitio se actualizará automáticamente.
-
-```bash
-# Hacer cambios en tu código
-# ...
-
-# Commit y push
-git add .
-git commit -m "Update surf classes content"
-git push origin main
-
-# El despliegue inicia automáticamente
-```
-
-## 🐛 Solución de Problemas
-
-### ❌ Error: "Failed to load resource: the server responded with a status of 404"
-
-**Causa**: La configuración de `base` en `vite.config.ts` no coincide con el nombre del repositorio.
-
-**Solución**:
-
-```typescript
-// vite.config.ts
-export default defineConfig({
-  base: "/nombre-correcto-del-repo/", // 👈 Verificar esto
-  plugins: [react()],
-});
-```
-
-### ❌ Error: "Process completed with exit code 1" durante el build
-
-**Causa**: Errores de compilación o linting en el código.
-
-**Solución**:
-
-1. Ejecuta localmente: `npm run build`
-2. Corrige los errores mostrados
-3. Commit y push de nuevo
-
-### ❌ Las rutas no funcionan después del despliegue
-
-**Causa**: React Router necesita configuración especial para GitHub Pages.
-
-**Solución**: Verifica que estés usando `BrowserRouter` con el `basename`:
-
-```typescript
-// src/App.tsx
-import { BrowserRouter } from "react-router-dom";
-
-function App() {
-  return (
-    <BrowserRouter basename="/new-evolushon-web">
-      {/* ... tus rutas */}
-    </BrowserRouter>
-  );
-}
-```
-
-### ❌ Los assets (imágenes, CSS) no cargan
-
-**Causa**: Las rutas de los assets son absolutas en lugar de relativas.
-
-**Solución**:
-
-- Usa rutas relativas: `./image.jpg` en lugar de `/image.jpg`
-- O importa los assets: `import logo from './assets/logo.png'`
-
-## 🎯 Verificación Rápida
-
-Antes de cada despliegue, verifica:
-
-```bash
-# 1. Compilar localmente
-npm run build
-
-# 2. Previsualizar la build
-npm run preview
-
-# 3. Verificar que todo funcione en http://localhost:4173
-```
-
-## 🔧 Despliegue Manual (Opcional)
-
-Si prefieres desplegar manualmente sin GitHub Actions:
-
-```bash
-# 1. Construir el proyecto
-npm run build
-
-# 2. Instalar gh-pages
-npm install --save-dev gh-pages
-
-# 3. Agregar script en package.json
-{
-  "scripts": {
-    "deploy": "gh-pages -d dist"
-  }
-}
-
-# 4. Desplegar
-npm run deploy
-```
-
-## 📚 Recursos Adicionales
-
-- [Documentación de Vite sobre despliegue](https://vitejs.dev/guide/static-deploy.html#github-pages)
-- [GitHub Pages Documentation](https://docs.github.com/es/pages)
-- [GitHub Actions Documentation](https://docs.github.com/es/actions)
-
-## 💡 Tips de Performance
-
-1. **Optimiza las imágenes**: Usa formatos modernos (WebP, AVIF)
-2. **Code Splitting**: React Router ya lo hace automáticamente
-3. **Lazy Loading**: Usa `React.lazy()` para componentes grandes
-4. **Analiza el bundle**:
-   ```bash
-   npm run build -- --mode production
-   ```
-
-## 🎉 ¡Listo!
-
-Tu sitio ahora se despliega automáticamente en GitHub Pages. Cualquier cambio que hagas en la rama `main` se reflejará en tu sitio en pocos minutos.
-
-**URL del sitio**: https://p4ranoic0.github.io/new-evolushon-web/
-
----
-
-¿Problemas? Abre un issue en el repositorio o contacta al equipo de desarrollo.
+`design/claude-design/` conserva íntegros los cinco archivos fuente. `support.js` y las plantillas `.dc.html` solo son referencias: no se importan en producción. Las ilustraciones SVG se portaron a React en `src/components/Doodle.tsx`. Las fotografías y el vídeo existentes permanecen en `src/assets/` y Vite genera sus URLs con hash.
