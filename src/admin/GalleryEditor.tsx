@@ -8,10 +8,11 @@ import {
   IconStarFilled,
 } from "@tabler/icons-react";
 import { asset, blank, clone, LANGS } from "../store";
+import { api } from "../store/api";
 import type { Lang, Photo, SiteData } from "../store";
 import { Check, Field, LangTabs, Panel, TranslateButton } from "./shared";
 import type { Update } from "./shared";
-import { compressImage, processFile } from "./images";
+import { uploadImage } from "./image-pipeline";
 export function GalleryEditor({
   data,
   update,
@@ -88,63 +89,23 @@ export function GalleryEditor({
     const added: Photo[] = [];
     let original = 0,
       compressed = 0;
-    try {
-      for (const [i, f] of Array.from(files).entries()) {
-        setProgress("Comprimiendo " + (i + 1) + " / " + files.length);
-        const out = await processFile(f, data.settings.img);
-        added.push({
-          id: "g-" + crypto.randomUUID(),
-          src: out.src,
-          album: album === "all" ? data.albums[0].id : album,
-          featured: false,
-          hidden: false,
-          alt: blank(),
-          focus: "50% 50%",
-          originalBytes: f.size,
-          bytes: out.bytes,
-        });
-        original += f.size;
-        compressed += out.bytes;
-      }
-      update((d) => d.gallery.push(...added));
-      notify(
-        added.length +
-          " imágenes procesadas: " +
-          kb(original) +
-          " → " +
-          kb(compressed) +
-          ".",
-      );
-    } catch (e) {
-      notify((e as Error).message);
-    } finally {
-      setProgress("");
+    for (const [i, f] of Array.from(files).entries()) {
+      setProgress("Subiendo " + (i + 1) + " / " + files.length + " · " + f.name);
+      try {
+        const targetAlbum=album === "all" ? data.albums[0]?.id || "" : album;
+        const out = await uploadImage(f,data.settings.img,targetAlbum||"galeria",f.name);
+        added.push({...out,album:targetAlbum});
+        original+=f.size;compressed+=out.bytes||0;
+      } catch (error) { notify(f.name+": "+(error as Error).message); }
     }
+    if(added.length){update((d)=>{for(const photo of added)if(!d.gallery.some((g)=>g.id===photo.id))d.gallery.push(photo);});notify(added.length+" imágenes subidas: "+kb(original)+" → "+kb(compressed)+".");}
+    setProgress("");
   }
-  async function optimize(ids: string[]) {
-    setProgress("Optimizando imágenes…");
-    try {
-      const results = await Promise.all(
-        data.gallery
-          .filter((g) => ids.includes(g.id))
-          .map(async (g) => ({
-            id: g.id,
-            ...(await compressImage(g.src, data.settings.img)),
-          })),
-      );
-      update((d) =>
-        results.forEach((r) => {
-          const g = d.gallery.find((g) => g.id === r.id)!;
-          g.src = r.src;
-          g.bytes = r.bytes;
-        }),
-      );
-      notify("Imágenes optimizadas en el borrador.");
-    } catch (e) {
-      notify("No se pudo optimizar: " + (e as Error).message);
-    } finally {
-      setProgress("");
-    }
+  async function remove(ids:string[]){
+    try{
+      for(const id of ids){if(id.startsWith('p-') && data.gallery.find((g)=>g.id===id)?.src.startsWith('/uploads/'))await api.del('/admin/photos/'+id);}
+      update((d)=>{d.gallery=d.gallery.filter((g)=>!ids.includes(g.id));});setSelected([]);setPhoto(null);
+    }catch(error){notify((error as Error).message);}
   }
   return (
     <div className="admin-content">
@@ -251,14 +212,14 @@ export function GalleryEditor({
         <div>
           <b>Arrastra tus fotos aquí</b>
           <p className="muted">
-            Se comprimen antes de guardar. JPEG, PNG, WebP, AVIF o GIF.
+            Se comprimen a WebP en tu navegador antes de subirlas. JPG, PNG, WebP o HEIC (iPhone).
           </p>
         </div>
         <label className="admin-btn primary file-btn">
           {progress || "Subir fotos"}
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,.heic,.heif"
             multiple
             disabled={!!progress}
             onChange={(e) => {
@@ -376,21 +337,11 @@ export function GalleryEditor({
             ))}
           </select>
           <button
-            className="admin-btn"
-            disabled={!!progress}
-            onClick={() => void optimize(selected)}
-          >
-            Optimizar
-          </button>
-          <button
             className="admin-btn danger"
             disabled={!canDelete}
             onClick={() => {
               if (confirm("¿Eliminar " + selected.length + " fotos?")) {
-                update((d) => {
-                  d.gallery = d.gallery.filter((g) => !selected.includes(g.id));
-                });
-                setSelected([]);
+                void remove(selected);
               }
             }}
           >
@@ -598,13 +549,6 @@ export function GalleryEditor({
             <div className="actions">
               <button
                 className="admin-btn"
-                disabled={!!progress}
-                onClick={() => void optimize([p.id])}
-              >
-                Optimizar
-              </button>
-              <button
-                className="admin-btn"
                 onClick={() => {
                   const copy = clone(p);
                   copy.id = "g-" + crypto.randomUUID();
@@ -650,10 +594,7 @@ export function GalleryEditor({
                 disabled={!canDelete}
                 onClick={() => {
                   if (confirm("¿Eliminar esta foto?")) {
-                    update((d) => {
-                      d.gallery = d.gallery.filter((g) => g.id !== p.id);
-                    });
-                    setPhoto(null);
+                    void remove([p.id]);
                   }
                 }}
               >

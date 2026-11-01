@@ -28,7 +28,7 @@ import {
   TranslateButton,
 } from "./shared";
 import type { Update } from "./shared";
-import { processFile } from "./images";
+import { uploadImage } from "./image-pipeline";
 export function ServicesEditor({
   data,
   update,
@@ -93,12 +93,12 @@ export function ServicesEditor({
     if (!file) return;
     setBusy(true);
     try {
-      const result = await processFile(file, data.settings.img);
+      const result = await uploadImage(file,data.settings.img,"portada",s?.name.es||file.name);
       change((s) => {
         s.cover = result.src;
         s.coverFocus = "50% 50%";
       });
-      notify("Portada comprimida y guardada en el borrador.");
+      notify("Portada subida y guardada en el borrador.");
     } catch (e) {
       notify((e as Error).message);
     } finally {
@@ -349,10 +349,10 @@ export function ServicesEditor({
                 </small>
                 <div className="actions">
                   <label className="admin-btn file-btn">
-                    {busy ? "Comprimiendo…" : "Subir portada"}
+                    {busy ? "Subiendo…" : "Subir portada"}
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.heic,.heif"
                       disabled={busy}
                       onChange={(e) => {
                         void upload(e.target.files?.[0]);

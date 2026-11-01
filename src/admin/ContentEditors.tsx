@@ -1,15 +1,10 @@
-import { kb } from "./utils";
 import { useState } from "react";
+import { ServerStorage, UsersManager } from "./ServerSettings";
 import { IconPlus } from "@tabler/icons-react";
 import {
   blank,
-  clone,
-  DEFAULT,
-  download,
   isoDate,
-  history,
   LANGS,
-  migrate,
   UI,
 } from "../store";
 import type { Lang, Page, SiteData } from "../store";
@@ -383,36 +378,8 @@ export function LanguagesEditor({ data, update, notify }: Props) {
   );
 }
 export function SettingsEditor({ data, update, notify }: Props) {
-  const entries = history();
   const [lang, setLang] = useState<Lang>("es");
   const [page, setPage] = useState<Page>("home");
-  let usage = 0;
-  try {
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith("evolushon"))
-      .forEach((k) => {
-        usage += (localStorage.getItem(k) || "").length * 2;
-      });
-  } catch {
-    /* El formulario permanece accesible. */
-  }
-  async function importJson(file?: File) {
-    if (!file) return;
-    try {
-      const next = migrate(JSON.parse(await file.text()));
-      update((d) => {
-        Object.keys(d).forEach(
-          (k) => delete (d as unknown as Record<string, unknown>)[k],
-        );
-        Object.assign(d, next);
-      });
-      notify("Datos importados al borrador.");
-    } catch {
-      notify(
-        "Archivo inválido. Se requiere un JSON Evolushon con services y gallery.",
-      );
-    }
-  }
   return (
     <div className="admin-content">
       <Panel title="Datos del sitio">
@@ -470,7 +437,7 @@ export function SettingsEditor({ data, update, notify }: Props) {
       </Panel>
       <Panel title="Compresión de imágenes">
         <p className="muted">
-          Se aplica en el navegador al subir u optimizar una foto.
+          Calidad WebP del servidor. Las fotos se reducen antes de subir para ahorrar datos.
         </p>
         {(
           [
@@ -508,24 +475,7 @@ export function SettingsEditor({ data, update, notify }: Props) {
             </span>
           </button>
         ))}
-        <label className="field">
-          Formato
-          <select
-            value={data.settings.img.format}
-            onChange={(e) =>
-              update((d) => {
-                d.settings.img.format = e.target.value as "webp" | "jpeg";
-              })
-            }
-          >
-            <option value="webp">WebP (JPEG si no es compatible)</option>
-            <option value="jpeg">JPEG</option>
-          </select>
-        </label>
-        <p className="muted">
-          Uso del almacenamiento: {kb(usage)} de ~5 MB (borrador + publicado +
-          historial). El tamaño final depende de la foto.
-        </p>
+        <p className="muted">Las fotos se guardan como WebP en tres tamaños, sin metadatos de ubicación.</p>
       </Panel>
       <Panel title="SEO por página">
         <div className="admin-heading">
@@ -567,184 +517,8 @@ export function SettingsEditor({ data, update, notify }: Props) {
           }
         />
       </Panel>
-      <Panel title="Equipo (solo demo)">
-        <p className="muted">
-          Usuarios locales del prototipo. Administrador publica y configura;
-          editor edita borradores; fotógrafo gestiona la galería.
-        </p>
-        {data.settings.users.map((u, i) => (
-          <div className="user-editor" key={i}>
-            <Field
-              label="Nombre"
-              value={u.name}
-              onChange={(v) =>
-                update((d) => {
-                  d.settings.users[i].name = v;
-                })
-              }
-            />
-            <Field
-              label="Usuario"
-              value={u.user}
-              onChange={(v) =>
-                update((d) => {
-                  d.settings.users[i].user = v;
-                })
-              }
-            />
-            <Field
-              label="Clave demo"
-              type="password"
-              autoComplete="new-password"
-              value={u.pass}
-              onChange={(v) =>
-                update((d) => {
-                  d.settings.users[i].pass = v;
-                })
-              }
-            />
-            <label className="field">
-              Rol
-              <select
-                value={u.role}
-                onChange={(e) => {
-                  const value = e.target.value as typeof u.role;
-                  if (
-                    u.role === "admin" &&
-                    data.settings.users.filter((u) => u.role === "admin")
-                      .length < 2 &&
-                    value !== "admin"
-                  ) {
-                    notify("Debe quedar al menos un administrador.");
-                    return;
-                  }
-                  update((d) => {
-                    d.settings.users[i].role = value;
-                  });
-                }}
-              >
-                <option value="admin">Administrador</option>
-                <option value="editor">Editor</option>
-                <option value="fotografo">Fotógrafo</option>
-              </select>
-            </label>
-            <button
-              className="admin-btn danger"
-              onClick={() => {
-                if (
-                  u.role === "admin" &&
-                  data.settings.users.filter((u) => u.role === "admin").length <
-                    2
-                ) {
-                  notify("Debe quedar al menos un administrador.");
-                  return;
-                }
-                update((d) => {
-                  d.settings.users.splice(i, 1);
-                });
-              }}
-            >
-              Eliminar
-            </button>
-          </div>
-        ))}
-        <button
-          className="admin-btn"
-          onClick={() =>
-            update((d) =>
-              d.settings.users.push({
-                name: "Nuevo",
-                user: "usuario" + (d.settings.users.length + 1),
-                pass: "",
-                role: "editor",
-              }),
-            )
-          }
-        >
-          Añadir usuario
-        </button>
-      </Panel>
-      <Panel title="Respaldo y almacenamiento">
-        <div className="actions">
-          <button
-            className="admin-btn"
-            onClick={() =>
-              download(
-                "evolushon-datos-" + isoDate() + ".json",
-                JSON.stringify(data, null, 2),
-                "application/json",
-              )
-            }
-          >
-            Exportar JSON
-          </button>
-          <label className="admin-btn file-btn">
-            Importar JSON
-            <input
-              type="file"
-              accept="application/json,.json"
-              onChange={(e) => {
-                void importJson(e.target.files?.[0]);
-                e.target.value = "";
-              }}
-            />
-          </label>
-          <button
-            className="admin-btn danger"
-            onClick={() => {
-              if (
-                confirm("¿Reemplazar el borrador por los datos originales?")
-              ) {
-                const def = clone(DEFAULT);
-                def.settings.users = data.settings.users;
-                update((d) => Object.assign(d, def));
-                notify("Datos originales restaurados en el borrador.");
-              }
-            }}
-          >
-            Restaurar originales
-          </button>
-        </div>
-        <p className="muted">
-          Exporta una copia antes de borrar los datos del navegador. Publicar
-          modifica solo este navegador, no los archivos de Hostinger.
-        </p>
-      </Panel>
-      <Panel title="Historial de publicaciones">
-        <p className="muted">
-          Restaura servicios, textos y ajustes al borrador. La galería actual se
-          conserva.
-        </p>
-        {!entries.length && <p className="muted">Aún no hay publicaciones.</p>}
-        {entries.map((h) => (
-          <div className="history-row" key={h.at}>
-            <div>
-              <b>
-                {new Date(h.at).toLocaleString("es-PE")} · {h.by}
-              </b>
-              <small>
-                {h.summary.services} servicios · {h.summary.gallery} fotos ·{" "}
-                {h.summary.other} otros
-              </small>
-            </div>
-            <button
-              className="admin-btn"
-              onClick={() => {
-                if (confirm("¿Restaurar esta versión como borrador?")) {
-                  update((d) => {
-                    const users = d.settings.users;
-                    Object.assign(d, clone(h.snap));
-                    d.settings.users = users;
-                  });
-                  notify("Versión restaurada como borrador.");
-                }
-              }}
-            >
-              Restaurar
-            </button>
-          </div>
-        ))}
-      </Panel>
+      <UsersManager notify={notify}/>
+      <ServerStorage notify={notify}/>
     </div>
   );
 }

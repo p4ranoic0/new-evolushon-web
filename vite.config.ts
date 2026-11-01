@@ -5,4 +5,5 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   base: "/",
+  server: { proxy: Object.fromEntries(["/api", "/uploads", "/healthz", "/sitemap.xml", "/robots.txt"].map((path) => [path, "http://localhost:3000"])) },
 });

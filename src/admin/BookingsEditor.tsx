@@ -1,14 +1,8 @@
 import { useState } from "react";
 import { IconBrandWhatsapp, IconDownload } from "@tabler/icons-react";
-import {
-  bookings,
-  CATS,
-  download,
-  isoDate,
-  KEYS,
-  money,
-  writeStored,
-} from "../store";
+import { CATS, isoDate, money } from "../store";
+import { api } from "../store/api";
+import { useBookings } from "../store/bookings";
 import type { Booking, BookingStatus, SiteData } from "../store";
 import { Check, Field, Panel } from "./shared";
 import type { Update } from "./shared";
@@ -33,10 +27,9 @@ export function BookingsEditor({
   const [filter, setFilter] = useState("upcoming"),
     [q, setQ] = useState(""),
     [config, setConfig] = useState(false),
-    [block, setBlock] = useState(""),
-    [tick, setTick] = useState(0);
-  void tick;
-  const all = bookings(),
+    [block, setBlock] = useState("");
+  const {items:all,error,refresh}=useBookings();
+  const
     today = isoDate(),
     cfg = data.settings.booking;
   const filters = [
@@ -72,58 +65,10 @@ export function BookingsEditor({
         (a.date + a.time).localeCompare(b.date + b.time) *
         (filter === "past" ? -1 : 1),
     );
-  function status(code: string, status: BookingStatus) {
-    const next = bookings();
-    const b = next.find((b) => b.code === code);
-    if (b) {
-      b.status = status;
-      if (status === "pagada" && !b.paid) b.paid = b.due;
-    }
-    try {
-      writeStored(KEYS.bookings, next);
-      setTick((v) => v + 1);
-      notify("Estado de reserva actualizado.");
-    } catch {
-      notify("No se pudo guardar el estado.");
-    }
+  async function status(code:string,status:BookingStatus){
+    try{await api.patch('/admin/bookings/'+code,{status});await refresh();window.dispatchEvent(new Event('evo-bookings'));notify('Estado de reserva actualizado.');}catch(error){notify((error as Error).message);}
   }
-  function csv() {
-    const keys: (keyof Booking)[] = [
-      "code",
-      "date",
-      "time",
-      "svcEs",
-      "opt",
-      "persons",
-      "name",
-      "phone",
-      "email",
-      "level",
-      "classLang",
-      "method",
-      "currency",
-      "total",
-      "due",
-      "paid",
-      "status",
-      "notes",
-      "createdAt",
-      "demo",
-    ];
-    const esc = (v: unknown) =>
-      '"' + String(v ?? "").replaceAll('"', '""') + '"';
-    const safe = (v: unknown) =>
-      typeof v === "string" && /^[=+@\-\t\r]/.test(v) ? "'" + v : v;
-    download(
-      "reservas-evolushon-" + today + ".csv",
-      "\ufeff" +
-        [
-          keys.join(","),
-          ...all.map((b) => keys.map((k) => esc(safe(b[k]))).join(",")),
-        ].join("\n"),
-      "text/csv",
-    );
-  }
+  function csv(){window.location.assign('/api/admin/bookings.csv');}
   const paid = all
     .filter((b) => b.status === "pagada" || b.status === "completada")
     .reduce<
@@ -131,6 +76,7 @@ export function BookingsEditor({
     >((a, b) => ({ ...a, [b.currency]: (a[b.currency] || 0) + b.paid }), {});
   return (
     <div className="admin-content">
+      {error && <p role="alert" className="error">{error} <button onClick={()=>void refresh()}>Reintentar</button></p>}
       <div className="admin-stats">
         {[
           {
@@ -159,12 +105,12 @@ export function BookingsEditor({
             filter: "verify",
           },
           {
-            label: "Cobrado (demo)",
+            label: "Cobrado",
             value:
               Object.entries(paid)
                 .map(([c, n]) => money(c, n))
                 .join(" · ") || "0",
-            sub: "pagos simulados confirmados",
+            sub: "pagos confirmados",
             filter: "paid",
           },
         ].map((s) => (
@@ -335,7 +281,7 @@ export function BookingsEditor({
               ))}
             </div>
           </div>
-          <h3>Métodos de pago (demo)</h3>
+          <h3>Métodos de pago</h3>
           <div className="actions">
             {(["card", "yape", "plin"] as const).map((m) => (
               <Check
@@ -373,8 +319,7 @@ export function BookingsEditor({
             />
           </div>
           <p className="muted">
-            Todos los pagos son simulados y las reservas viven solo en este
-            navegador.
+            La configuración entra en vigor al publicar. Los pagos se verifican manualmente por WhatsApp.
           </p>
         </Panel>
       )}
@@ -409,7 +354,7 @@ export function BookingsEditor({
             <div className="actions">
               <b>{b.name}</b>
               <small className="status">{b.code}</small>
-              <small className="badge">Demo</small>
+              {b.holdExpired && <small className="badge">Retención vencida</small>}
             </div>
             <p>
               {b.svcEs || b.svc} ·{" "}

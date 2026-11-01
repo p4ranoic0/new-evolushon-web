@@ -1243,3 +1243,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+.admin-editor-fields { display: contents; }
+.admin-dialog .modal-panel { width: min(560px, calc(100vw - 32px)); padding: 24px; }
+.admin-dialog .admin-panel { margin: 0; }
+.admin-dialog .admin-btn { margin: 16px 8px 0 0; }

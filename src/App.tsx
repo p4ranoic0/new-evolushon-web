@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import {
   Link,
   Navigate,
@@ -10,6 +10,7 @@ import {
 import { PUBLIC_UI, LANGS, pathFor, slugs, useSiteData } from "./store";
 import type { Lang, Page } from "./store";
 import { PublicSite } from "./components/PublicSite";
+import { useHead } from "./components/useHead";
 const Admin = lazy(() => import("./admin/Admin"));
 function LocalizedSite() {
   const { lang, section, slug } = useParams();
@@ -40,13 +41,9 @@ function LocalizedSite() {
 function NotFound() {
   const { lang } = useParams();
   const l: Lang = LANGS.includes(lang as Lang) ? (lang as Lang) : "es";
-  useEffect(() => {
-    document.documentElement.lang = l;
-  }, [l]);
+  useHead({ title: "404 | Evolushon", lang: l, robots: "noindex" });
   return (
     <main className="not-found">
-      <title>404 | Evolushon</title>
-      <meta name="robots" content="noindex" />
       <span className="serif">Evolushon Surf Experience</span>
       <h1>404</h1>
       <p>{PUBLIC_UI.notFound[l]}</p>

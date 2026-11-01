@@ -1,34 +1,26 @@
 # Evolushon Surf Experience
 
-Sitio público multilingüe y panel demo del equipo, portados desde **Claude Design: Sitio v2 + Admin v3** a React 19, TypeScript, Vite 7 y Tailwind 4. Iconos Tabler; tipografías Bricolage Grotesque, Instrument Serif y Figtree (Google Fonts).
+Sitio público en español, inglés, francés y alemán, y panel `/admin`. React 19 + Vite 7, servidor Node 22 + Express 5 y MySQL. El contenido publicado, borradores, sesiones, reservas y metadatos de fotos viven en MySQL. Las fotos se comprimen, convierten a WebP y renombran en el navegador (`browser-image-compression`, `heic2any` para HEIC); el servidor solo valida la cabecera WebP y las guarda fuera del despliegue.
 
-```sh
-npm install
-npm run dev
-npm run lint
-npm run build
-npm run preview
-```
+## Desarrollo
 
-Requiere Node 20.19+ o 22.12+. El despliegue usa la raíz `/` del dominio, sin basename de GitHub Pages. Consulta [DEPLOYMENT.md](DEPLOYMENT.md) para subir `dist/` a Hostinger y para las limitaciones de la demo.
+1. Usar Node 22 (`nvm use`) y MySQL 8+ o MariaDB 10.6+. No hace falta Docker.
+2. Crear `evolushon_dev`, `evolushon_test` y un usuario dedicado con permisos sobre ambas. La suite vacía **solo** la base cuyo nombre termina en `_test`.
+3. `cp .env.example .env` y configurar DB, `UPLOADS_DIR`, `PUBLIC_URL` y credenciales iniciales. No versionar `.env`.
+4. `npm ci && npm run build && npm start`: producción local en `http://localhost:3000`. Al arrancar migra y siembra sin sobrescribir datos existentes. `admin` inicia sesión con `ADMIN_INITIAL_PASSWORD`; cambiarla desde Ajustes y retirar las variables iniciales.
+5. Para desarrollo separado: `PUBLIC_URL=http://localhost:5173`, `npm run dev:server` y `npm run dev` en otra terminal. Vite redirige API/uploads al servidor 3000; el head inyectado se comprueba con build + start.
 
-- `/` redirige a `/es/`. Idiomas ES, EN, FR, DE con rutas localizadas y selector que conserva la página o servicio.
-- Servicios: `/es/servicios`, `/en/services`, `/fr/services`, `/de/angebote`; detalle por ID o slug SEO.
-- Galería y contacto tienen sus slugs localizados. Las URLs antiguas redirigen a español.
-- `/admin` se carga por separado mediante `React.lazy`. Login demo: `admin` / `evolushon`. Borrador, publicación, historial y reservas se guardan únicamente en el navegador.
-- Pagos simulados, sin backend. No se guardan los campos de tarjeta. El contenido FR/DE vacío usa español, igual que el prototipo.
+`npm run lint` verifica TypeScript/frontend/backend. `npm test` ejecuta pruebas reales con MySQL: migraciones interrumpidas, sesiones/roles, conflicto de borrador, cupo concurrente, idempotencia, retención, imágenes y SEO. Requiere `.env` y base de pruebas previamente creada. `npm run migrate` y `npm run seed` permiten ejecutar esos pasos por separado después del build.
 
-## Código
+## Operación
 
-- `src/store/`: modelo tipado, datos originales, textos UI, migración y persistencia con las claves `evolushon-*-v1`, rutas y resolución de assets.
-- `src/components/PublicSite.tsx`: sitio público y estados del catálogo/galería.
-- `src/components/Booking.tsx`: opciones, cupos/calendario, datos, pago demo y confirmación (WhatsApp/ICS).
-- `src/components/SEO.tsx`: metadatos, canonical/hreflang y JSON-LD por página e idioma.
-- `src/admin/`: pantallas y editores del panel, compresión de imágenes y publicación local.
-- `src/index.css`: tokens Tailwind 4 y sistema visual responsive con reduced-motion.
-- `public/`: `.htaccess`, sitemap, robots e imágenes públicas para SEO.
-- `design/claude-design/`: fuentes originales versionadas, sin runtime de prototipo en el bundle.
+- [T0 y checklist de Hostinger](docs/hostinger-t0.md): completar antes de lanzar en el dominio.
+- [Despliegue](DEPLOYMENT.md) y [runbook](docs/RUNBOOK.md): respaldos, restauración y recuperación de admin.
+- [Spec aprobado](docs/specs/2026-11-01-backend-hostinger.md): la §12 prevalece sobre las decisiones anteriores.
+- `npm run t0` activa el servidor mínimo de persistencia. El entry definitivo es `server.js`.
+- `npm run reset-admin` recupera la cuenta `admin` usando `ADMIN_INITIAL_EMAIL` y `ADMIN_INITIAL_PASSWORD` del entorno; revoca todas sus sesiones.
+- `scripts/backup.sh` respalda MySQL remoto + uploads por SSH/rsync y conserva 8 copias identificadas por el script.
 
-El sitio antiguo, su modo oscuro y dependencias que dejaron de usarse se retiraron. No se eliminaron fotografías de `src/assets/`.
+No hay pagos reales. Yape/Plin generan reservas «por verificar». Si se habilita tarjeta, solo genera «pendiente» para coordinar el pago; no se solicitan datos de tarjeta. Las reservas pendientes retienen cupo durante `HOLD_HOURS` (24 por defecto); pagadas y completadas lo conservan.
 
-El detalle archivo por archivo y la evidencia de QA están en [design/VERIFICATION.md](design/VERIFICATION.md).
+El admin guarda cambios en el borrador del servidor, publica para compartirlos y detecta conflictos entre pestañas con `baseVersion`. El navegador conserva únicamente preferencias y un respaldo opcional del borrador. Ajustes permite importar los datos del antiguo localStorage, exportar JSON, gestionar usuarios y purgar fotos sin referencias en ninguna versión conservada. Borrar una foto de la galería es lógico; no elimina sus archivos automáticamente.

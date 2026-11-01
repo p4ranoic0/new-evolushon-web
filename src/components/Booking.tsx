@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -11,21 +11,20 @@ import {
   IconCalendarPlus,
 } from "@tabler/icons-react";
 import { Modal } from "./Modal";
+import { api, ApiError } from "../store/api";
+import { normalizeTime, useAvailability } from "../store/availability";
 import {
   asset,
   BOOKING_UI,
-  bookings,
   download,
   effectivePrice,
   fmt,
   isoDate,
-  KEYS,
   LANGS,
   money,
   tr,
   uiFor,
   waUrl,
-  writeStored,
 } from "../store";
 import type {
   Booking as BookingRecord,
@@ -61,14 +60,14 @@ export function Booking({
     [phone, setPhone] = useState(""),
     [level, setLevel] = useState("beginner"),
     [classLang, setClassLang] = useState<Lang>(lang),
-    [notes, setNotes] = useState("");
+    [notes, setNotes] = useState(""),
+    [hp,setHp]=useState("");
   const [method, setMethod] = useState<PaymentMethod | "">(""),
     [full, setFull] = useState(false),
-    [card, setCard] = useState(""),
-    [exp, setExp] = useState(""),
-    [cvc, setCvc] = useState(""),
     [error, setError] = useState(""),
     [done, setDone] = useState<BookingRecord | null>(null);
+  const [sending,setSending]=useState(false);
+  const attempt=useRef({fingerprint:"",key:""});
   const close = useCallback(() => onClose(), [onClose]);
   const trip = s.cat === "trip",
     cap = cfg.capacity[s.cat],
@@ -80,17 +79,12 @@ export function Booking({
     due =
       full || !cfg.deposit ? total : Math.round((total * cfg.deposit) / 100),
     m = (n: number | null | undefined) => money(s.currency, n);
-  const all = bookings().filter((b) => b.status !== "cancelada");
-  const slots = trip
-    ? [s.depart || "07:00 AM"]
-    : cfg.slots[s.cat as "surf" | "surfskate"];
-  const left = (d: string, t: string) =>
-    cap -
-    all
-      .filter((b) => b.date === d && b.time === t && b.cat === s.cat)
-      .reduce((a, b) => a + b.persons, 0);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const slots = (trip ? [s.depart || "07:00 AM"] : cfg.slots[s.cat as "surf" | "surfskate"]).map(normalizeTime);
+  const today = new Date(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Lima',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())+'T00:00:00');
+  const monthStart = new Date(today.getFullYear(),today.getMonth()+month,1);
+  const monthEnd = new Date(monthStart.getFullYear(),monthStart.getMonth()+1,0);
+  const availability=useAvailability(s.id,isoDate(monthStart),isoDate(monthEnd),step===2);
+  const left=(d:string,t:string)=>(availability.value?.capacity||cap)-(availability.value?.taken[d]?.[normalizeTime(t)]||0);
   const min = new Date(today);
   min.setDate(min.getDate() + cfg.lead);
   const max = new Date(today);
@@ -98,7 +92,7 @@ export function Booking({
   const available = (dt: Date) => {
     const k = isoDate(dt);
     return (
-      dt >= min &&
+      !availability.loading && !availability.error && availability.value !== null && dt >= min &&
       dt <= max &&
       !cfg.blocked.includes(k) &&
       !cfg.closedDays.includes(dt.getDay()) &&
@@ -138,12 +132,9 @@ export function Booking({
               /.+@.+\..+/.test(email) &&
               phone.replace(/\D/g, "").length >= 7
             )
-          : !!method &&
-            (method !== "card" ||
-              (card.replace(/\D/g, "").length >= 15 &&
-                /^\d\d\/\d\d$/.test(exp) &&
-                /^\d{3,4}$/.test(cvc)));
-  function next() {
+          : !!method && cfg.methods[method];
+  async function next() {
+    if(sending)return;
     setError("");
     if (!valid) {
       setError(step === 3 ? t.fillAll : t.noSlots);
@@ -162,49 +153,18 @@ export function Booking({
       setError(t.full);
       return;
     }
-    const b: BookingRecord = {
-      code: "EVO-" + crypto.randomUUID().slice(0, 6).toUpperCase(),
-      sid: s.id,
-      svc: tr(s.name, lang),
-      svcEs: s.name.es,
-      cat: s.cat,
-      opt,
-      persons,
-      date,
-      time,
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      level,
-      classLang,
-      notes,
-      method: method as PaymentMethod,
-      currency: s.currency,
-      total,
-      due,
-      paid: method === "card" ? due : 0,
-      status: method === "card" ? "pagada" : "por verificar",
-      createdAt: new Date().toISOString(),
-      lang,
-      demo: true,
-    };
+    const body={sid:s.id,opt,persons,date,time:normalizeTime(time),name:name.trim(),email:email.trim(),phone:phone.trim(),level,classLang,notes,method,lang,full,hp};
+    const fingerprint=JSON.stringify(body);
+    if(attempt.current.fingerprint!==fingerprint)attempt.current={fingerprint,key:crypto.randomUUID()};
+    setSending(true);
     try {
-      writeStored(KEYS.bookings, [b, ...bookings()]);
-      setDone(b);
-      setStep(5);
-      setCard("");
-      setCvc("");
-      setExp("");
-    } catch {
-      setError(
-        {
-          es: "No se pudo guardar la reserva. No hay espacio en el navegador.",
-          en: "Unable to save. Browser storage is full.",
-          fr: "Stockage du navigateur plein.",
-          de: "Browserspeicher voll.",
-        }[lang],
-      );
-    }
+      const booking=await api.post<BookingRecord>('/public/bookings',body,{'Idempotency-Key':attempt.current.key});
+      setDone(booking);setStep(5);
+    }catch(error){
+      if(error instanceof ApiError && error.code==='SLOT_FULL'){setStep(2);setTime('');setError(t.full);void availability.refresh();}
+      else if(error instanceof ApiError && error.status===429)setError(t.tooMany);
+      else setError((error as Error).message);
+    }finally{setSending(false);}
   }
   const wa = waUrl(
     data.settings,
@@ -317,10 +277,7 @@ export function Booking({
                 <strong>{m(due)}</strong>
               </div>
             )}
-            <p className="demo-note">
-              <IconLock size={16} />
-              {t.demo}
-            </p>
+            <p className="payment-note">{t.paymentNote}</p>
           </div>
         </aside>
         <div className="booking-main">
@@ -406,6 +363,8 @@ export function Booking({
             )}
             {step === 2 && (
               <>
+                {availability.loading&&<p role="status">{t.loadingAvailability}</p>}
+                {availability.error&&<p role="alert" className="error">{t.availabilityError} <button onClick={()=>void availability.refresh()}>{t.retry}</button></p>}
                 <div className="calendar-title">
                   <button
                     className="round"
@@ -494,6 +453,7 @@ export function Booking({
             )}
             {step === 3 && (
               <div className="form-grid">
+                <div aria-hidden="true" style={{position:"absolute",left:"-10000px"}}><label>Website<input name="website" tabIndex={-1} autoComplete="off" value={hp} onChange={(event)=>setHp(event.target.value)}/></label></div>
                 <label className="span-2">
                   {t.name}
                   <input
@@ -561,7 +521,7 @@ export function Booking({
             )}
             {step === 4 && (
               <>
-                <p className="demo-note">{t.demo}</p>
+                <p className="payment-note">{t.paymentNote}</p>
                 {cfg.deposit > 0 && cfg.deposit < 100 && (
                   <div className="pay-modes">
                     {[false, true].map((v) => (
@@ -601,56 +561,6 @@ export function Booking({
                       </button>
                     ))}
                 </div>
-                {method === "card" && (
-                  <div className="form-grid">
-                    <label className="span-2">
-                      {t.cardNum}
-                      <input
-                        inputMode="numeric"
-                        placeholder="4242 4242 4242 4242"
-                        autoComplete="off"
-                        value={card}
-                        onChange={(e) =>
-                          setCard(
-                            e.target.value
-                              .replace(/\D/g, "")
-                              .slice(0, 16)
-                              .replace(/(\d{4})(?=\d)/g, "$1 "),
-                          )
-                        }
-                      />
-                    </label>
-                    <label>
-                      {t.exp}
-                      <input
-                        inputMode="numeric"
-                        autoComplete="off"
-                        placeholder="MM/YY"
-                        value={exp}
-                        onChange={(e) => {
-                          const v = e.target.value
-                            .replace(/\D/g, "")
-                            .slice(0, 4);
-                          setExp(
-                            v.length > 2 ? v.slice(0, 2) + "/" + v.slice(2) : v,
-                          );
-                        }}
-                      />
-                    </label>
-                    <label>
-                      CVC
-                      <input
-                        inputMode="numeric"
-                        autoComplete="off"
-                        placeholder="123"
-                        value={cvc}
-                        onChange={(e) =>
-                          setCvc(e.target.value.replace(/\D/g, "").slice(0, 4))
-                        }
-                      />
-                    </label>
-                  </div>
-                )}
                 {(method === "yape" || method === "plin") && (
                   <div className="wallet">
                     <p>
@@ -678,7 +588,6 @@ export function Booking({
                     ? fmt(t.doneSub, { d: dateLabel, t: time })
                     : t.pendSub}
                 </p>
-                <p className="muted">{t.demo}</p>
                 <small>{t.code}</small>
                 <strong className="booking-code">{done.code}</strong>
                 <a
@@ -707,17 +616,17 @@ export function Booking({
               <button
                 className="btn outline"
                 onClick={() => setStep(step - 1)}
-                disabled={step === 1}
+                disabled={step === 1 || sending}
               >
                 <IconArrowLeft size={17} />
                 {t.back}
               </button>
               <button
                 className={"btn " + (step === 4 ? "gold" : "ink")}
-                disabled={!valid}
-                onClick={next}
+                disabled={!valid || sending}
+                onClick={()=>void next()}
               >
-                {step < 4
+                {sending ? t.processing : step < 4
                   ? t.next
                   : method === "card"
                     ? fmt(t.pay, { x: m(due) || "" })

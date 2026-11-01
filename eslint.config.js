@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'server-dist', '.mysql-data', 'mysql-dev-data', 'uploads-dev']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -20,4 +20,5 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  { files: ['server/**/*.ts', 'scripts/**/*.ts', 'tests/**/*.ts'], languageOptions: { globals: globals.node }, rules: { 'react-hooks/rules-of-hooks': 'off', 'react-hooks/exhaustive-deps': 'off' } },
 ])

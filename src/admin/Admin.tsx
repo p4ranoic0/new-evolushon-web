@@ -16,19 +16,13 @@ import {
   IconRipple,
   IconWorldUpload,
 } from "@tabler/icons-react";
-import {
-  asset,
-  bookings,
-  clone,
-  DEFAULT,
-  history,
-  KEYS,
-  load,
-  migrate,
-  readStored,
-  save,
-  writeStored,
-} from "../store";
+import { asset, clone, preference, setPreference } from "../store";
+import { api, onUnauthorized } from "../store/api";
+import { ContentActions, useAdminContent } from "../store/admin-remote";
+import { useBookings } from "../store/bookings";
+import { Modal } from "../components/Modal";
+import { useHead } from "../components/useHead";
+import { diff } from "../../shared/diff";
 import type { SiteData, User } from "../store";
 import { ServicesEditor } from "./ServicesEditor";
 import { GalleryEditor } from "./GalleryEditor";
@@ -52,59 +46,13 @@ const NAV = [
   { id: "langs", label: "Idiomas", icon: IconLanguage },
   { id: "settings", label: "Ajustes", icon: IconSettings },
 ];
-function diff(d: SiteData, l: SiteData) {
-  const count = (a: { id: string }[], b: { id: string }[]) =>
-    new Set([...a, ...b].map((v) => v.id)).size -
-    [...new Set([...a, ...b].map((v) => v.id))].filter(
-      (id) =>
-        JSON.stringify(a.find((v) => v.id === id)) ===
-        JSON.stringify(b.find((v) => v.id === id)),
-    ).length;
-  const services = count(d.services, l.services),
-    gallery = count(d.gallery, l.gallery),
-    other =
-      ["home", "settings", "albums", "reviews"].filter(
-        (k) =>
-          JSON.stringify(d[k as keyof SiteData]) !==
-          JSON.stringify(l[k as keyof SiteData]),
-      ).length +
-      Number(
-        d.services.map((s) => s.id).join() !==
-          l.services.map((s) => s.id).join(),
-      ) +
-      Number(
-        d.gallery.map((g) => g.id).join() !== l.gallery.map((g) => g.id).join(),
-      );
-  return { services, gallery, other, total: services + gallery + other };
-}
 export default function Admin() {
-  const [auth, setAuth] = useState<Omit<User, "pass"> | null>(() => {
-    try {
-      return JSON.parse(sessionStorage.getItem("evo-auth3") || "null");
-    } catch {
-      return null;
-    }
-  });
-  const [user, setUser] = useState(""),
-    [pass, setPass] = useState(""),
-    [loginError, setLoginError] = useState(false);
-  const [data, setData] = useState<SiteData>(() => {
-      try {
-        return migrate(readStored(KEYS.draft, load()));
-      } catch {
-        return clone(DEFAULT);
-      }
-    }),
-    [live, setLive] = useState(() => clone(load()));
-  const [view, setView] = useState(() =>
-      readStored<string>(
-        "evo-admin3-view",
-        localStorage.getItem("evo-admin3-view") || "dash",
-      ),
-    ),
-    [notice, setNotice] = useState(""),
-    [revision, setRevision] = useState(0),
-    [mobileMenu, setMobileMenu] = useState(false);
+  useHead({ title: "Panel del equipo | Evolushon", robots: "noindex,nofollow" });
+  const [auth, setAuth] = useState<User | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [user, setUser] = useState(""), [pass, setPass] = useState(""), [loginError,setLoginError]=useState("");
+  const [view,setView]=useState(()=>preference("evo-admin-view","dash")), [notice,setNotice]=useState(""), [mobileMenu,setMobileMenu]=useState(false);
+  const [undoGeneration,setUndoGeneration]=useState(0);
   const [canUndo, setCanUndo] = useState(false),
     [canRedo, setCanRedo] = useState(false);
   const undo = useRef<SiteData[]>([]),
@@ -115,49 +63,38 @@ export default function Admin() {
     if (noticeTimer.current) clearTimeout(noticeTimer.current);
     noticeTimer.current = setTimeout(() => setNotice(""), 6500);
   }, []);
-  useEffect(() => {
-    document.documentElement.lang = "es";
-    const listener = () => setRevision((v) => v + 1);
-    window.addEventListener("storage", listener);
-    window.addEventListener("evo-storage", listener);
-    return () => {
-      window.removeEventListener("storage", listener);
-      window.removeEventListener("evo-storage", listener);
-      if (noticeTimer.current) clearTimeout(noticeTimer.current);
-    };
-  }, []);
-  function persist(next: SiteData) {
-    try {
-      writeStored(KEYS.draft, next);
-      return true;
-    } catch {
-      notify(
-        "Sin espacio en el navegador. Optimiza o elimina fotos. El cambio no se guardó.",
-      );
-      return false;
-    }
-  }
+  const remote = useAdminContent(auth, notify);
+  const {data,live,entries,persist,saveState}=remote;
+  const {items:allBookings}=useBookings(!!auth && auth.role!=="fotografo");
+  useEffect(()=>{
+    onUnauthorized(()=>{setAuth(null);});
+    api.get<User>("/auth/me").then(setAuth).catch(()=>setAuth(null)).finally(()=>setChecking(false));
+    return ()=>{onUnauthorized();if(noticeTimer.current)clearTimeout(noticeTimer.current);};
+  },[]);
+  useEffect(()=>{undo.current=[];redo.current=[];},[remote.generation]);
   function update(fn: (d: SiteData) => void) {
-    const next = clone(data);
+    const previous = clone(remote.current());
+    const next = clone(previous);
     fn(next);
     if (!persist(next)) return;
-    undo.current = [...undo.current.slice(-39), clone(data)];
+    setUndoGeneration(remote.generation);
+    undo.current = [...undo.current.slice(-39), previous];
     redo.current = [];
     setCanUndo(true);
     setCanRedo(false);
-    setData(next);
   }
   function travel(back: boolean) {
     const from = back ? undo.current : redo.current,
       to = back ? redo.current : undo.current;
     if (!from.length) return;
+    const previous=clone(remote.current());
     const next = from[from.length - 1];
     if (!persist(next)) return;
     from.pop();
-    to.push(clone(data));
+    to.push(previous);
+    setUndoGeneration(remote.generation);
     setCanUndo(undo.current.length > 0);
     setCanRedo(redo.current.length > 0);
-    setData(next);
   }
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
@@ -173,11 +110,7 @@ export default function Admin() {
   });
   function go(v: string) {
     setView(v);
-    try {
-      localStorage.setItem("evo-admin3-view", v);
-    } catch {
-      /* La navegación sigue disponible sin almacenamiento. */
-    }
+    setPreference("evo-admin-view", v);
     setMobileMenu(false);
     window.scrollTo(0, 0);
   }
@@ -192,52 +125,13 @@ export default function Admin() {
         : NAV.some((v) => v.id === view)
           ? view
           : "dash";
-  const allBookings = bookings(),
-    entries = history();
-  void revision;
-  function publish() {
-    try {
-      save(data);
-      setLive(clone(data));
-      const h = [
-        {
-          at: new Date().toISOString(),
-          by: auth?.name || "Equipo",
-          summary: {
-            services: changes.services,
-            gallery: changes.gallery,
-            other: changes.other,
-          },
-          snap: {
-            services: data.services,
-            home: data.home,
-            settings: data.settings,
-            albums: data.albums,
-            reviews: data.reviews,
-          },
-        },
-        ...history(),
-      ].slice(0, 8);
-      try {
-        writeStored(KEYS.history, h);
-      } catch {
-        try {
-          writeStored(KEYS.history, h.slice(0, 2));
-        } catch {
-          notify("Publicado. No hay espacio para guardar el historial.");
-          return;
-        }
-      }
-      notify("Publicado en el sitio.");
-    } catch {
-      notify("No se pudo publicar: sin espacio en el navegador.");
-    }
-  }
+  async function publish() { try { await remote.publish(); } catch { /* El hook muestra el error. */ } }
   const shared = { data, update, notify };
+  if(checking || (auth && !remote.loaded && !remote.loadError)) return <main className="loading">Evolushon · Cargando panel…</main>;
+  if(auth && remote.loadError) return <main className="loading"><p role="alert">{remote.loadError}</p><button onClick={()=>void remote.reload()}>Reintentar</button></main>;
   return (
+    <ContentActions.Provider value={{importData:remote.importData,restore:remote.restore}}>
     <div className="admin">
-      <title>Panel del equipo | Evolushon</title>
-      <meta name="robots" content="noindex,nofollow" />
       {!auth ? (
         <div className="admin-login">
           <div className="login-image">
@@ -251,18 +145,7 @@ export default function Admin() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const u = data.settings.users.find(
-                (u) => u.user === user.trim() && u.pass === pass,
-              );
-              if (!u) {
-                setLoginError(true);
-                return;
-              }
-              const a = { name: u.name, user: u.user, role: u.role };
-              sessionStorage.setItem("evo-auth3", JSON.stringify(a));
-              setAuth(a);
-              setPass("");
-              if (u.role === "fotografo") go("gallery");
+              void api.post<User>("/auth/login",{user:user.trim(),pass}).then((u)=>{setAuth(u);setPass("");setLoginError("");if(u.role==="fotografo")go("gallery");}).catch((error)=>setLoginError(error.message));
             }}
           >
             <img src={asset("src/assets/logo.jpg")} alt="Evolushon" />
@@ -274,7 +157,7 @@ export default function Admin() {
                 autoComplete="username"
                 onChange={(e) => {
                   setUser(e.target.value);
-                  setLoginError(false);
+                  setLoginError("");
                 }}
               />
             </label>
@@ -286,21 +169,18 @@ export default function Admin() {
                 autoComplete="current-password"
                 onChange={(e) => {
                   setPass(e.target.value);
-                  setLoginError(false);
+                  setLoginError("");
                 }}
               />
             </label>
             {loginError && (
               <p className="error" role="alert">
-                Usuario o contraseña incorrectos.
+                {loginError}
               </p>
             )}
             <button className="admin-btn primary" type="submit">
               Entrar
             </button>
-            <p className="muted">
-              Demo · admin / evolushon · editor / editor · foto / foto
-            </p>
           </form>
         </div>
       ) : (
@@ -359,8 +239,7 @@ export default function Admin() {
                 <button
                   aria-label="Cerrar sesión"
                   onClick={() => {
-                    sessionStorage.removeItem("evo-auth3");
-                    setAuth(null);
+                    void remote.prepareLogout().then(()=>api.post("/auth/logout")).then(()=>setAuth(null)).catch((error)=>{notify(error.message);remote.resumeSession();});
                   }}
                 >
                   <IconLogout size={20} />
@@ -368,7 +247,8 @@ export default function Admin() {
               </div>
             </div>
           </aside>
-          <main className="admin-main">
+          <main className="admin-main" aria-busy={remote.busy}>
+            <fieldset disabled={remote.busy} className="admin-editor-fields">
             <header className="admin-toolbar">
               <button
                 className="admin-menu-btn"
@@ -381,7 +261,7 @@ export default function Admin() {
               <div className="flex gap-1">
                 <button
                   className="round"
-                  disabled={!canUndo}
+                  disabled={!canUndo || undoGeneration!==remote.generation}
                   onClick={() => travel(true)}
                   aria-label="Deshacer"
                 >
@@ -389,13 +269,15 @@ export default function Admin() {
                 </button>
                 <button
                   className="round"
-                  disabled={!canRedo}
+                  disabled={!canRedo || undoGeneration!==remote.generation}
                   onClick={() => travel(false)}
                   aria-label="Rehacer"
                 >
                   <IconArrowForwardUp size={18} />
                 </button>
               </div>
+              <span aria-live="polite">{saveState === "saving" ? "Guardando…" : saveState === "error" ? "Sin guardar — reintentar" : "Borrador guardado"}</span>
+              {saveState === "error" && <button className="admin-btn" onClick={()=>void remote.retry().catch(()=>{})}>Reintentar</button>}
               {changes.total > 0 ? (
                 <div className="publish-actions">
                   <span className="change-badge">
@@ -411,14 +293,13 @@ export default function Admin() {
                               "¿Descartar todos los cambios sin publicar?",
                             )
                           ) {
-                            update((d) => Object.assign(d, clone(live)));
-                            notify("Cambios descartados.");
+                            void remote.discard().catch(()=>{});
                           }
                         }}
                       >
                         Descartar
                       </button>
-                      <button className="admin-btn gold" onClick={publish}>
+                      <button className="admin-btn gold" onClick={()=>void publish()} disabled={saveState!=="saved"}>
                         <IconWorldUpload size={17} />
                         Publicar
                       </button>
@@ -544,7 +425,7 @@ export default function Admin() {
                     {!entries.length && (
                       <p className="muted">Aún no hay publicaciones.</p>
                     )}
-                    {entries.map((h, i) => (
+                    {entries.map((h) => (
                       <div className="history-row" key={h.at}>
                         <IconWorldUpload size={18} />
                         <div>
@@ -552,8 +433,8 @@ export default function Admin() {
                             {new Date(h.at).toLocaleString("es-PE")} · {h.by}
                           </b>
                           <small>
-                            {h.summary.services} servicios · {h.summary.gallery}{" "}
-                            fotos · {h.summary.other} otros
+                            {h.summary?.services ?? 0} servicios · {h.summary?.gallery ?? 0}{" "}
+                            fotos · {h.summary?.other ?? 0} otros
                           </small>
                         </div>
                         {canPublish && (
@@ -565,16 +446,7 @@ export default function Admin() {
                                   "¿Restaurar servicios, textos, reseñas y ajustes de esta versión al borrador? Las fotos actuales se conservan.",
                                 )
                               ) {
-                                update((d) => {
-                                  const users = d.settings.users;
-                                  Object.assign(d, clone(h.snap));
-                                  d.settings.users = users;
-                                });
-                                notify(
-                                  "Versión " +
-                                    (i + 1) +
-                                    " restaurada al borrador.",
-                                );
+                                if(h.id)void remote.restore(h.id).catch(()=>{});
                               }
                             }}
                           >
@@ -584,7 +456,7 @@ export default function Admin() {
                       </div>
                     ))}
                     <small className="muted">
-                      El historial guarda hasta 8 publicaciones. Las imágenes no
+                      El historial guarda hasta 20 publicaciones. Las imágenes no
                       se duplican en las versiones.
                     </small>
                   </Panel>
@@ -604,6 +476,7 @@ export default function Admin() {
             {activeView === "settings" && isAdmin && (
               <SettingsEditor {...shared} />
             )}
+            </fieldset>
           </main>
           <nav className="admin-bottom-nav" aria-label="Panel del equipo">
             {NAV.filter(
@@ -637,6 +510,9 @@ export default function Admin() {
           </button>
         </div>
       )}
+      {remote.conflict && <Modal label="Otro usuario modificó el borrador" onClose={()=>{}} className="admin-dialog"><section className="admin-panel"><h2 id="draft-conflict">Otro usuario modificó el borrador</h2><p>Elige qué versión conservar. Sobrescribir reemplaza los cambios del otro usuario por tu borrador.</p><button className="admin-btn" onClick={()=>void remote.resolveConflict(false)}>Cargar el suyo</button><button className="admin-btn danger" onClick={()=>void remote.resolveConflict(true).catch(()=>{})}>Sobrescribir</button></section></Modal>}
+      {remote.recovery && <Modal label="Recuperar borrador local" onClose={remote.dismissRecovery} className="admin-dialog"><section className="admin-panel"><h2 id="draft-recovery">Recuperar borrador local</h2><p>Hay una copia local más reciente que el borrador del servidor.</p><button className="admin-btn" onClick={remote.recover}>Recuperar</button><button className="admin-btn" onClick={remote.dismissRecovery}>Conservar servidor</button></section></Modal>}
     </div>
+    </ContentActions.Provider>
   );
 }

@@ -1313,7 +1313,7 @@ h2 {
   font: 800 32px var(--font-display);
   font-variation-settings: "wdth" 75;
 }
-.demo-note {
+.payment-note {
   font-size: 12px;
   color: var(--color-muted);
   display: flex;
@@ -1321,7 +1321,7 @@ h2 {
   gap: 6px;
   line-height: 1.5;
 }
-.demo-note svg {
+.payment-note svg {
   flex-shrink: 0;
 }
 .booking-main {
@@ -1815,7 +1815,7 @@ input[type="checkbox"] {
   }
   .booking-summary dl,
   .booking-summary .summary-total,
-  .booking-summary .demo-note {
+  .booking-summary .payment-note {
     display: none;
   }
   .booking-summary .eyebrow {
@@ -2018,7 +2018,7 @@ input[type="checkbox"] {
   color: var(--color-gold);
   font-size: 44px;
 }
-.booking-summary .demo-note {
+.booking-summary .payment-note {
   color: #8f847c;
 }
 @media (max-width: 1079px) {

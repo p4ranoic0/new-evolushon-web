@@ -377,6 +377,8 @@ export function PublicSite({
                       loading="lazy"
                       decoding="async"
                       src={asset(g.src)}
+                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+                      sizes="(max-width: 700px) 100vw, 50vw"
                       alt={tr(g.alt, lang)}
                       style={{ objectPosition: g.focus }}
                     />
@@ -592,6 +594,8 @@ export function PublicSite({
                       loading="lazy"
                       decoding="async"
                       src={asset(g.src)}
+                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+                      sizes="(max-width: 700px) 100vw, 50vw"
                       alt={tr(g.alt, lang)}
                       style={{ objectPosition: g.focus }}
                     />
@@ -967,6 +971,8 @@ function Lightbox({
       </div>
       <img
         src={asset(list[index].src)}
+        srcSet={list[index].variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+        sizes="90vw"
         alt={tr(list[index].alt, lang)}
         onTouchStart={(e) => {
           touch.current = e.touches[0].clientX;

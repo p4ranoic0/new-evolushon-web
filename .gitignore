@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.env
+.env.*
+!.env.example
+server-dist/
+uploads-dev/
+.mysql-data/
+
+mysql-dev-data/
+uploads-test-*/
+
+# Banco de redes (material de trabajo, no se publica)
+content/redes/
