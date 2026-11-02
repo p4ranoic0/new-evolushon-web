@@ -3,11 +3,11 @@ export const SEO_DEFAULTS = {
   home: {
     es: [
       "Clases de surf en Lima | Evolushon Surf Experience",
-      "Escuela de surf en Lima: clases grupales, privadas, coaching y tándem para niños, surfskate y surftrips a Punta Hermosa, Puerto Viejo y Bermejo. Clases en español, inglés, francés y alemán.",
+      "Escuela de surf en Lima: clases grupales, privadas, coaching y tándem para niños, surfskate y surftrips al sur. Clases en español, inglés, francés y alemán.",
     ],
     en: [
       "Surf lessons in Lima, Peru | Evolushon Surf Experience",
-      "Surf school in Lima: group, private, coaching and kids tandem lessons, surfskate and surftrips to Punta Hermosa, Puerto Viejo and Bermejo. Lessons in English, Spanish, French and German.",
+      "Surf school in Lima, Peru: group, private, coaching and kids tandem lessons, surfskate and surftrips down south. Lessons in English, Spanish, French and German.",
     ],
     fr: [
       "Cours de surf à Lima, Pérou | Evolushon Surf Experience",

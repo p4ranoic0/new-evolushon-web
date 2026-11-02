@@ -1,6 +1,12 @@
 import { SEO_DEFAULTS } from "./seo-defaults.js";
 import { effectivePrice, LANGS, pathFor, tr } from "./index.js";
 import type { SiteData, Lang, Page, Service } from "./types.js";
+// Tema de cada categoría para los títulos de servicio: «Grupales · Clases de surf en Lima | Evolushon».
+const SERVICE_TOPIC: Record<string, Record<Lang, string>> = {
+  surf: { es: "Clases de surf en Lima", en: "Surf lessons in Lima", fr: "Cours de surf à Lima", de: "Surfkurs in Lima" },
+  surfskate: { es: "Surfskate en Lima", en: "Surfskate in Lima", fr: "Surfskate à Lima", de: "Surfskate in Lima" },
+  trip: { es: "Surftrip desde Lima", en: "Surf trip from Lima", fr: "Surf trip depuis Lima", de: "Surftrip ab Lima" },
+};
 export function seoFor(data: SiteData, lang: Lang, page: Page, service?: Service, publicUrl?: string) {
   const domain = (
     publicUrl || data.settings.domain || "https://evolushonsurfexperience.com"
@@ -8,7 +14,7 @@ export function seoFor(data: SiteData, lang: Lang, page: Page, service?: Service
   const defaults = SEO_DEFAULTS[page][lang];
   const ov = data.settings.seo[page]?.[lang];
   const title = service
-    ? tr(service.seo.title, lang) || tr(service.name, lang) + " | Evolushon"
+    ? tr(service.seo.title, lang) || `${tr(service.name, lang)} · ${SERVICE_TOPIC[service.cat]?.[lang] ?? ""} | Evolushon`.replace(" ·  |", " |")
     : ov?.title || defaults[0];
   const desc = service
     ? tr(service.seo.desc, lang) || tr(service.desc, lang)

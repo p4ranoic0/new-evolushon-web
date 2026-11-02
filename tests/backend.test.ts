@@ -41,7 +41,9 @@ test('migraciones: interrupción tras DDL, replay y segunda ejecución sin dupli
   await assert.rejects(migrate(db,{afterStatement:n=>{if(n===3)throw new Error('interrupción simulada');}}),/interrupción/);
   assert.equal((await rows(db,'SELECT * FROM migrations')).length,0);
   await migrate(db);await migrate(db);
-  assert.equal((await rows(db,'SELECT * FROM migrations')).length,1);
+  assert.equal((await rows(db,'SELECT * FROM migrations')).length,2);
+  await exec(db,'CREATE TABLE t0_probe (id INT PRIMARY KEY)');await exec(db,'DELETE FROM migrations WHERE id=2');await migrate(db);
+  assert.equal((await rows(db,"SHOW TABLES LIKE 't0_probe'")).length,0,'0002 borra la tabla de la prueba T0');
   const [table]=await rows(db,'SHOW CREATE TABLE bookings');
   assert.match(String(table['Create Table']),/ix_bookings_slot/);
   assert.match(String(table['Create Table']),/idempotency_key/);
@@ -212,6 +214,7 @@ test('HTTP SEO, redirecciones, sitemap dinámico, robots, 404 y mantenimiento',a
   await request(app).get('/en/surftrips/').expect(301).expect('Location','/en/services?category=trip');
   await request(app).get('/es/galeria?x=1').set('Host','www.'+new URL(origin).host).expect(301).expect('Location',origin+'/es/galeria?x=1');
   await request(app).get('/es/servicios/no-existe').expect(404);
+  const svc=await request(app).get('/es/servicios/s-grupal').expect(200);assert.match(svc.text,/<title data-ssr>Grupales · Clases de surf en Lima \| Evolushon<\/title>/);
   const xml=await request(app).get('/sitemap.xml').expect(200);assert.equal((xml.text.match(/<loc>/g)||[]).length,56);
   const robots=await request(app).get('/robots.txt').expect(200);assert.match(robots.text,/Disallow: \/admin/);assert.match(robots.text,new RegExp(origin.replaceAll('.','\\.')+'/sitemap.xml'));
   const {app:maintenance}=createApp(db,{ready:false,error:'Migración fallida'});
