@@ -210,6 +210,7 @@ test('HTTP SEO, redirecciones, sitemap dinámico, robots, 404 y mantenimiento',a
   const h=await request(app).get('/es/').expect(200);assert.match(h.text,/<title data-ssr>/);assert.match(h.text,/rel="canonical"/);assert.match(h.text,/application\/ld\+json/);assert.match(h.text,/id="evo-data"/);
   await request(app).get('/surftrips/').expect(301).expect('Location','/es/servicios?category=trip');
   await request(app).get('/en/surftrips/').expect(301).expect('Location','/en/services?category=trip');
+  await request(app).get('/es/galeria?x=1').set('Host','www.'+new URL(origin).host).expect(301).expect('Location',origin+'/es/galeria?x=1');
   await request(app).get('/es/servicios/no-existe').expect(404);
   const xml=await request(app).get('/sitemap.xml').expect(200);assert.equal((xml.text.match(/<loc>/g)||[]).length,56);
   const robots=await request(app).get('/robots.txt').expect(200);assert.match(robots.text,/Disallow: \/admin/);assert.match(robots.text,new RegExp(origin.replaceAll('.','\\.')+'/sitemap.xml'));

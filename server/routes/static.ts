@@ -12,7 +12,11 @@ export const LEGACY_REDIRECTS:Record<string,string>={
 };
 export function redirects() {
   const r=Router();r.use((req,res,next)=>{
-    if(env.FORCE_HTTPS&&(req.protocol!=='https'||req.hostname!==new URL(env.PUBLIC_URL).hostname)) {res.redirect(301,env.PUBLIC_URL+req.originalUrl);return;}
+    const canonical=new URL(env.PUBLIC_URL).hostname;
+    // www → dominio canónico. Solo mira el host: detrás del proxy de Hostinger req.protocol es siempre http
+    // (TRUST_PROXY=0), así que FORCE_HTTPS provocaría un bucle; el panel ya redirige http → https.
+    if(req.hostname==='www.'+canonical){res.redirect(301,env.PUBLIC_URL+req.originalUrl);return;}
+    if(env.FORCE_HTTPS&&(req.protocol!=='https'||req.hostname!==canonical)) {res.redirect(301,env.PUBLIC_URL+req.originalUrl);return;}
     const path=req.path.replace(/\/$/,'') || '/';
     if(path==='/'){res.redirect(302,'/es/');return;}
     if(LEGACY_REDIRECTS[path]){res.redirect(301,LEGACY_REDIRECTS[path]);return;}next();
