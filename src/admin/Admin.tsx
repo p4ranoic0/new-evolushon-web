@@ -151,7 +151,7 @@ export default function Admin() {
             <img src={asset("src/assets/logo.jpg")} alt="Evolushon" />
             <h1>Iniciar sesión</h1>
             <label className="field">
-              Usuario
+              Usuario o correo
               <input
                 value={user}
                 autoComplete="username"

@@ -1248,3 +1248,171 @@
 .admin-dialog .modal-panel { width: min(560px, calc(100vw - 32px)); padding: 24px; }
 .admin-dialog .admin-panel { margin: 0; }
 .admin-dialog .admin-btn { margin: 16px 8px 0 0; }
+
+/* Equipo: lista compacta, edición en línea y alta guiada */
+.team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.team-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.team-list > li {
+  border-top: 1px solid #efe4d6;
+  padding: 12px 0;
+}
+.team-list > li.inactive .who,
+.team-list > li.inactive .avatar {
+  opacity: 0.55;
+}
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.team-row .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-sand);
+  color: var(--color-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.team-row .who {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.team-row .who b {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.team-row .who small {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.team-list code,
+.created-note code {
+  font-size: 12px;
+  background: #f5ede4;
+  padding: 1px 5px;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+.team-edit,
+.new-user {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  background: #fffaf5;
+}
+.new-user h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.role-picker {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.role-picker legend {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+  padding: 0;
+}
+.role-picker label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  row-gap: 2px;
+  align-items: start;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: #fffdfb;
+}
+.role-picker label.selected {
+  border-color: var(--color-blue);
+  box-shadow: inset 0 0 0 1px var(--color-blue);
+}
+.role-picker input {
+  grid-row: span 2;
+  margin-top: 3px;
+  width: auto;
+  padding: 0;
+}
+.role-picker b {
+  font-size: 14px;
+}
+.role-picker small {
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+.role-picker:disabled label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.password-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.password-row input {
+  flex: 1;
+  min-width: 0;
+}
+.field .hint {
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.created-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #e6f0e9;
+  color: #1f4d39;
+  font-size: 14px;
+}
+@media (max-width: 720px) {
+  .role-picker {
+    grid-template-columns: 1fr;
+  }
+  .password-row {
+    flex-wrap: wrap;
+  }
+}

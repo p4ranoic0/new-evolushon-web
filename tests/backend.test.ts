@@ -195,6 +195,16 @@ test('usuarios: último admin protegido y cambio de rol revoca sesiones',async()
   const [u]=await rows(db,"SELECT id FROM users WHERE username='fotografo'");
   await agent.patch('/api/admin/users/'+u.id).set('Origin',origin).set('X-Requested-With','evolushon').send({role:'editor'}).expect(200);
   assert.equal((await rows(db,'SELECT * FROM sessions WHERE user_id=?',[u.id])).length,0);
+  // Alta con correo opcional: usuario o correo repetidos (incluido el del admin) dan 409; la lista expone el correo.
+  const send=(path:string,body:object)=>agent.post(path).set('Origin',origin).set('X-Requested-With','evolushon').send(body);
+  await send('/api/admin/users',{username:'lucho.silva',name:'Lucho Silva',email:'Lucho@Example.test',role:'editor',password:'clave-larga-123'}).expect(201);
+  await send('/api/admin/users',{username:'lucho.silva',name:'Otro',role:'editor',password:'clave-larga-123'}).expect(409);
+  await send('/api/admin/users',{username:'otro',name:'Otro',email:'lucho@example.test',role:'editor',password:'clave-larga-123'}).expect(409);
+  await send('/api/admin/users',{username:'otro2',name:'Otro',email:'test@example.test',role:'editor',password:'clave-larga-123'}).expect(409);
+  await send('/api/admin/users',{username:'sin.correo',name:'Sin correo',email:'',role:'fotografo',password:'clave-larga-123'}).expect(201);
+  const list=(await agent.get('/api/admin/users').expect(200)).body as {username:string;email:string|null}[];
+  assert.equal(list.find(x=>x.username==='lucho.silva')?.email,'lucho@example.test');
+  assert.equal(list.find(x=>x.username==='sin.correo')?.email,null);
 });
 test('HTTP SEO, redirecciones, sitemap dinámico, robots, 404 y mantenimiento',async()=>{
   const h=await request(app).get('/es/').expect(200);assert.match(h.text,/<title data-ssr>/);assert.match(h.text,/rel="canonical"/);assert.match(h.text,/application\/ld\+json/);assert.match(h.text,/id="evo-data"/);
