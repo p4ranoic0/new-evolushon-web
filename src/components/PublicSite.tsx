@@ -226,12 +226,20 @@ export function PublicSite({
         {page === "home" && (
           <>
             <section className="hero">
-              <img
-                className="hero-poster"
-                src={asset("src/assets/banner-principal.jpg")}
-                alt=""
-                fetchPriority="high"
-              />
+              <picture>
+                {/* En celular (sin video) va la foto vertical del grupo; el corte coincide con mobileMotion. */}
+                <source
+                  media="(max-width: 759px)"
+                  srcSet={asset("src/assets/hero-movil.webp")}
+                  type="image/webp"
+                />
+                <img
+                  className="hero-poster"
+                  src={asset("src/assets/banner-principal.jpg")}
+                  alt=""
+                  fetchPriority="high"
+                />
+              </picture>
               {!still && (
                 <video
                   src={asset("src/assets/Video-drone.mp4")}
