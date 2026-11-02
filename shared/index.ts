@@ -1,6 +1,5 @@
 import { SEED } from "./seed.js";
 import { UI } from "./ui.js";
-import { SAMPLE_REVIEWS } from "./reviews.js";
 import type {
   BookingConfig,
   Lang,
@@ -99,10 +98,11 @@ export function migrate(input: unknown): SiteData {
     ) as Localized,
   }));
   d.home ||= {};
-  d.reviews ||= clone(SAMPLE_REVIEWS) as ReviewSeed[] as SiteData["reviews"];
+  d.reviews ||= [];
   d.reviews.forEach((r) => {
     r.text = { ...blank(), ...r.text };
     r.hidden = !!r.hidden;
+    r.source ??= "manual";
   });
   d.services.forEach((s) => {
     s.seo = Object.assign({ title: blank(), desc: blank(), slug: "" }, s.seo);
@@ -127,7 +127,6 @@ export function migrate(input: unknown): SiteData {
   });
   return d;
 }
-type ReviewSeed = (typeof SAMPLE_REVIEWS)[number];
 export const DEFAULT = migrate(SEED);
 export function uiFor(
   d: SiteData,

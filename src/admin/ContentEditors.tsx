@@ -1,3 +1,5 @@
+import { GoogleReviewsStatus } from "./GoogleReviewsStatus";
+import { SocialReviewsImport } from "./SocialReviewsImport";
 import { useState } from "react";
 import { ServerStorage, UsersManager } from "./ServerSettings";
 import { IconPlus } from "@tabler/icons-react";
@@ -7,7 +9,7 @@ import {
   LANGS,
   UI,
 } from "../store";
-import type { Lang, Page, SiteData } from "../store";
+import type { Lang, Page, SiteData, ReviewSource } from "../store";
 import { SEO_DEFAULTS } from "../store/seo-defaults";
 import {
   Check,
@@ -79,8 +81,7 @@ export function ReviewsEditor({ data, update, notify }: Props) {
     <div className="admin-content">
       <Panel title="Reseñas de Google">
         <p className="muted">
-          Carga manual. Los ejemplos del prototipo están identificados como
-          ejemplo en el sitio.
+          Enlaces y puntuación manual de respaldo. Las reseñas de ejemplo y las ocultas nunca se muestran en público.
         </p>
         <div className="form-grid">
           <Field
@@ -154,6 +155,7 @@ export function ReviewsEditor({ data, update, notify }: Props) {
                 d.reviews.unshift({
                   id: "r-" + crypto.randomUUID(),
                   author: "",
+                  source: "manual",
                   rating: 5,
                   date: isoDate().slice(0, 7),
                   sample: false,
@@ -168,9 +170,18 @@ export function ReviewsEditor({ data, update, notify }: Props) {
           </button>
         </div>
       </div>
+      <SocialReviewsImport reviews={data.reviews} update={update} notify={notify}/>
+      <GoogleReviewsStatus lang={lang}/>
+      <h2>Reseñas del borrador</h2>
       {data.reviews.map((r) => (
         <Panel key={r.id} title={r.author || "Nueva reseña"}>
           <div className="form-grid">
+            <label className="field">Fuente
+              <select value={r.source} onChange={e=>update(d=>{d.reviews.find(x=>x.id===r.id)!.source=e.target.value as ReviewSource;})}>
+                <option value="manual">Manual</option><option value="google">Google</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option>
+              </select>
+            </label>
+            <Field label="Enlace original (HTTPS)" type="url" value={r.url || ""} onChange={v=>update(d=>{d.reviews.find(x=>x.id===r.id)!.url=v;})}/>
             <Field
               label="Autor"
               value={r.author}

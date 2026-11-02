@@ -1,3 +1,5 @@
+import { publicSiteData } from '../../shared/review-utils.js';
+import type { GoogleReviewsService } from '../services/google-reviews.js';
 import { Router, type Request } from 'express';
 import { z } from 'zod';
 import multer from 'multer';
@@ -15,7 +17,7 @@ import { userRoutes } from './users.js';
 import { authRoutes } from './auth.js';
 const limiter=(limit:number,windowMs:number,keyGenerator?:(req:Request)=>string)=>rateLimit({limit,windowMs,keyGenerator,standardHeaders:'draft-7',legacyHeaders:false,handler:(_req,res)=>res.status(429).json({error:{code:'RATE_LIMITED',message:'Demasiados intentos; espera unos minutos'}})});
 const csvCell=(v:unknown)=>'"'+String(v??'').replace(/^[=+@\-\t\r]/,"'$&").replace(/"/g,'""')+'"';
-export function apiRoutes(db:Pool,content:ContentService) {
+export function apiRoutes(db:Pool,content:ContentService,google:GoogleReviewsService) {
   const r=Router(),bookings=bookingService(db,content),images=imageService(db);
   r.use(limiter(300,60000));
   r.use('/auth',authRoutes(db));
@@ -24,8 +26,10 @@ export function apiRoutes(db:Pool,content:ContentService) {
     const etag=`"site-${published.version}-${published.id}"`;
     res.set({'Cache-Control':'public, max-age=60','ETag':etag});
     if(req.headers['if-none-match']===etag){res.sendStatus(304);return;}
-    res.json(published.data);
+    res.json(publicSiteData(published.data));
   });
+  const reviewLang = (query:unknown) => z.object({lang:z.enum(['es','en','fr','de']).default('es')}).parse(query).lang;
+  r.get('/public/reviews',async(req,res)=>res.set('Cache-Control','no-store').json(await google.get(reviewLang(req.query))));
   r.get('/public/availability',limiter(120,60000),async(req,res)=>{
     const query=z.object({sid:z.string().max(40),from:z.string().max(10),to:z.string().max(10)}).parse(req.query);
     res.set('Cache-Control','no-store').json(await bookings.availability(query.sid,query.from,query.to));
@@ -37,6 +41,7 @@ export function apiRoutes(db:Pool,content:ContentService) {
   const admin=Router();
   admin.use(sessions(db).guard,csrf,(_req,res,next)=>{res.set('Cache-Control','no-store');next();});
   admin.use('/users',userRoutes(db));
+  admin.get('/reviews/google',roles('admin','editor'),async(req,res)=>res.json(await google.get(reviewLang(req.query))));
   admin.get('/content',async(_req,res)=>res.json(await content.getContent()));
   admin.put('/content/draft',async(req,res)=>{
     const {baseVersion}=baseVersionSchema.parse(req.body);

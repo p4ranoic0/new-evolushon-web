@@ -20,7 +20,7 @@ export function validateSite(input: unknown): SiteData {
   return siteSchema.parse(migrate(input)) as SiteData;
 }
 const snapshot = (r: Record<string, unknown>) => ({
-  id: r.id, version: Number(r.version), data: json<SiteData>(r.data as string),
+  id: r.id, version: Number(r.version), data: migrate(json<SiteData>(r.data as string)),
   updatedAt: iso(r.updated_at as string), publishedAt: iso(r.published_at as string),
 });
 export function contentService(db: Pool) {

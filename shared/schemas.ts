@@ -37,7 +37,7 @@ export const siteSchema = z.object({
     bytes: z.number().nonnegative().optional(), originalBytes: z.number().nonnegative().optional(), width: z.number().positive().optional(), height: z.number().positive().optional(),
     variants: z.array(z.object({ w: z.number().positive(), webp: image })).max(3).optional(),
   })).max(2000),
-  reviews: z.array(z.object({ id, author: short, rating: z.number().min(1).max(5), date: short, sample: z.boolean().optional(), hidden: z.boolean(), text: localized })).max(1000),
+  reviews: z.array(z.object({ id, source: z.enum(["google","instagram","tiktok","manual"]).default("manual"), url: link.optional(), author: short, rating: z.number().min(1).max(5), date: short, sample: z.boolean().optional(), hidden: z.boolean(), text: localized })).max(1000),
   albums: z.array(z.object({ id, name: localized })).max(100),
   home: z.record(z.string().max(80), localized),
 }).superRefine((d,ctx) => {

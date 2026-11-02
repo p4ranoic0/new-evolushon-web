@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { migrate } from '../../shared/index.js';
 import { SEED } from '../../shared/seed.js';
 import { env } from '../env.js';
-import { exec, pool, rows } from './pool.js';
+import { exec, pool, rows, json } from './pool.js';
 export async function seed(db: Pool) {
   const c = await db.getConnection();
   let locked = false;
@@ -18,6 +18,17 @@ export async function seed(db: Pool) {
       const data = migrate(SEED);
       data.settings.booking.methods.card = false;
       for (const status of ['published','draft']) await exec(c, 'INSERT INTO site_versions(status,data,published_at) VALUES (?,?,UTC_TIMESTAMP(3))', [status, JSON.stringify(data)]);
+    }
+    // Migración de contenido acotada e idempotente. Bloquea los documentos activos,
+    // conserva snapshots archivados y aumenta version para invalidar editores abiertos.
+    for (const row of await rows(c, "SELECT id,data FROM site_versions WHERE status IN ('draft','published') FOR UPDATE")) {
+      const data = json<import('../../shared/types.js').SiteData>(row.data);
+      if (!Array.isArray(data.reviews)) continue;
+      const clean = data.reviews.filter(r => r.sample !== true);
+      const changed = clean.length !== data.reviews.length || clean.some(r => r.source == null);
+      if (!changed) continue;
+      data.reviews = clean.map(r => ({ ...r, source: r.source ?? 'manual' }));
+      await exec(c, 'UPDATE site_versions SET data=?,version=version+1,updated_at=UTC_TIMESTAMP(3) WHERE id=?', [JSON.stringify(data),row.id]);
     }
     const [users] = await rows(c, 'SELECT COUNT(*) AS n FROM users');
     if (!Number(users.n)) {

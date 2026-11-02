@@ -53,7 +53,10 @@ export interface Photo {
   originalBytes?: number;
   bytes?: number;
 }
+export type ReviewSource = "google" | "instagram" | "tiktok" | "manual";
 export interface Review {
+  source: ReviewSource;
+  url?: string;
   id: string;
   author: string;
   rating: number;
@@ -61,6 +64,23 @@ export interface Review {
   sample?: boolean;
   hidden: boolean;
   text: Localized;
+}
+// Solo transporte de Places; nunca se guarda en SiteData ni en su historial.
+export interface GoogleReview extends Review {
+  source: "google";
+  authorUrl?: string;
+  photoUrl?: string;
+  relativeDate: string;
+}
+export interface GoogleReviewsState {
+  active: boolean;
+  updatedAt: string | null;
+  rating: number | null;
+  count: number | null;
+  placeUrl: string;
+  reviews: GoogleReview[];
+  stale: boolean;
+  error: boolean;
 }
 export interface User {
   name: string;

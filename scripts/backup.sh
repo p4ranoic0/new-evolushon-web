@@ -28,7 +28,10 @@ def quote(value):
 values={'host':os.environ['BACKUP_DB_HOST'],'user':os.environ['BACKUP_DB_USER'],'password':os.environ['BACKUP_DB_PASSWORD'],'port':os.environ.get('BACKUP_DB_PORT','3306'),'ssl-mode':os.environ.get('BACKUP_SSL_MODE','REQUIRED')}
 Path(os.environ['EVO_BACKUP_CONFIG']).write_text('[client]\n'+''.join(k+'='+quote(v)+'\n' for k,v in values.items()))
 PY
-mysqldump --defaults-extra-file="$backup_config" --single-transaction --no-tablespaces --column-statistics=0 --set-gtid-purged=OFF "$BACKUP_DB_NAME" | gzip > "$backup_stage/dump.sql.gz"
+{
+  mysqldump --defaults-extra-file="$backup_config" --single-transaction --no-tablespaces --column-statistics=0 --set-gtid-purged=OFF --ignore-table="$BACKUP_DB_NAME.google_reviews_cache" "$BACKUP_DB_NAME"
+  mysqldump --defaults-extra-file="$backup_config" --no-data --no-tablespaces --column-statistics=0 --set-gtid-purged=OFF "$BACKUP_DB_NAME" google_reviews_cache
+} | gzip > "$backup_stage/dump.sql.gz"
 rsync -a -e "ssh -p ${BACKUP_SSH_PORT:-22}" -- "$BACKUP_SSH_HOST:$BACKUP_UPLOADS_DIR/" "$backup_stage/uploads/"
 (cd "$backup_stage" && shasum -a 256 dump.sql.gz > SHA256SUMS)
 printf 'evolushon backup v1\n' > "$backup_stage/.evolushon-backup"

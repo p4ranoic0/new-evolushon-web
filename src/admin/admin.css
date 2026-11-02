@@ -1416,3 +1416,9 @@
     flex-wrap: wrap;
   }
 }
+
+.social-import { margin-block: 20px; }
+.social-candidates { max-height: 480px; overflow-y: auto; margin-block: 16px; }
+.social-candidate { padding-block: 16px; border-bottom: 1px solid var(--a-line, #ddd); }
+.social-candidate p { white-space: pre-wrap; overflow-wrap: anywhere; margin-block: 8px; }
+.social-candidate a { text-decoration: underline; }

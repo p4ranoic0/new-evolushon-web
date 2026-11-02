@@ -1,3 +1,4 @@
+import { publicSiteData } from '../../shared/review-utils.js';
 import { seoFor } from '../../shared/seo.js';
 import { LANGS, pathFor, slugs } from '../../shared/index.js';
 import type { SiteData,Lang,Page } from '../../shared/types.js';
@@ -27,5 +28,5 @@ export function renderHead(data:SiteData,route:ReturnType<typeof resolveRoute>,p
 }
 export function injectHtml(template:string,data:SiteData,path:string,publicUrl:string) {
   const route=resolveRoute(path,data);
-  return {status:route.status,html:template.replace('<html lang="es">',`<html lang="${route.lang}">`).replace('<!--evo:head-->',renderHead(data,route,publicUrl)).replace('<!--evo:data-->',`<script type="application/json" id="evo-data">${escapeJson(data)}</script>`)};
+  return {status:route.status,html:template.replace('<html lang="es">',`<html lang="${route.lang}">`).replace('<!--evo:head-->',renderHead(data,route,publicUrl)).replace('<!--evo:data-->',`<script type="application/json" id="evo-data">${escapeJson(publicSiteData(data))}</script>`)};
 }

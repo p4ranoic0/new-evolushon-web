@@ -13,7 +13,7 @@
     "dev:server": "node --watch --env-file=.env --import tsx server/index.ts",
     "migrate": "node --env-file=.env server-dist/server/db/migrate.js",
     "seed": "node --env-file=.env server-dist/server/db/seed.js",
-    "test": "node --env-file=.env --import tsx --test --test-concurrency=1 tests/*.test.ts",
+    "test": "TSX_TSCONFIG_PATH=tsconfig.app.json node --env-file=.env --import tsx --test --test-concurrency=1 tests/*.test.ts",
     "reset-admin": "node --env-file=.env --import tsx scripts/reset-admin.ts"
   },
   "dependencies": {

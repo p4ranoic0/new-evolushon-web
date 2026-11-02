@@ -2150,3 +2150,9 @@ input[type="checkbox"] {
   animation-duration: 1.1s;
   animation-delay: 0.15s;
 }
+
+.review-source { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.review-author > img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+.review-origin { font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+.google-attribution { font-family: Arial, sans-serif; color: var(--color-muted); font-size: 13px; }
+.reviews > .wrap > .google-attribution { margin-top: 16px; }

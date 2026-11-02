@@ -9,7 +9,6 @@ import { Link, useLocation } from "react-router-dom";
 import {
   IconArrowRight,
   IconArrowUpRight,
-  IconBrandGoogle,
   IconBrandInstagram,
   IconBrandTiktok,
   IconBrandWhatsapp,
@@ -19,8 +18,6 @@ import {
   IconClock,
   IconMapPin,
   IconMenu2,
-  IconPencil,
-  IconStar,
   IconStarFilled,
   IconUsers,
   IconX,
@@ -32,7 +29,6 @@ import {
   UI,
   CATS,
   effectivePrice,
-  fmt,
   LANGS,
   money,
   offerOn,
@@ -45,6 +41,7 @@ import type { Category, Lang, Page, Photo, Service, SiteData } from "../store";
 import { Doodle } from "./Doodle";
 import { Seo } from "./SEO";
 import { Booking } from "./Booking";
+import { RemoteReviews } from "./Reviews";
 import { Modal } from "./Modal";
 const mobileMotion = window.matchMedia(
   "(max-width: 759px), (prefers-reduced-motion: reduce)",
@@ -58,19 +55,6 @@ const covers = {
   surfskate: "src/assets/class-surfskate-3.jpg",
   trip: "src/assets/surftrip-chicama.jpg",
 };
-function Stars({ n }: { n: number }) {
-  return (
-    <span className="stars" aria-label={n + " / 5"}>
-      {[1, 2, 3, 4, 5].map((i) =>
-        i <= Math.round(n) ? (
-          <IconStarFilled key={i} size={18} />
-        ) : (
-          <IconStar key={i} size={18} />
-        ),
-      )}
-    </span>
-  );
-}
 export function PublicSite({
   data,
   lang,
@@ -82,8 +66,7 @@ export function PublicSite({
   page: Page;
   service?: Service;
 }) {
-  const ui = uiFor(data, lang),
-    bt = BOOKING_UI[lang];
+  const ui = uiFor(data, lang);
   const location = useLocation();
   const [menu, setMenu] = useState(false),
     [scrolled, setScrolled] = useState(false),
@@ -148,8 +131,7 @@ export function PublicSite({
     photos = data.gallery.filter((g) => !g.hidden),
     featured = photos.filter((g) => g.featured);
   const shown = photos.filter((g) => album === "all" || g.album === album),
-    reviews = data.reviews.filter((r) => !r.hidden),
-    rs = data.settings.reviews;
+    reviewSettings = data.settings.reviews;
   const wa = waUrl(data.settings, ui.waGeneric),
     minPrice = (cat: Category) => {
       const list = services
@@ -386,91 +368,7 @@ export function PublicSite({
                 ))}
               </div>
             </section>
-            {reviews.length > 0 && (
-              <section className="section reviews">
-                <div className="wrap">
-                  <Doodle name="star" className="section-doodle" />
-                  <div className="section-heading" data-reveal>
-                    <div>
-                      <h2>{bt.reviewsTitle}</h2>
-                      {!!rs.rating && (
-                        <div className="rating">
-                          <strong>{rs.rating}</strong>
-                          <div>
-                            <Stars n={rs.rating} />
-                            <small>
-                              {rs.count ? fmt(bt.basedOn, { n: rs.count }) : ""}
-                            </small>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="actions">
-                      <a
-                        className="btn outline"
-                        href={
-                          rs.placeUrl ||
-                          "https://www.google.com/maps/search/Evolushon+Surf+Experience"
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <IconMapPin size={18} />
-                        {bt.seeAll}
-                      </a>
-                      <a
-                        className="btn ink"
-                        href={
-                          rs.writeUrl ||
-                          rs.placeUrl ||
-                          "https://www.google.com/maps/search/Evolushon+Surf+Experience"
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <IconPencil size={18} />
-                        {bt.write}
-                      </a>
-                    </div>
-                  </div>
-                  <div className="reviews-strip">
-                    {reviews.map((r) => (
-                      <article key={r.id}>
-                        <div className="flex justify-between">
-                          <Stars n={r.rating} />
-                          <IconBrandGoogle size={20} />
-                        </div>
-                        <p className="serif">“{tr(r.text, lang)}”</p>
-                        <div className="review-author">
-                          <span>{r.author[0] || "?"}</span>
-                          <div>
-                            <b>{r.author}</b>
-                            <small>
-                              {r.date
-                                ? new Date(
-                                    r.date +
-                                      (r.date.length === 7
-                                        ? "-01T12:00:00"
-                                        : "T12:00:00"),
-                                  ).toLocaleDateString(lang, {
-                                    month: "long",
-                                    year: "numeric",
-                                  })
-                                : ""}
-                            </small>
-                          </div>
-                          {r.sample && (
-                            <small className="badge">
-                              {PUBLIC_UI.sample[lang]}
-                            </small>
-                          )}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            )}
+            <RemoteReviews reviews={data.reviews} settings={reviewSettings} lang={lang} />
             <section className="home-contact dark">
               <img
                 loading="lazy"

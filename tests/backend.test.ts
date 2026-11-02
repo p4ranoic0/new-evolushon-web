@@ -41,13 +41,13 @@ test('migraciones: interrupción tras DDL, replay y segunda ejecución sin dupli
   await assert.rejects(migrate(db,{afterStatement:n=>{if(n===3)throw new Error('interrupción simulada');}}),/interrupción/);
   assert.equal((await rows(db,'SELECT * FROM migrations')).length,0);
   await migrate(db);await migrate(db);
-  assert.equal((await rows(db,'SELECT * FROM migrations')).length,2);
+  assert.equal((await rows(db,'SELECT * FROM migrations')).length,3);
   await exec(db,'CREATE TABLE t0_probe (id INT PRIMARY KEY)');await exec(db,'DELETE FROM migrations WHERE id=2');await migrate(db);
   assert.equal((await rows(db,"SHOW TABLES LIKE 't0_probe'")).length,0,'0002 borra la tabla de la prueba T0');
   const [table]=await rows(db,'SHOW CREATE TABLE bookings');
   assert.match(String(table['Create Table']),/ix_bookings_slot/);
   assert.match(String(table['Create Table']),/idempotency_key/);
-  assert.equal((await rows(db,'SHOW TABLES')).length,7);
+  assert.equal((await rows(db,'SHOW TABLES')).length,8);
 });
 test('seed idempotente: una pareja draft/published, admin cifrado y sin credenciales editoriales',async()=>{
   await seed(db);await seed(db);
@@ -220,4 +220,70 @@ test('HTTP SEO, redirecciones, sitemap dinámico, robots, 404 y mantenimiento',a
   const {app:maintenance}=createApp(db,{ready:false,error:'Migración fallida'});
   await request(maintenance).get('/api/public/site').expect(503);
   await request(maintenance).get('/healthz/deep').expect(503);
+});
+
+test('reseñas: limpieza segura del contenido activo, idempotente, sin ejemplos en HTML/API',async()=>{
+  const {SAMPLE_REVIEWS}=await import('../shared/reviews.js');
+  const [live]=await rows(db,"SELECT * FROM site_versions WHERE status='published'");
+  const data=typeof live.data==='string' ? JSON.parse(live.data) : live.data;
+  const real={id:'r-keep',author:'Autor real',rating:5,date:'2026-10',hidden:false,text:{es:'Testimonio real conservado',en:'',fr:'',de:''}};
+  data.reviews=[...SAMPLE_REVIEWS,real];
+  await exec(db,'UPDATE site_versions SET data=? WHERE id=?',[JSON.stringify(data),live.id]);
+  const {app:rawApp}=createApp(db);
+  const html=await request(rawApp).get('/es/').expect(200);
+  assert.doesNotMatch(html.text,/Camila R\.|Thomas B\.|Lucía M\./);
+  assert.match(html.text,/Autor real/);
+  const api=await request(rawApp).get('/api/public/site').expect(200);
+  assert.equal(api.body.reviews.length,1);
+  await seed(db);
+  const [clean]=await rows(db,"SELECT * FROM site_versions WHERE status='published'");
+  const cleanData=typeof clean.data==='string' ? JSON.parse(clean.data) : clean.data;
+  assert.deepEqual(cleanData.reviews,[{...real,source:'manual'}]);
+  assert.deepEqual(cleanData.services,data.services);
+  assert.equal(clean.version,live.version+1);
+  await seed(db);
+  assert.equal((await rows(db,'SELECT version FROM site_versions WHERE id=?',[live.id]))[0].version,clean.version);
+});
+
+test('Google: 24 h, llamadas concurrentes, idiomas, reinicio, fallo y TTL de 30 días',async()=>{
+  const {googleReviewsService,GOOGLE_REFRESH_MS,GOOGLE_RETENTION_MS}=await import('../server/services/google-reviews.js');
+  await exec(db,'DELETE FROM google_reviews_cache');
+  let now=Date.parse('2026-11-01T12:00:00Z'),calls=0,broken=false,warnings=0;
+  const fetchMock:typeof fetch=async(url,init)=>{
+    calls++;
+    assert.match(String(url),/places\/test-place\?languageCode=(es|en)/);
+    const headers=init!.headers as Record<string,string>;
+    assert.equal(headers['X-Goog-FieldMask'],'rating,userRatingCount,reviews,googleMapsUri');
+    assert.equal(headers['X-Goog-Api-Key'],'fake-key');
+    if(broken)throw new Error('simulated outage');
+    return Response.json({rating:4.8,userRatingCount:123,googleMapsUri:'https://maps.google.com/?cid=1',reviews:[{
+      rating:5,publishTime:'2026-10-25T12:00:00Z',relativePublishTimeDescription:'hace una semana',text:{text:'Opinión desde API'},
+      authorAttribution:{displayName:'Autor Google',uri:'https://maps.google.com/contrib/1',photoUri:'https://lh3.googleusercontent.com/test'},
+      googleMapsUri:'https://maps.google.com/reviews/1',
+    }]});
+  };
+  const options={key:'fake-key',placeId:'test-place',now:()=>now,fetch:fetchMock,warn:()=>{warnings++;}};
+  const service=googleReviewsService(db,options);
+  const results=await Promise.all(Array.from({length:8},()=>service.get('es')));
+  assert.equal(calls,1);assert.equal(results[0].rating,4.8);assert.equal(results[0].reviews[0].relativeDate,'hace una semana');
+  assert.equal(results[0].reviews[0].author,'Autor Google');assert.equal(results[0].reviews[0].photoUrl,'https://lh3.googleusercontent.com/test');
+  now+=GOOGLE_REFRESH_MS-1;await service.get('es');assert.equal(calls,1);
+  const restart=googleReviewsService(db,options);await restart.get('es');assert.equal(calls,1,'caché persistente tras reinicio');
+  now++;broken=true;
+  const fallback=await service.get('es');assert.equal(calls,2);assert.equal(fallback.reviews.length,1);assert.equal(fallback.error,true);assert.equal(fallback.stale,true);assert.equal(warnings,1);
+  await service.get('es');await googleReviewsService(db,options).get('es');assert.equal(calls,2,'fallo también se limita 24 h');
+  broken=false;await service.get('en');assert.equal(calls,3,'caché separada por idioma');
+  now+=GOOGLE_REFRESH_MS;await service.get('es');assert.equal(calls,4);
+  now+=GOOGLE_RETENTION_MS;broken=true;
+  const expired=await service.get('es');assert.equal(expired.reviews.length,0);assert.equal(expired.rating,null);
+  await service.purge();
+  assert.equal((await rows(db,'SELECT * FROM google_reviews_cache WHERE payload IS NOT NULL')).length,0);
+  assert.equal((await googleReviewsService(db,{...options,key:''}).get('es')).active,false);
+});
+
+test('Google: sin variables no consulta y los endpoints validan idioma y acceso',async()=>{
+  await request(app).get('/api/public/reviews?lang=es').expect(200).expect(r=>assert.equal(r.body.active,false));
+  await request(app).get('/api/public/reviews?lang=zz').expect(400);
+  await request(app).get('/api/admin/reviews/google').expect(401);
+  await agent.get('/api/admin/reviews/google?lang=fr').expect(200).expect(r=>assert.equal(r.body.active,false));
 });
