@@ -13,7 +13,10 @@ export function asset(path: string) {
     /^https:\/\//.test(path)
   )
     return path;
-  return assets["../assets/" + path.replace(/^.*src\/assets\//, "")] || "";
+  const key = "../assets/" + path.replace(/^.*src\/assets\//, "");
+  // Las fotos de src/assets se guardan como "<nombre original>.webp"; el contenido
+  // publicado sigue usando la ruta original (p. ej. src/assets/logo.jpg).
+  return assets[key] || assets[key + ".webp"] || "";
 }
 export function download(name: string, text: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }));

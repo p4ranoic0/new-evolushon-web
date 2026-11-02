@@ -9,7 +9,7 @@ import { api } from '../store/api';
 import { Doodle } from './Doodle';
 
 function Stars({ n }: { n:number }) {
-  return <span className="stars" aria-label={n+' / 5'}>{[1,2,3,4,5].map(i => i<=Math.round(n) ? <IconStarFilled key={i} size={18}/> : <IconStar key={i} size={18}/>)}</span>;
+  return <span className="stars" role="img" aria-label={n+' / 5'}>{[1,2,3,4,5].map(i => i<=Math.round(n) ? <IconStarFilled key={i} size={18}/> : <IconStar key={i} size={18}/>)}</span>;
 }
 function ReviewCard({ review:r, lang }: {review:Review|GoogleReview;lang:Lang}) {
   const synced='relativeDate' in r ? r : undefined;

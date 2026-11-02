@@ -25,7 +25,7 @@ export function createApp(db:Pool,state:RuntimeState={ready:true}) {
   app.use((req,res,next)=>{req.requestId=randomUUID();res.set('X-Request-ID',req.requestId);next();});
   app.use(pinoHttp({logger:log,genReqId:req=>(req as express.Request).requestId,serializers:{req:req=>({id:req.id,method:req.method,path:req.url?.split('?')[0]}),res:res=>({status:res.statusCode})},customLogLevel:(_req,res,error)=>error||res.statusCode>=500?'error':res.statusCode>=400?'warn':'info'}));
   app.use(helmet({frameguard:{action:'deny'},referrerPolicy:{policy:'strict-origin-when-cross-origin'},strictTransportSecurity:env.NODE_ENV==='production'?undefined:false,
-    contentSecurityPolicy:{reportOnly:!env.CSP_ENFORCE,useDefaults:false,directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:','blob:','https://*.googleusercontent.com'],connectSrc:["'self'"],frameAncestors:["'none'"],baseUri:["'self'"],formAction:["'self'"]}}}));
+    contentSecurityPolicy:{reportOnly:!env.CSP_ENFORCE,useDefaults:false,directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'"],fontSrc:["'self'"],imgSrc:["'self'",'data:','blob:','https://*.googleusercontent.com'],connectSrc:["'self'"],frameAncestors:["'none'"],baseUri:["'self'"],formAction:["'self'"]}}}));
   app.use((_req,res,next)=>{res.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');next();});
   app.use(compression());app.use(redirects());
   const probe=createProbe(db,env.UPLOADS_DIR);
