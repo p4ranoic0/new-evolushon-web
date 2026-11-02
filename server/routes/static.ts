@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import { readFile,stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { env } from '../env.js';
 import type { ContentService } from '../services/content.js';
 import { injectHtml } from '../services/head.js';
@@ -22,6 +23,15 @@ export function redirects() {
     if(LEGACY_REDIRECTS[path]){res.redirect(301,LEGACY_REDIRECTS[path]);return;}next();
   });return r;
 }
+type SsrRender=(url:string,publicData:unknown)=>string;
+let ssr:Promise<SsrRender|undefined>|undefined;
+// Módulo generado por `vite build --ssr`. Si falta o falla, la página se sirve como antes (solo cliente).
+function loadSsr(log:{warn:(o:object,m:string)=>void}){
+  ssr??=import(pathToFileURL(resolve('server-dist/ssr/entry-server.js')).href)
+    .then(m=>m.render as SsrRender)
+    .catch(error=>{log.warn({err:error},'SSR no disponible; se sirve solo cliente');ssr=undefined;return undefined;});
+  return ssr;
+}
 export function staticRoutes(content:ContentService) {
   const r=Router();
   let xmlCache:{key:string;xml:string}|undefined;
@@ -42,6 +52,13 @@ export function staticRoutes(content:ContentService) {
     if(info.mtimeMs!==mtime){template=await readFile(file,'utf8');mtime=info.mtimeMs;}
     const live=await content.getPublished();
     const rendered=injectHtml(template,live.data,req.path,env.PUBLIC_URL);
+    if(!req.path.startsWith('/admin')){
+      const render=await loadSsr(req.log);
+      if(render){
+        try{rendered.html=rendered.html.replace('<div id="root"></div>',()=>`<div id="root">${render(req.originalUrl,rendered.publicData)}</div>`);}
+        catch(error){req.log.error({err:error,path:req.path},'Falló el render en servidor; se sirve solo cliente');}
+      }
+    }
     if(req.path.startsWith('/admin')||rendered.status===404)res.set('X-Robots-Tag','noindex, nofollow');
     res.status(rendered.status).type('text/html').set('Cache-Control','no-cache').send(rendered.html);
   });

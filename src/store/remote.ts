@@ -3,12 +3,15 @@ import { DEFAULT, migrate } from '../../shared/index';
 import type { SiteData } from '../../shared/types';
 import { api } from './api';
 const listeners = new Set<() => void>();
-const injected = document.getElementById('evo-data')?.textContent;
+const browser = typeof document !== 'undefined';
+const injected = browser ? document.getElementById('evo-data')?.textContent : undefined;
 let cached: SiteData = DEFAULT;
 let fetchedAt = 0;
 let pending: Promise<void> | undefined;
 try { if (injected) { cached = migrate(JSON.parse(injected)); fetchedAt = Date.now(); } } catch { /* La API recupera datos si el HTML está incompleto. */ }
 export function load() { return cached; }
+/** Solo para el render en el servidor: fija los datos antes de renderToString. */
+export function primeSiteData(data: SiteData) { cached = data; }
 export function subscribe(fn: () => void) { listeners.add(fn); return () => { listeners.delete(fn); }; }
 export function refreshSite() {
   if (!pending) pending = api.get<SiteData>('/public/site').then((data) => {
@@ -17,8 +20,8 @@ export function refreshSite() {
   return pending;
 }
 export function useSiteData() { return useSyncExternalStore(subscribe, load, load); }
-if (!injected) void refreshSite().catch(() => { /* La siguiente visita visible reintenta. */ });
-document.addEventListener('visibilitychange', () => {
+if (browser && !injected) void refreshSite().catch(() => { /* La siguiente visita visible reintenta. */ });
+if (browser) document.addEventListener('visibilitychange', () => {
   if (!document.hidden && Date.now() - fetchedAt > 60000) void refreshSite().catch(() => {});
 });
 export function preference(key: string, fallback: string) { try { return localStorage.getItem(key) || fallback; } catch { return fallback; } }

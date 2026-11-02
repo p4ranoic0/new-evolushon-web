@@ -28,5 +28,6 @@ export function renderHead(data:SiteData,route:ReturnType<typeof resolveRoute>,p
 }
 export function injectHtml(template:string,data:SiteData,path:string,publicUrl:string) {
   const route=resolveRoute(path,data);
-  return {status:route.status,html:template.replace('<html lang="es">',`<html lang="${route.lang}">`).replace('<!--evo:head-->',renderHead(data,route,publicUrl)).replace('<!--evo:data-->',`<script type="application/json" id="evo-data">${escapeJson(publicSiteData(data))}</script>`)};
+  const publicData=publicSiteData(data);
+  return {status:route.status,publicData,html:template.replace('<html lang="es">',`<html lang="${route.lang}">`).replace('<!--evo:head-->',()=>renderHead(data,route,publicUrl)).replace('<!--evo:data-->',()=>`<script type="application/json" id="evo-data">${escapeJson(publicData)}</script>`)};
 }

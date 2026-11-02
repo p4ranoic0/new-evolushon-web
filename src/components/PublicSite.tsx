@@ -43,12 +43,13 @@ import { Seo } from "./SEO";
 import { Booking } from "./Booking";
 import { RemoteReviews } from "./Reviews";
 import { Modal } from "./Modal";
-const mobileMotion = window.matchMedia(
-  "(max-width: 759px), (prefers-reduced-motion: reduce)",
-);
+const mobileMotion =
+  typeof window === "undefined"
+    ? undefined
+    : window.matchMedia("(max-width: 759px), (prefers-reduced-motion: reduce)");
 function subscribeMotion(f: () => void) {
-  mobileMotion.addEventListener("change", f);
-  return () => mobileMotion.removeEventListener("change", f);
+  mobileMotion?.addEventListener("change", f);
+  return () => mobileMotion?.removeEventListener("change", f);
 }
 const covers = {
   surf: "src/assets/galeria-sesion-16.jpg",
@@ -81,7 +82,9 @@ export function PublicSite({
     [lb, setLb] = useState<{ list: Photo[]; i: number } | null>(null);
   const still = useSyncExternalStore(
       subscribeMotion,
-      () => mobileMotion.matches,
+      () => mobileMotion?.matches ?? true,
+      // El HTML del servidor va sin video (como en celular); en escritorio se agrega al hidratar.
+      () => true,
     ),
     root = useRef<HTMLDivElement>(null);
   const book = useCallback(
@@ -101,6 +104,11 @@ export function PublicSite({
     const nodes = root.current?.querySelectorAll("[data-reveal]");
     if (!nodes || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
       return;
+    // Lo que ya se ve (p. ej. el hero que pintó el servidor) no se oculta para re-animarlo.
+    nodes.forEach((n) => {
+      if (n.getBoundingClientRect().top < window.innerHeight) n.classList.add("revealed");
+    });
+    document.documentElement.classList.add("reveal-on");
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {

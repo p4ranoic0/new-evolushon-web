@@ -215,6 +215,12 @@ test('HTTP SEO, redirecciones, sitemap dinámico, robots, 404 y mantenimiento',a
   await request(app).get('/es/galeria?x=1').set('Host','www.'+new URL(origin).host).expect(301).expect('Location',origin+'/es/galeria?x=1');
   await request(app).get('/es/servicios/no-existe').expect(404);
   const svc=await request(app).get('/es/servicios/s-grupal').expect(200);assert.match(svc.text,/<title data-ssr>Grupales · Clases de surf en Lima \| Evolushon<\/title>/);
+  // Render en servidor: el contenido viene en el HTML (requiere `npm run build`); el panel sigue solo cliente.
+  const root=(html:string)=>html.slice(html.indexOf('<div id="root">'),html.indexOf('<script type="application/json"'));
+  assert.match(root(h.text),/<h1[\s>]/);assert.match(root(h.text),/href="\/es\/servicios"/);assert.match(root(h.text),/\/assets\/hero-movil-[\w-]+\.webp/);
+  assert.match(root(svc.text),/Grupales/);
+  const missing=await request(app).get('/es/no-existe').expect(404);assert.match(root(missing.text),/<h1[^>]*>404<\/h1>/);
+  const panel=await request(app).get('/admin').expect(200);assert.match(panel.text,/<div id="root"><\/div>/);
   const xml=await request(app).get('/sitemap.xml').expect(200);assert.equal((xml.text.match(/<loc>/g)||[]).length,56);
   const robots=await request(app).get('/robots.txt').expect(200);assert.match(robots.text,/Disallow: \/admin/);assert.match(robots.text,new RegExp(origin.replaceAll('.','\\.')+'/sitemap.xml'));
   const {app:maintenance}=createApp(db,{ready:false,error:'Migración fallida'});

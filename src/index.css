@@ -1130,14 +1130,15 @@ h2 {
 .mobile-book {
   display: none;
 }
-[data-reveal] {
+/* Solo se oculta cuando el JS ya está listo para revelarlo (ver PublicSite): el HTML del servidor se ve sin JS. */
+.reveal-on [data-reveal] {
   opacity: 0;
   transform: translateY(48px);
   transition:
     transform 1s var(--ease),
     opacity 1s var(--ease);
 }
-[data-reveal].revealed {
+.reveal-on [data-reveal].revealed {
   opacity: 1;
   transform: none;
 }

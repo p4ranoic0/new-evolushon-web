@@ -34,8 +34,10 @@ function preloadCritical(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), preloadCritical()],
   base: "/",
+  // El build SSR (server-dist/ssr) solo necesita el JS; public/ ya lo sirve dist/.
+  build: { copyPublicDir: !isSsrBuild },
   server: { proxy: Object.fromEntries(["/api", "/uploads", "/healthz", "/sitemap.xml", "/robots.txt"].map((path) => [path, "http://localhost:3000"])) },
-});
+}));
