@@ -8,8 +8,9 @@ const PRELOADS: { file: string; as: "font" | "image"; media?: string }[] = [
   // Frase del hero (elemento LCP en celular). Bricolage (131 KB) no se precarga:
   // en redes lentas le quita ancho de banda al JavaScript.
   { file: "instrument-serif-italic-latin.woff2", as: "font" },
-  { file: "hero-movil.webp", as: "image", media: "(max-width: 759px)" },
 ];
+// La foto del hero móvil (115 KB) NO se precarga: el LCP en celular es la frase
+// del hero (texto que pinta el JS) y la precarga le quitaba ancho de banda al JS.
 
 function preloadCritical(): Plugin {
   return {
