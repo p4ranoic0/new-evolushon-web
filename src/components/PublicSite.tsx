@@ -24,6 +24,7 @@ import {
 } from "@tabler/icons-react";
 import {
   asset,
+  assetSrcSet,
   BOOKING_UI,
   PUBLIC_UI,
   UI,
@@ -189,7 +190,7 @@ export function PublicSite({
       <header className={"site-header " + (scrolled ? "solid" : "")}>
         <div className="header-inner wrap">
           <Link className="brand" to={pathFor(lang)}>
-            <img src={asset("src/assets/logo.jpg")} alt="" />
+            <img src={asset("src/assets/logo.jpg")} srcSet={assetSrcSet("src/assets/logo.jpg")} sizes="44px" alt="" />
             <span>Evolushon</span>
           </Link>
           <nav className="desktop-nav">{nav}</nav>
@@ -305,12 +306,16 @@ export function PublicSite({
                   loading="lazy"
                   decoding="async"
                   src={asset("src/assets/galeria-sesion-18.jpg")}
+                  srcSet={assetSrcSet("src/assets/galeria-sesion-18.jpg")}
+                  sizes="(max-width: 759px) 76vw, 36vw"
                   alt={ui.surf}
                 />
                 <img
                   loading="lazy"
                   decoding="async"
                   src={asset("src/assets/class-surfskate-1.jpg")}
+                  srcSet={assetSrcSet("src/assets/class-surfskate-1.jpg")}
+                  sizes="(max-width: 759px) 44vw, 20vw"
                   alt={ui.surfskate}
                 />
                 <span className="serif">{ui.tag}</span>
@@ -334,6 +339,8 @@ export function PublicSite({
                         loading="lazy"
                         decoding="async"
                         src={asset(covers[c])}
+                        srcSet={assetSrcSet(covers[c])}
+                        sizes="(max-width: 759px) 92vw, 960px"
                         alt=""
                       />
                       <span className="panel-arrow">
@@ -375,7 +382,7 @@ export function PublicSite({
                       loading="lazy"
                       decoding="async"
                       src={asset(g.src)}
-                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ") || assetSrcSet(g.src)}
                       sizes="(max-width: 700px) 100vw, 50vw"
                       alt={tr(g.alt, lang)}
                       style={{ objectPosition: g.focus }}
@@ -508,7 +515,7 @@ export function PublicSite({
                       loading="lazy"
                       decoding="async"
                       src={asset(g.src)}
-                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+                      srcSet={g.variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ") || assetSrcSet(g.src)}
                       sizes="(max-width: 700px) 100vw, 50vw"
                       alt={tr(g.alt, lang)}
                       style={{ objectPosition: g.focus }}
@@ -623,6 +630,8 @@ export function PublicSite({
           <div className="footer-lockup">
             <img
               src={asset("src/assets/logo.jpg")}
+              srcSet={assetSrcSet("src/assets/logo.jpg")}
+              sizes="(max-width: 759px) 44px, 130px"
               alt=""
               loading="lazy"
               decoding="async"
@@ -725,6 +734,8 @@ function ServiceArticle({
           loading="lazy"
           decoding="async"
           src={asset(s.cover)}
+          srcSet={assetSrcSet(s.cover)}
+          sizes="(max-width: 759px) 92vw, 640px"
           alt={tr(s.name, lang)}
           style={{ objectPosition: s.coverFocus }}
         />
@@ -885,7 +896,7 @@ function Lightbox({
       </div>
       <img
         src={asset(list[index].src)}
-        srcSet={list[index].variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ")}
+        srcSet={list[index].variants?.map((v)=>asset(v.webp)+" "+v.w+"w").join(", ") || assetSrcSet(list[index].src)}
         sizes="90vw"
         alt={tr(list[index].alt, lang)}
         onTouchStart={(e) => {
